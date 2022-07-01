@@ -73,7 +73,7 @@ const styles = {
   },
 };
 
-const CSVReader = ({handleUpload}) => {
+const CSVReader = ({handleUpload, handleRemoveFile}) => {
 
   const {CSVReader} = useCSVReader();
   const [zoneHover, setZoneHover] = useState(false);
@@ -81,9 +81,27 @@ const CSVReader = ({handleUpload}) => {
     DEFAULT_REMOVE_HOVER_COLOR
   );
 
+  function parseDataForView(unparsedData) {
+    if (unparsedData !== null) {
+      const headers = unparsedData.data[0]
+
+      // parse the body portions
+      const parsedData = {};
+      for (let i = 1; i < unparsedData.data.length; i++) {
+        let parsedRow = {
+          id: i - 1
+        };
+        for (let j = 0; j < headers.length; j++) {
+          parsedRow[headers[j]] = unparsedData.data[i][j]
+        }
+        parsedData[i - 1] = parsedRow
+      }
+      return [headers, parsedData];
+    }
+  }
+
   return (
     <div style={{
-      // background: 'red',
       display: 'flex',
       width: '70%',
       flexDirection: 'column',
@@ -97,7 +115,7 @@ const CSVReader = ({handleUpload}) => {
           console.log('---------------------------');
           console.log(results);
           setZoneHover(false);
-          handleUpload(results)
+          handleUpload(...parseDataForView(results))
         }}
         onDragOver={(event) => {
           event.preventDefault();
@@ -146,6 +164,11 @@ const CSVReader = ({handleUpload}) => {
                       onMouseOut={(event) => {
                         event.preventDefault();
                         setRemoveHoverColor(DEFAULT_REMOVE_HOVER_COLOR);
+                      }}
+                      onClick={(event) => {
+                        getRemoveFileProps().onClick(event);
+                        // Your code here
+                        handleRemoveFile()
                       }}
                     >
                       <Remove color={removeHoverColor}/>
