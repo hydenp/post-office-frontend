@@ -2,14 +2,38 @@ import "./App.css";
 
 import GoogleOauth from "./components/GoogleAuth";
 import FileUpload from "./components/FileUpload";
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import DataView from "./components/DataView";
 import BodyInput from "./components/BodyInput";
+import RequestHandler from "./components/RequestHandler";
 
 function App() {
   const [tableHeaders, setTableHeaders] = useState(null);
   const [tableData, setTableData] = useState(null);
-  const bodyInput = useRef("");
+  const [bodyInput, setBodyInput] = useState(null);
+  const [token, setToken] = useState(null);
+
+  // useEffect(() => {
+  //   console.log("table data = ", tableData);
+  //   console.log("body input = ", bodyInput);
+  //   console.log("token = ", token);
+  // }, [tableData, bodyInput, token]);
+
+  useEffect(() => {
+    console.log("re-render");
+  });
+
+  function handleToken(t) {
+    setToken(t);
+  }
+
+  function handleBodyInput(v) {
+    if (v === "") {
+      setBodyInput(null);
+    } else {
+      setBodyInput(v);
+    }
+  }
 
   function handleUpload(headers, data) {
     setTableHeaders(headers);
@@ -81,16 +105,26 @@ function App() {
         {/* Component to handle creating body of email */}
         <div>
           <h2>Create a body for your email</h2>
-          <BodyInput variableNames={tableHeaders} bodyInput={bodyInput} />
+          <BodyInput
+            variableNames={tableHeaders}
+            handleBodyInput={handleBodyInput}
+          />
         </div>
 
         {/* Component to start google oauth flow, store it in state variable and print token */}
         <div>
           <h2>Get Google the Keys</h2>
-          <GoogleOauth />
+          <GoogleOauth handleToken={handleToken} />
         </div>
-        <br />
-        <br />
+
+        <div
+          style={{
+            marginBottom: 50,
+          }}
+        >
+          <h2>Send Mail</h2>
+          <RequestHandler body={bodyInput} data={tableData} token={token} />
+        </div>
       </div>
     </div>
   );

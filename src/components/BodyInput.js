@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const BodyInput = ({ variableNames, bodyInput }) => {
+const BodyInput = ({ variableNames, handleBodyInput }) => {
   const [variables, setVariables] = useState([]);
   const [usedVars, setUsedVars] = useState({});
 
@@ -26,7 +26,7 @@ const BodyInput = ({ variableNames, bodyInput }) => {
       newUsedVars[v] = val.indexOf(`{${v}}`) !== -1;
     }
     setUsedVars(newUsedVars);
-    bodyInput.current = val;
+    handleBodyInput(val);
   }
 
   return (
