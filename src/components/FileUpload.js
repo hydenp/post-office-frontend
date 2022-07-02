@@ -1,56 +1,60 @@
-import React, {useState} from 'react';
+import React, { useState } from "react";
 
-import {formatFileSize, lightenDarkenColor, useCSVReader,} from 'react-papaparse';
+import {
+  formatFileSize,
+  lightenDarkenColor,
+  useCSVReader,
+} from "react-papaparse";
 
-const GREY = '#CCC';
-const DEFAULT_REMOVE_HOVER_COLOR = '#A01919';
+const GREY = "#CCC";
+const DEFAULT_REMOVE_HOVER_COLOR = "#A01919";
 const REMOVE_HOVER_COLOR_LIGHT = lightenDarkenColor(
   DEFAULT_REMOVE_HOVER_COLOR,
   40
 );
-const GREY_DIM = '#686868';
+const GREY_DIM = "#686868";
 
 const styles = {
   zone: {
-    alignItems: 'center',
+    alignItems: "center",
     borderWidth: 2,
-    borderStyle: 'dashed',
+    borderStyle: "dashed",
     borderColor: GREY,
     borderRadius: 20,
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-    justifyContent: 'center',
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
+    justifyContent: "center",
     padding: 20,
   },
   file: {
-    background: '#EEE',
+    background: "#EEE",
     borderRadius: 20,
-    display: 'flex',
+    display: "flex",
     height: 120,
     width: 120,
-    position: 'relative',
+    position: "relative",
     zIndex: 10,
-    flexDirection: 'column',
-    justifyContent: 'center',
+    flexDirection: "column",
+    justifyContent: "center",
   },
   info: {
-    alignItems: 'center',
-    display: 'flex',
-    flexDirection: 'column',
+    alignItems: "center",
+    display: "flex",
+    flexDirection: "column",
     paddingLeft: 10,
     paddingRight: 10,
   },
   size: {
     borderRadius: 3,
-    marginBottom: '0.5em',
-    justifyContent: 'center',
-    display: 'flex',
+    marginBottom: "0.5em",
+    justifyContent: "center",
+    display: "flex",
   },
   name: {
     borderRadius: 3,
     fontSize: 12,
-    marginBottom: '0.5em',
+    marginBottom: "0.5em",
   },
   // progressBar: {
   //   bottom: 14,
@@ -66,16 +70,15 @@ const styles = {
   },
   remove: {
     height: 23,
-    position: 'absolute',
+    position: "absolute",
     right: 6,
     top: 6,
     width: 23,
   },
 };
 
-const CSVReader = ({handleUpload, handleRemoveFile}) => {
-
-  const {CSVReader} = useCSVReader();
+const CSVReader = ({ handleUpload, handleRemoveFile }) => {
+  const { CSVReader } = useCSVReader();
   const [zoneHover, setZoneHover] = useState(false);
   const [removeHoverColor, setRemoveHoverColor] = useState(
     DEFAULT_REMOVE_HOVER_COLOR
@@ -83,39 +86,41 @@ const CSVReader = ({handleUpload, handleRemoveFile}) => {
 
   function parseDataForView(unparsedData) {
     if (unparsedData !== null) {
-      const headers = unparsedData.data[0]
+      const headers = unparsedData.data[0];
 
       // parse the body portions
       const parsedData = {};
       for (let i = 1; i < unparsedData.data.length; i++) {
         let parsedRow = {
-          id: i - 1
+          id: i - 1,
         };
         for (let j = 0; j < headers.length; j++) {
-          parsedRow[headers[j]] = unparsedData.data[i][j]
+          parsedRow[headers[j]] = unparsedData.data[i][j];
         }
-        parsedData[i - 1] = parsedRow
+        parsedData[i - 1] = parsedRow;
       }
       return [headers, parsedData];
     }
   }
 
   return (
-    <div style={{
-      display: 'flex',
-      width: '70%',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      margin: '0 auto'
-    }}>
+    <div
+      style={{
+        display: "flex",
+        width: "70%",
+        flexDirection: "column",
+        justifyContent: "center",
+        margin: "0 auto",
+      }}
+    >
       <h2>Upload Your File</h2>
 
       <CSVReader
         onUploadAccepted={(results) => {
-          console.log('---------------------------');
+          console.log("---------------------------");
           console.log(results);
           setZoneHover(false);
-          handleUpload(...parseDataForView(results))
+          handleUpload(...parseDataForView(results));
         }}
         onDragOver={(event) => {
           event.preventDefault();
@@ -127,12 +132,12 @@ const CSVReader = ({handleUpload, handleRemoveFile}) => {
         }}
       >
         {({
-            getRootProps,
-            acceptedFile,
-            // ProgressBar,
-            getRemoveFileProps,
-            Remove,
-          }) => (
+          getRootProps,
+          acceptedFile,
+          // ProgressBar,
+          getRemoveFileProps,
+          Remove,
+        }) => (
           <>
             <div
               {...getRootProps()}
@@ -146,9 +151,9 @@ const CSVReader = ({handleUpload, handleRemoveFile}) => {
                 <>
                   <div style={styles.file}>
                     <div style={styles.info}>
-                    <span style={styles.size}>
-                      {formatFileSize(acceptedFile.size)}
-                    </span>
+                      <span style={styles.size}>
+                        {formatFileSize(acceptedFile.size)}
+                      </span>
                       <span style={styles.name}>{acceptedFile.name}</span>
                     </div>
                     {/*<div style={styles.progressBar}>*/}
@@ -167,16 +172,15 @@ const CSVReader = ({handleUpload, handleRemoveFile}) => {
                       }}
                       onClick={(event) => {
                         getRemoveFileProps().onClick(event);
-                        // Your code here
-                        handleRemoveFile()
+                        handleRemoveFile();
                       }}
                     >
-                      <Remove color={removeHoverColor}/>
+                      <Remove color={removeHoverColor} />
                     </div>
                   </div>
                 </>
               ) : (
-                'Drop CSV file here or click to upload'
+                "Drop CSV file here or click to upload"
               )}
             </div>
           </>
@@ -184,6 +188,6 @@ const CSVReader = ({handleUpload, handleRemoveFile}) => {
       </CSVReader>
     </div>
   );
-}
+};
 
 export default CSVReader;
