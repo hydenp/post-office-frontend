@@ -1,30 +1,36 @@
-import './App.css';
+import "./App.css";
 
-import GoogleOauth from './components/GoogleAuth'
-import FileUpload from './components/FileUpload';
-import {useState} from "react";
+import GoogleOauth from "./components/GoogleAuth";
+import FileUpload from "./components/FileUpload";
+import { useRef, useState } from "react";
 import DataView from "./components/DataView";
+import BodyInput from "./components/BodyInput";
 
 function App() {
-
-  const [tableHeaders, setTableHeaders] = useState(null)
-  const [tableData, setTableData] = useState(null)
+  const [tableHeaders, setTableHeaders] = useState(null);
+  const [tableData, setTableData] = useState(null);
+  const bodyInput = useRef("");
 
   function handleUpload(headers, data) {
-    setTableHeaders(headers)
-    setTableData(data)
+    setTableHeaders(headers);
+    setTableData(data);
   }
 
   function handleRemoveFile() {
-    if (window.confirm('Are you sure you want to remove that file? Doing so will remove all changes in the table.')) {
-      setTableHeaders(null)
-      setTableData(null)
+    if (
+      window.confirm(
+        "Are you sure you want to remove that file? Doing so will remove all changes in the table."
+      )
+    ) {
+      setTableHeaders(null);
+      setTableData(null);
     }
   }
 
   function printData() {
-    console.log('Data ------')
-    console.log(tableData)
+    console.log("Data ------");
+    console.log(tableData);
+    console.log(bodyInput);
   }
 
   function handleFieldEdit(rowIndex, key, newValue) {
@@ -35,45 +41,56 @@ function App() {
         ...tableData[rowIndex],
 
         // override with new value
-        [key]: newValue
+        [key]: newValue,
       },
-    }
+    };
 
     // set the state to the new value
-    setTableData(newData)
+    setTableData(newData);
   }
 
   return (
     <div className="App">
-      <div style={{
-        width: '70%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-      }}>
+      <div
+        style={{
+          width: "70%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+        }}
+      >
         <h1>PostOffice</h1>
 
         {/* Component to handle file upload*/}
-        <FileUpload handleUpload={handleUpload} handleRemoveFile={handleRemoveFile}/>
+        <FileUpload
+          handleUpload={handleUpload}
+          handleRemoveFile={handleRemoveFile}
+        />
 
         <div>
           <h2>View and Edit your uploaded data</h2>
-          <DataView tableHeaders={tableHeaders} tableData={tableData} handleFieldEdit={handleFieldEdit}/>
-          <br/>
+          <DataView
+            tableHeaders={tableHeaders}
+            tableData={tableData}
+            handleFieldEdit={handleFieldEdit}
+          />
+          <br />
           <button onClick={printData}>print data</button>
         </div>
 
         {/* Component to handle creating body of email */}
         <div>
           <h2>Create a body for your email</h2>
-          <textarea/>
+          <BodyInput variableNames={tableHeaders} bodyInput={bodyInput} />
         </div>
 
         {/* Component to start google oauth flow, store it in state variable and print token */}
         <div>
           <h2>Get Google the Keys</h2>
-          <GoogleOauth/>
+          <GoogleOauth />
         </div>
+        <br />
+        <br />
       </div>
     </div>
   );
