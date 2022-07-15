@@ -7,21 +7,37 @@ import DataView from "./components/DataView";
 import BodyInput from "./components/BodyInput";
 import RequestHandler from "./components/RequestHandler";
 
+import testData from "./test_data.json";
+
 function App() {
   const [tableHeaders, setTableHeaders] = useState(null);
   const [tableData, setTableData] = useState(null);
-  const [bodyInput, setBodyInput] = useState(null);
+  const [bodyInput, setBodyInput] = useState("");
   const [token, setToken] = useState(null);
-
-  // useEffect(() => {
-  //   console.log("table data = ", tableData);
-  //   console.log("body input = ", bodyInput);
-  //   console.log("token = ", token);
-  // }, [tableData, bodyInput, token]);
 
   useEffect(() => {
     console.log("re-render");
-  });
+    // loadTestData();
+  }, []);
+
+  function loadTestData() {
+    setTableHeaders(testData.tableHeaders);
+    setTableData(testData.tableData);
+    setBodyInput(testData.bodyInput);
+    setToken(testData.token);
+  }
+
+  function unsetTestData() {
+    setTableHeaders(null);
+    setTableData(null);
+    setBodyInput("");
+    setToken(null);
+  }
+
+  function printStates() {
+    console.log("headers = ", tableHeaders);
+    console.log("data = ", tableData);
+  }
 
   function handleToken(t) {
     setToken(t);
@@ -29,7 +45,7 @@ function App() {
 
   function handleBodyInput(v) {
     if (v === "") {
-      setBodyInput(null);
+      setBodyInput("");
     } else {
       setBodyInput(v);
     }
@@ -84,6 +100,9 @@ function App() {
         }}
       >
         <h1>PostOffice</h1>
+        <button onClick={loadTestData}>Set Data</button>
+        <button onClick={unsetTestData}>UNSET Data</button>
+        <button onClick={printStates}>Print Data</button>
 
         {/* Component to handle file upload*/}
         <FileUpload
@@ -107,6 +126,7 @@ function App() {
           <h2>Create a body for your email</h2>
           <BodyInput
             variableNames={tableHeaders}
+            bodyInput={bodyInput}
             handleBodyInput={handleBodyInput}
           />
         </div>
@@ -122,7 +142,6 @@ function App() {
             marginBottom: 50,
           }}
         >
-          <h2>Send Mail</h2>
           <RequestHandler body={bodyInput} data={tableData} token={token} />
         </div>
       </div>

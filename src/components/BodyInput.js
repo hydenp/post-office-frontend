@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const BodyInput = ({ variableNames, handleBodyInput }) => {
+const BodyInput = ({ variableNames, bodyInput, handleBodyInput }) => {
   const [variables, setVariables] = useState([]);
   const [usedVars, setUsedVars] = useState({});
 
@@ -42,6 +42,7 @@ const BodyInput = ({ variableNames, handleBodyInput }) => {
         ))}
       </div>
       <textarea
+        value={bodyInput}
         rows="20"
         cols="100"
         onChange={(event) => update(event)}
