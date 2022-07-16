@@ -2,14 +2,54 @@ import "./App.css";
 
 import GoogleOauth from "./components/GoogleAuth";
 import FileUpload from "./components/FileUpload";
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import DataView from "./components/DataView";
 import BodyInput from "./components/BodyInput";
+import RequestHandler from "./components/RequestHandler";
+
+import testData from "./test_data.json";
 
 function App() {
   const [tableHeaders, setTableHeaders] = useState(null);
   const [tableData, setTableData] = useState(null);
-  const bodyInput = useRef("");
+  const [bodyInput, setBodyInput] = useState("");
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    console.log("re-render");
+    // loadTestData();
+  }, []);
+
+  function loadTestData() {
+    setTableHeaders(testData.tableHeaders);
+    setTableData(testData.tableData);
+    setBodyInput(testData.bodyInput);
+    setToken(testData.token);
+  }
+
+  function unsetTestData() {
+    setTableHeaders(null);
+    setTableData(null);
+    setBodyInput("");
+    setToken(null);
+  }
+
+  function printStates() {
+    console.log("headers = ", tableHeaders);
+    console.log("data = ", tableData);
+  }
+
+  function handleToken(t) {
+    setToken(t);
+  }
+
+  function handleBodyInput(v) {
+    if (v === "") {
+      setBodyInput("");
+    } else {
+      setBodyInput(v);
+    }
+  }
 
   function handleUpload(headers, data) {
     setTableHeaders(headers);
@@ -60,6 +100,9 @@ function App() {
         }}
       >
         <h1>PostOffice</h1>
+        <button onClick={loadTestData}>Set Data</button>
+        <button onClick={unsetTestData}>UNSET Data</button>
+        <button onClick={printStates}>Print Data</button>
 
         {/* Component to handle file upload*/}
         <FileUpload
@@ -81,16 +124,26 @@ function App() {
         {/* Component to handle creating body of email */}
         <div>
           <h2>Create a body for your email</h2>
-          <BodyInput variableNames={tableHeaders} bodyInput={bodyInput} />
+          <BodyInput
+            variableNames={tableHeaders}
+            bodyInput={bodyInput}
+            handleBodyInput={handleBodyInput}
+          />
         </div>
 
         {/* Component to start google oauth flow, store it in state variable and print token */}
         <div>
           <h2>Get Google the Keys</h2>
-          <GoogleOauth />
+          <GoogleOauth handleToken={handleToken} />
         </div>
-        <br />
-        <br />
+
+        <div
+          style={{
+            marginBottom: 50,
+          }}
+        >
+          <RequestHandler body={bodyInput} data={tableData} token={token} />
+        </div>
       </div>
     </div>
   );
