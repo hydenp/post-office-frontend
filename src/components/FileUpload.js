@@ -89,15 +89,13 @@ const CSVReader = ({ handleUpload, handleRemoveFile }) => {
       const headers = unparsedData.data[0];
 
       // parse the body portions
-      const parsedData = {};
+      const parsedData = [];
       for (let i = 1; i < unparsedData.data.length; i++) {
-        let parsedRow = {
-          id: i - 1,
-        };
+        let parsedRow = {};
         for (let j = 0; j < headers.length; j++) {
           parsedRow[headers[j]] = unparsedData.data[i][j];
         }
-        parsedData[i - 1] = parsedRow;
+        parsedData.push(parsedRow);
       }
       return [headers, parsedData];
     }

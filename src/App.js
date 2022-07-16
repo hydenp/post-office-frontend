@@ -56,9 +56,22 @@ function App() {
     setTableData(data);
   }
 
-  function handleDeleteRow(rowId) {
-    const newTableData = { ...tableData };
-    delete newTableData[rowId];
+  function handleAddRow() {
+    // create an object with all the keys mapped to empty strings
+    const newRow = {};
+    for (const header in tableHeaders) {
+      newRow[tableHeaders[header]] = "";
+    }
+
+    // create the shallow copy and set new
+    const newTableData = [...tableData];
+    newTableData.push(newRow);
+    setTableData(newTableData);
+  }
+
+  function handleDeleteRow(arrIndex) {
+    const newTableData = [...tableData];
+    newTableData.splice(arrIndex, 1);
     setTableData(newTableData);
   }
 
@@ -79,19 +92,13 @@ function App() {
     console.log(bodyInput);
   }
 
-  function handleFieldEdit(rowIndex, key, newValue) {
-    // create the new data object with updated fields
-    const newData = {
-      ...tableData,
-      [rowIndex]: {
-        ...tableData[rowIndex],
+  function handleFieldEdit(arrIndex, key, newValue) {
+    // create the new row object
+    const newRow = { ...tableData[arrIndex], [key]: newValue };
+    // shallow copy data and then set new row
+    const newData = [...tableData];
+    newData[arrIndex] = newRow;
 
-        // override with new value
-        [key]: newValue,
-      },
-    };
-
-    // set the state to the new value
     setTableData(newData);
   }
 
@@ -122,6 +129,7 @@ function App() {
             tableHeaders={tableHeaders}
             tableData={tableData}
             handleFieldEdit={handleFieldEdit}
+            handleAddRow={handleAddRow}
             handleDeleteRow={handleDeleteRow}
           />
           <br />
