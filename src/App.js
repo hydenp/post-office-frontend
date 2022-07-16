@@ -56,6 +56,12 @@ function App() {
     setTableData(data);
   }
 
+  function handleDeleteRow(rowId) {
+    const newTableData = { ...tableData };
+    delete newTableData[rowId];
+    setTableData(newTableData);
+  }
+
   function handleRemoveFile() {
     if (
       window.confirm(
@@ -116,6 +122,7 @@ function App() {
             tableHeaders={tableHeaders}
             tableData={tableData}
             handleFieldEdit={handleFieldEdit}
+            handleDeleteRow={handleDeleteRow}
           />
           <br />
           <button onClick={printData}>print data</button>

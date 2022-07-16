@@ -33,7 +33,7 @@ const DataField = ({ item, handleFieldEdit }) => {
   );
 };
 
-const DataRow = ({ row, handleFieldEdit }) => {
+const DataRow = ({ row, handleFieldEdit, handleDeleteRow }) => {
   return (
     <tr>
       {Object.keys(row)
@@ -45,11 +45,17 @@ const DataRow = ({ row, handleFieldEdit }) => {
             handleFieldEdit={handleFieldEdit}
           />
         ))}
+      <button onClick={() => handleDeleteRow(row.id)}>delete</button>
     </tr>
   );
 };
 
-const DataView = ({ tableHeaders, tableData, handleFieldEdit }) => {
+const DataView = ({
+  tableHeaders,
+  tableData,
+  handleFieldEdit,
+  handleDeleteRow,
+}) => {
   return (
     <div
       style={{
@@ -72,6 +78,7 @@ const DataView = ({ tableHeaders, tableData, handleFieldEdit }) => {
                 key={k}
                 row={tableData[k]}
                 handleFieldEdit={handleFieldEdit}
+                handleDeleteRow={handleDeleteRow}
               />
             ))}
           </tbody>
