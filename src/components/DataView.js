@@ -19,14 +19,28 @@ import React from "react";
 //   ]
 // }
 
-const DataHeader = ({ item, handleHeaderEdit }) => {
+const DataHeader = ({ item, handleHeaderEdit, handleDeleteHeaderVariable }) => {
+  const editable = item.value === "email" || item.value === "subject";
   return (
     <td key={item.index}>
-      <input
-        type="text"
-        value={item.value}
-        onChange={(e) => handleHeaderEdit(item.index, e.target.value)}
-      />
+      <div
+        style={{
+          display: "flex",
+        }}
+      >
+        <input
+          type="text"
+          readOnly={editable}
+          value={item.value}
+          onChange={(e) => handleHeaderEdit(item.index, e.target.value)}
+        />
+        <button
+          onClick={() => handleDeleteHeaderVariable(item.index)}
+          hidden={editable}
+        >
+          X
+        </button>
+      </div>
     </td>
   );
 };
@@ -68,6 +82,7 @@ const DataView = ({
   handleFieldEdit,
   handleAddRow,
   handleAddHeaderVariable,
+  handleDeleteHeaderVariable,
   handleDeleteRow,
 }) => {
   return (
@@ -89,6 +104,7 @@ const DataView = ({
                   <DataHeader
                     key={k}
                     handleHeaderEdit={handleHeaderEdit}
+                    handleDeleteHeaderVariable={handleDeleteHeaderVariable}
                     item={{ index: k, value: tableHeaders[k] }}
                   />
                 ))}

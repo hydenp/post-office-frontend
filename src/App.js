@@ -12,6 +12,7 @@ import testData from "./test_data.json";
 function App() {
   const [tableHeaderVariables, setTableHeaderVariables] = useState(null);
   const [headerVariableWarning, setHeaderVariableWarning] = useState(false);
+  const [numVariablesAdded, setNumVariablesAdded] = useState(0);
   const [tableData, setTableData] = useState(null);
   const [bodyInput, setBodyInput] = useState("");
   const [token, setToken] = useState(null);
@@ -53,6 +54,12 @@ function App() {
   }
 
   function handleUpload(headers, data) {
+    if (headers.length <= 2) {
+      headers = ["email", "subject"];
+    } else {
+      headers[0] = "email";
+      headers[1] = "subject";
+    }
     setTableHeaderVariables(headers);
     setTableData(data);
   }
@@ -71,16 +78,19 @@ function App() {
   }
 
   function handleAddHeaderVariable() {
+    const newVarName = `new_variable_${numVariablesAdded + 1}`;
+    setNumVariablesAdded(numVariablesAdded + 1);
+
     // update the headers
     const newHeaderVariables = [...tableHeaderVariables];
-    newHeaderVariables.push("new_variable");
+    newHeaderVariables.push(newVarName);
     setTableHeaderVariables(newHeaderVariables);
 
     // update the tableData
     const updatedTableData = [];
     for (const row in tableData) {
       const updatedRow = { ...tableData[row] };
-      updatedRow["new_variable"] = "";
+      updatedRow[newVarName] = "";
       updatedTableData.push(updatedRow);
     }
     setTableData(updatedTableData);
@@ -90,6 +100,23 @@ function App() {
     const newTableData = [...tableData];
     newTableData.splice(arrIndex, 1);
     setTableData(newTableData);
+  }
+
+  function handleDeleteHeaderVariable(variableIndex) {
+    const variableName = tableHeaderVariables[variableIndex];
+    // update headers
+    const updatedHeaderVariables = [...tableHeaderVariables];
+    updatedHeaderVariables.splice(variableIndex, 1);
+    setTableHeaderVariables(updatedHeaderVariables);
+
+    // update data body
+    const updatedTableData = [];
+    for (const rowIndex in tableData) {
+      const updatedRow = { ...tableData[rowIndex] };
+      delete updatedRow[variableName];
+      updatedTableData.push(updatedRow);
+    }
+    setTableData(updatedTableData);
   }
 
   function handleRemoveFile() {
@@ -185,6 +212,7 @@ function App() {
             handleHeaderEdit={handleHeaderEdit}
             handleAddRow={handleAddRow}
             handleAddHeaderVariable={handleAddHeaderVariable}
+            handleDeleteHeaderVariable={handleDeleteHeaderVariable}
             handleDeleteRow={handleDeleteRow}
           />
           <br />
