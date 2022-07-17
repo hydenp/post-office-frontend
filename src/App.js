@@ -20,7 +20,7 @@ function App() {
   useEffect(() => {
     console.log("re-render");
     // loadTestData();
-  }, []);
+  });
 
   function loadTestData() {
     setTableHeaderVariables(testData.tableHeaders);
