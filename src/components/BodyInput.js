@@ -1,43 +1,50 @@
 import React, { useEffect, useState } from "react";
 
 const BodyInput = ({ variableNames, bodyInput, handleBodyInput }) => {
-  const [variables, setVariables] = useState([]);
-  const [usedVars, setUsedVars] = useState({});
+  const [headerVariables, setHeaderVariables] = useState([]);
 
-  useEffect(() => {
-    if (variableNames !== null) {
-      const newVars = [];
-      const newUsedVars = {};
-      for (const vn of variableNames) {
-        newVars.push(vn);
-        newUsedVars[vn] = false;
-      }
-      setVariables(newVars);
-      setUsedVars(newUsedVars);
+  function updateUsedVars() {
+    const newUsedVars = {};
+    for (const v of headerVariables) {
+      newUsedVars[v] = bodyInput.indexOf(`{${v}}`) !== -1;
     }
-  }, [variableNames]);
+  }
 
   function update(e) {
     const val = e.target.value;
-
-    // check for check matching variables
-    const newUsedVars = {};
-    for (const v of variables) {
-      newUsedVars[v] = val.indexOf(`{${v}}`) !== -1;
-    }
-    setUsedVars(newUsedVars);
+    updateUsedVars();
+    // check for check matching headerVariables
     handleBodyInput(val);
   }
+
+  useEffect(() => {
+    console.log("updating");
+    console.log(headerVariables);
+    if (variableNames !== null) {
+      const newVars = [];
+      for (const vn of variableNames) {
+        newVars.push(vn);
+      }
+      setHeaderVariables(newVars);
+      updateUsedVars();
+    }
+  }, [variableNames, bodyInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "center" }}>
-        {Object.keys(usedVars).map((k) => (
+        {Object.keys(headerVariables).map((k) => (
           <p
             key={k}
-            style={{ padding: 3, color: usedVars[k] ? "green" : "red" }}
+            style={{
+              padding: 3,
+              color:
+                bodyInput.indexOf(`{${headerVariables[k]}}`) !== -1
+                  ? "green"
+                  : "red",
+            }}
           >
-            {k}
+            {headerVariables[k]}
           </p>
         ))}
       </div>
