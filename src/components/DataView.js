@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 // this is how the parsed data will be delivered from the parser
 // const testData = {
@@ -46,10 +46,26 @@ const DataHeader = ({ item, handleHeaderEdit, handleDeleteHeaderVariable }) => {
 };
 
 const DataField = ({ item, handleFieldEdit }) => {
+  const invalidStyle = {
+    borderColor: "yellow",
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  function validateEmail(email) {
+    if (item.key === "email") {
+      return !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email);
+    }
+  }
+
+  useEffect(() => {
+    validateEmail(item.value);
+  }, [item.value, validateEmail]);
+
   return (
     <td key={item.key}>
       <input
         type="text"
+        style={validateEmail(item.value) ? invalidStyle : {}}
         value={item.value}
         onChange={(e) => handleFieldEdit(item.index, item.key, e.target.value)}
       />
