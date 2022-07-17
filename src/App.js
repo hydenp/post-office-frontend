@@ -10,7 +10,8 @@ import RequestHandler from "./components/RequestHandler";
 import testData from "./test_data.json";
 
 function App() {
-  const [tableHeaders, setTableHeaders] = useState(null);
+  const [tableHeaderVariables, setTableHeaderVariables] = useState(null);
+  const [headerVariableWarning, setHeaderVariableWarning] = useState(false);
   const [tableData, setTableData] = useState(null);
   const [bodyInput, setBodyInput] = useState("");
   const [token, setToken] = useState(null);
@@ -21,21 +22,21 @@ function App() {
   }, []);
 
   function loadTestData() {
-    setTableHeaders(testData.tableHeaders);
+    setTableHeaderVariables(testData.tableHeaders);
     setTableData(testData.tableData);
     setBodyInput(testData.bodyInput);
     setToken(testData.token);
   }
 
   function unsetTestData() {
-    setTableHeaders(null);
+    setTableHeaderVariables(null);
     setTableData(null);
     setBodyInput("");
     setToken(null);
   }
 
   function printStates() {
-    console.log("headers = ", tableHeaders);
+    console.log("headers = ", tableHeaderVariables);
     console.log("data = ", tableData);
   }
 
@@ -52,15 +53,15 @@ function App() {
   }
 
   function handleUpload(headers, data) {
-    setTableHeaders(headers);
+    setTableHeaderVariables(headers);
     setTableData(data);
   }
 
   function handleAddRow() {
     // create an object with all the keys mapped to empty strings
     const newRow = {};
-    for (const header in tableHeaders) {
-      newRow[tableHeaders[header]] = "";
+    for (const header in tableHeaderVariables) {
+      newRow[tableHeaderVariables[header]] = "";
     }
 
     // create the shallow copy and set new
@@ -81,7 +82,7 @@ function App() {
         "Are you sure you want to remove that file? Doing so will remove all changes in the table."
       )
     ) {
-      setTableHeaders(null);
+      setTableHeaderVariables(null);
       setTableData(null);
     }
   }
@@ -90,6 +91,40 @@ function App() {
     console.log("Data ------");
     console.log(tableData);
     console.log(bodyInput);
+  }
+
+  function handleHeaderEdit(arrIndex, newValue) {
+    // make sure the variable doesn't already exist
+    if (tableHeaderVariables.includes(newValue)) {
+      // display the warning for 3 seconds that variables must be unique
+      setHeaderVariableWarning(true);
+      setTimeout(function () {
+        setHeaderVariableWarning(false);
+      }, 3000);
+
+      // if the new header variable is valid, perform the necessary updates
+    } else {
+      // update the header variables
+      const oldValue = tableHeaderVariables[arrIndex];
+      const newHeaders = [...tableHeaderVariables];
+      newHeaders[arrIndex] = newValue;
+      setTableHeaderVariables(newHeaders);
+
+      // update the keys in the table data
+      const newTableData = [];
+      for (const rowIndex in tableData) {
+        const updatedRow = { ...tableData[rowIndex] };
+        updatedRow[newValue] = updatedRow[oldValue];
+        delete updatedRow[oldValue];
+        newTableData.push(updatedRow);
+      }
+
+      setTableData(newTableData);
+
+      // update the tableData with the new key
+      const newBody = bodyInput.replaceAll(`{${oldValue}}`, `{${newValue}}`);
+      setBodyInput(newBody);
+    }
   }
 
   function handleFieldEdit(arrIndex, key, newValue) {
@@ -126,9 +161,11 @@ function App() {
         <div>
           <h2>View and Edit your uploaded data</h2>
           <DataView
-            tableHeaders={tableHeaders}
+            tableHeaders={tableHeaderVariables}
+            headerWarning={headerVariableWarning}
             tableData={tableData}
             handleFieldEdit={handleFieldEdit}
+            handleHeaderEdit={handleHeaderEdit}
             handleAddRow={handleAddRow}
             handleDeleteRow={handleDeleteRow}
           />
@@ -140,7 +177,7 @@ function App() {
         <div>
           <h2>Create a body for your email</h2>
           <BodyInput
-            variableNames={tableHeaders}
+            variableNames={tableHeaderVariables}
             bodyInput={bodyInput}
             handleBodyInput={handleBodyInput}
           />

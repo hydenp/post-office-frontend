@@ -19,12 +19,24 @@ import React from "react";
 //   ]
 // }
 
+const DataHeader = ({ item, handleHeaderEdit }) => {
+  return (
+    <td key={item.index}>
+      <input
+        type="text"
+        value={item.value}
+        onChange={(e) => handleHeaderEdit(item.index, e.target.value)}
+      />
+    </td>
+  );
+};
+
 const DataField = ({ item, handleFieldEdit }) => {
   return (
     <td key={item.key}>
       <input
         type="text"
-        defaultValue={item.value}
+        value={item.value}
         onChange={(e) => handleFieldEdit(item.index, item.key, e.target.value)}
       />
     </td>
@@ -50,7 +62,9 @@ const DataRow = ({ arrIndex, row, handleFieldEdit, handleDeleteRow }) => {
 
 const DataView = ({
   tableHeaders,
+  headerWarning,
   tableData,
+  handleHeaderEdit,
   handleFieldEdit,
   handleAddRow,
   handleDeleteRow,
@@ -64,19 +78,29 @@ const DataView = ({
     >
       {tableHeaders !== null ? (
         <div>
+          <p hidden={!headerWarning} style={{ backgroundColor: "yellow" }}>
+            Please make sure all table headers are unique
+          </p>
           <table>
             <thead>
               <tr>
                 {Object.keys(tableHeaders).map((k) => (
-                  <th key={k}>{tableHeaders[k]}</th>
+                  <DataHeader
+                    key={k}
+                    handleHeaderEdit={handleHeaderEdit}
+                    item={{ index: k, value: tableHeaders[k] }}
+                  />
                 ))}
+                <th>
+                  <button>Add Variable</button>
+                </th>
               </tr>
             </thead>
             <tbody>
               {Object.keys(tableData).map((k) => (
                 <DataRow
                   key={k}
-                  index={k}
+                  arrIndex={k}
                   row={tableData[k]}
                   handleFieldEdit={handleFieldEdit}
                   handleDeleteRow={handleDeleteRow}
