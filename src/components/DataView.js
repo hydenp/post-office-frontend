@@ -1,18 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 // this is how the parsed data will be delivered from the parser
 // const testData = {
 //   "headers": ["email", "subject", "var_1", "var_2"],
 //   "body": [
 //     {
-//       "id": 0,
 //       "email": "skyleitz@gmail.com",
 //       "subject": "Subject 1",
 //       "var_1": "Monika",
 //       "var_2": "59"
 //     },
 //     {
-//       "id": 1,
 //       "email": "hyden.testing@gmail.com",
 //       "subject": "Subject 2",
 //       "var_1": "Hyden",
@@ -21,35 +19,88 @@ import React from "react";
 //   ]
 // }
 
+const DataHeader = ({ item, handleHeaderEdit, handleDeleteHeaderVariable }) => {
+  const editable = item.value === "email" || item.value === "subject";
+  return (
+    <td key={item.index}>
+      <div
+        style={{
+          display: "flex",
+        }}
+      >
+        <input
+          type="text"
+          readOnly={editable}
+          value={item.value}
+          onChange={(e) => handleHeaderEdit(item.index, e.target.value)}
+        />
+        <button
+          onClick={() => handleDeleteHeaderVariable(item.index)}
+          hidden={editable}
+        >
+          X
+        </button>
+      </div>
+    </td>
+  );
+};
+
 const DataField = ({ item, handleFieldEdit }) => {
+  const invalidStyle = {
+    borderColor: "yellow",
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  function validateEmail(email) {
+    if (item.key === "email") {
+      return !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email);
+    }
+  }
+
+  useEffect(() => {
+    validateEmail(item.value);
+  }, [item.value, validateEmail]);
+
   return (
     <td key={item.key}>
       <input
         type="text"
-        defaultValue={item.value}
-        onChange={(e) => handleFieldEdit(item.rowKey, item.key, e.target.value)}
+        style={validateEmail(item.value) ? invalidStyle : {}}
+        value={item.value}
+        onChange={(e) => handleFieldEdit(item.index, item.key, e.target.value)}
       />
     </td>
   );
 };
 
-const DataRow = ({ row, handleFieldEdit }) => {
+const DataRow = ({ arrIndex, row, handleFieldEdit, handleDeleteRow }) => {
   return (
     <tr>
-      {Object.keys(row)
-        .filter((k) => k !== "id")
-        .map((k) => (
-          <DataField
-            key={k}
-            item={{ rowKey: row.id, key: k, value: row[k] }}
-            handleFieldEdit={handleFieldEdit}
-          />
-        ))}
+      {Object.keys(row).map((k) => (
+        <DataField
+          key={k}
+          item={{ index: arrIndex, key: k, value: row[k] }}
+          handleFieldEdit={handleFieldEdit}
+        />
+      ))}
+      <td>
+        <button onClick={() => handleDeleteRow(arrIndex)}>delete</button>
+      </td>
     </tr>
   );
 };
 
-const DataView = ({ tableHeaders, tableData, handleFieldEdit }) => {
+const DataView = ({
+  tableHeaders,
+  headerWarning,
+  tableData,
+  handleHeaderEdit,
+  handleFieldEdit,
+  handleAddRow,
+  handleAddHeaderVariable,
+  handleDeleteHeaderVariable,
+  handleDeleteRow,
+}) => {
   return (
     <div
       style={{
@@ -58,24 +109,44 @@ const DataView = ({ tableHeaders, tableData, handleFieldEdit }) => {
       }}
     >
       {tableHeaders !== null ? (
-        <table>
-          <thead>
-            <tr>
-              {Object.keys(tableHeaders).map((k) => (
-                <th key={k}>{tableHeaders[k]}</th>
+        <div>
+          <p hidden={!headerWarning} style={{ backgroundColor: "yellow" }}>
+            Please make sure all table headers are unique
+          </p>
+          <table>
+            <thead>
+              <tr>
+                {Object.keys(tableHeaders).map((k) => (
+                  <DataHeader
+                    key={k}
+                    handleHeaderEdit={handleHeaderEdit}
+                    handleDeleteHeaderVariable={handleDeleteHeaderVariable}
+                    item={{ index: k, value: tableHeaders[k] }}
+                  />
+                ))}
+                <th>
+                  <button onClick={handleAddHeaderVariable}>
+                    Add Variable
+                  </button>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.keys(tableData).map((k) => (
+                <DataRow
+                  key={k}
+                  arrIndex={k}
+                  row={tableData[k]}
+                  handleFieldEdit={handleFieldEdit}
+                  handleDeleteRow={handleDeleteRow}
+                />
               ))}
-            </tr>
-          </thead>
-          <tbody>
-            {Object.keys(tableData).map((k) => (
-              <DataRow
-                key={k}
-                row={tableData[k]}
-                handleFieldEdit={handleFieldEdit}
-              />
-            ))}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+          <div>
+            <button onClick={handleAddRow}>add row</button>
+          </div>
+        </div>
       ) : (
         <p>Upload a CSV above to get started!</p>
       )}

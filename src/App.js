@@ -10,7 +10,9 @@ import RequestHandler from "./components/RequestHandler";
 import testData from "./test_data.json";
 
 function App() {
-  const [tableHeaders, setTableHeaders] = useState(null);
+  const [tableHeaderVariables, setTableHeaderVariables] = useState(null);
+  const [headerVariableWarning, setHeaderVariableWarning] = useState(false);
+  const [numVariablesAdded, setNumVariablesAdded] = useState(0);
   const [tableData, setTableData] = useState(null);
   const [bodyInput, setBodyInput] = useState("");
   const [token, setToken] = useState(null);
@@ -18,24 +20,24 @@ function App() {
   useEffect(() => {
     console.log("re-render");
     // loadTestData();
-  }, []);
+  });
 
   function loadTestData() {
-    setTableHeaders(testData.tableHeaders);
+    setTableHeaderVariables(testData.tableHeaders);
     setTableData(testData.tableData);
     setBodyInput(testData.bodyInput);
     setToken(testData.token);
   }
 
   function unsetTestData() {
-    setTableHeaders(null);
+    setTableHeaderVariables(null);
     setTableData(null);
     setBodyInput("");
     setToken(null);
   }
 
   function printStates() {
-    console.log("headers = ", tableHeaders);
+    console.log("headers = ", tableHeaderVariables);
     console.log("data = ", tableData);
   }
 
@@ -52,8 +54,69 @@ function App() {
   }
 
   function handleUpload(headers, data) {
-    setTableHeaders(headers);
+    if (headers.length <= 2) {
+      headers = ["email", "subject"];
+    } else {
+      headers[0] = "email";
+      headers[1] = "subject";
+    }
+    setTableHeaderVariables(headers);
     setTableData(data);
+  }
+
+  function handleAddRow() {
+    // create an object with all the keys mapped to empty strings
+    const newRow = {};
+    for (const header in tableHeaderVariables) {
+      newRow[tableHeaderVariables[header]] = "";
+    }
+
+    // create the shallow copy and set new
+    const newTableData = [...tableData];
+    newTableData.push(newRow);
+    setTableData(newTableData);
+  }
+
+  function handleAddHeaderVariable() {
+    const newVarName = `new_variable_${numVariablesAdded + 1}`;
+    setNumVariablesAdded(numVariablesAdded + 1);
+
+    // update the headers
+    const newHeaderVariables = [...tableHeaderVariables];
+    newHeaderVariables.push(newVarName);
+    setTableHeaderVariables(newHeaderVariables);
+
+    // update the tableData
+    const updatedTableData = [];
+    for (const row in tableData) {
+      const updatedRow = { ...tableData[row] };
+      updatedRow[newVarName] = "";
+      updatedTableData.push(updatedRow);
+    }
+    setTableData(updatedTableData);
+  }
+
+  function handleDeleteRow(arrIndex) {
+    const newTableData = [...tableData];
+    newTableData.splice(arrIndex, 1);
+    setTableData(newTableData);
+  }
+
+  function handleDeleteHeaderVariable(variableIndex) {
+    const variableName = tableHeaderVariables[variableIndex];
+    // update headers
+    const updatedHeaderVariables = [...tableHeaderVariables];
+    updatedHeaderVariables.splice(variableIndex, 1);
+    setTableHeaderVariables(updatedHeaderVariables);
+
+    // update data body
+    const updatedTableData = [];
+    for (const rowIndex in tableData) {
+      const updatedRow = { ...tableData[rowIndex] };
+      delete updatedRow[variableName];
+      updatedTableData.push(updatedRow);
+    }
+    setTableData(updatedTableData);
   }
 
   function handleRemoveFile() {
@@ -62,7 +125,7 @@ function App() {
         "Are you sure you want to remove that file? Doing so will remove all changes in the table."
       )
     ) {
-      setTableHeaders(null);
+      setTableHeaderVariables(null);
       setTableData(null);
     }
   }
@@ -73,19 +136,48 @@ function App() {
     console.log(bodyInput);
   }
 
-  function handleFieldEdit(rowIndex, key, newValue) {
-    // create the new data object with updated fields
-    const newData = {
-      ...tableData,
-      [rowIndex]: {
-        ...tableData[rowIndex],
+  function handleHeaderEdit(arrIndex, newValue) {
+    // make sure the variable doesn't already exist
+    if (tableHeaderVariables.includes(newValue)) {
+      // display the warning for 3 seconds that variables must be unique
+      setHeaderVariableWarning(true);
+      setTimeout(function () {
+        setHeaderVariableWarning(false);
+      }, 3000);
 
-        // override with new value
-        [key]: newValue,
-      },
-    };
+      // if the new header variable is valid, perform the necessary updates
+    } else {
+      // update the header variables
+      setHeaderVariableWarning(false);
+      const oldValue = tableHeaderVariables[arrIndex];
+      const newHeaders = [...tableHeaderVariables];
+      newHeaders[arrIndex] = newValue;
+      setTableHeaderVariables(newHeaders);
 
-    // set the state to the new value
+      // update the keys in the table data
+      const newTableData = [];
+      for (const rowIndex in tableData) {
+        const updatedRow = { ...tableData[rowIndex] };
+        updatedRow[newValue] = updatedRow[oldValue];
+        delete updatedRow[oldValue];
+        newTableData.push(updatedRow);
+      }
+
+      setTableData(newTableData);
+
+      // update the tableData with the new key
+      const newBody = bodyInput.replaceAll(`{${oldValue}}`, `{${newValue}}`);
+      setBodyInput(newBody);
+    }
+  }
+
+  function handleFieldEdit(arrIndex, key, newValue) {
+    // create the new row object
+    const newRow = { ...tableData[arrIndex], [key]: newValue };
+    // shallow copy data and then set new row
+    const newData = [...tableData];
+    newData[arrIndex] = newRow;
+
     setTableData(newData);
   }
 
@@ -113,9 +205,15 @@ function App() {
         <div>
           <h2>View and Edit your uploaded data</h2>
           <DataView
-            tableHeaders={tableHeaders}
+            tableHeaders={tableHeaderVariables}
+            headerWarning={headerVariableWarning}
             tableData={tableData}
             handleFieldEdit={handleFieldEdit}
+            handleHeaderEdit={handleHeaderEdit}
+            handleAddRow={handleAddRow}
+            handleAddHeaderVariable={handleAddHeaderVariable}
+            handleDeleteHeaderVariable={handleDeleteHeaderVariable}
+            handleDeleteRow={handleDeleteRow}
           />
           <br />
           <button onClick={printData}>print data</button>
@@ -125,7 +223,7 @@ function App() {
         <div>
           <h2>Create a body for your email</h2>
           <BodyInput
-            variableNames={tableHeaders}
+            variableNames={tableHeaderVariables}
             bodyInput={bodyInput}
             handleBodyInput={handleBodyInput}
           />
