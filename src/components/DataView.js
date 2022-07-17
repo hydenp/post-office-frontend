@@ -67,6 +67,7 @@ const DataView = ({
   handleHeaderEdit,
   handleFieldEdit,
   handleAddRow,
+  handleAddHeaderVariable,
   handleDeleteRow,
 }) => {
   return (
@@ -92,7 +93,9 @@ const DataView = ({
                   />
                 ))}
                 <th>
-                  <button>Add Variable</button>
+                  <button onClick={handleAddHeaderVariable}>
+                    Add Variable
+                  </button>
                 </th>
               </tr>
             </thead>

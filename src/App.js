@@ -70,6 +70,22 @@ function App() {
     setTableData(newTableData);
   }
 
+  function handleAddHeaderVariable() {
+    // update the headers
+    const newHeaderVariables = [...tableHeaderVariables];
+    newHeaderVariables.push("new_variable");
+    setTableHeaderVariables(newHeaderVariables);
+
+    // update the tableData
+    const updatedTableData = [];
+    for (const row in tableData) {
+      const updatedRow = { ...tableData[row] };
+      updatedRow["new_variable"] = "";
+      updatedTableData.push(updatedRow);
+    }
+    setTableData(updatedTableData);
+  }
+
   function handleDeleteRow(arrIndex) {
     const newTableData = [...tableData];
     newTableData.splice(arrIndex, 1);
@@ -105,6 +121,7 @@ function App() {
       // if the new header variable is valid, perform the necessary updates
     } else {
       // update the header variables
+      setHeaderVariableWarning(false);
       const oldValue = tableHeaderVariables[arrIndex];
       const newHeaders = [...tableHeaderVariables];
       newHeaders[arrIndex] = newValue;
@@ -167,6 +184,7 @@ function App() {
             handleFieldEdit={handleFieldEdit}
             handleHeaderEdit={handleHeaderEdit}
             handleAddRow={handleAddRow}
+            handleAddHeaderVariable={handleAddHeaderVariable}
             handleDeleteRow={handleDeleteRow}
           />
           <br />

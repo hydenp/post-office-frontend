@@ -18,8 +18,6 @@ const BodyInput = ({ variableNames, bodyInput, handleBodyInput }) => {
   }
 
   useEffect(() => {
-    console.log("updating");
-    console.log(headerVariables);
     if (variableNames !== null) {
       const newVars = [];
       for (const vn of variableNames) {
