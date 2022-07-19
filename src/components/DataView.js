@@ -20,7 +20,7 @@ import React, { useEffect } from "react";
 // }
 
 const DataHeader = ({ item, handleHeaderEdit, handleDeleteHeaderVariable }) => {
-  const editable = item.value === "email" || item.value === "subject";
+  const editable = item.value === "Recipient" || item.value === "Subject";
   return (
     <td key={item.index}>
       <div
@@ -52,7 +52,7 @@ const DataField = ({ item, handleFieldEdit }) => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   function validateEmail(email) {
-    if (item.key === "email") {
+    if (item.key === "Recipient") {
       return !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email);
     }
   }
@@ -94,13 +94,47 @@ const DataView = ({
   tableHeaders,
   headerWarning,
   tableData,
+  handleSetFromLocalStorage,
   handleHeaderEdit,
   handleFieldEdit,
+  handleResetTable,
   handleAddRow,
   handleAddHeaderVariable,
   handleDeleteHeaderVariable,
   handleDeleteRow,
 }) => {
+  // updating the table data in user storage
+  useEffect(() => {
+    cacheDataToLocalStore("tableHeaders", tableHeaders);
+    cacheDataToLocalStore("tableData", tableData);
+  }, [tableHeaders, tableData]);
+
+  function cacheDataToLocalStore(key, data) {
+    if (data !== null && data !== {}) {
+      console.log("Setting data values in localStorage");
+      localStorage.setItem(key, JSON.stringify(data));
+    }
+  }
+
+  // fetching the table data from local_storage on load
+  useEffect(() => {
+    const localStorageTableData = JSON.parse(localStorage.getItem("tableData"));
+    const localStorageTableHeaderVariables = JSON.parse(
+      localStorage.getItem("tableHeaders")
+    );
+    if (
+      localStorageTableData !== null &&
+      localStorageTableHeaderVariables !== null
+    ) {
+      handleSetFromLocalStorage(
+        localStorageTableHeaderVariables,
+        localStorageTableData
+      );
+    }
+    console.log("local store headers = ", localStorageTableHeaderVariables);
+    console.log("Local storage data = ", localStorageTableData);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <div
       style={{
@@ -145,6 +179,7 @@ const DataView = ({
           </table>
           <div>
             <button onClick={handleAddRow}>add row</button>
+            <button onClick={handleResetTable}>Reset</button>
           </div>
         </div>
       ) : (

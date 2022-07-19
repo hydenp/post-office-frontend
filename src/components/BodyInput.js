@@ -37,6 +37,12 @@ const BodyInput = ({ variableNames, bodyInput, handleBodyInput }) => {
     handleBodyInput(val);
   }
 
+  function cacheBodyInput(data) {
+    if (data !== null && data !== "") {
+      localStorage.setItem("bodyInput", JSON.stringify(data));
+    }
+  }
+
   useEffect(() => {
     if (variableNames !== null) {
       const newVars = [];
@@ -46,15 +52,26 @@ const BodyInput = ({ variableNames, bodyInput, handleBodyInput }) => {
       setHeaderVariables(newVars);
       updateUsedVars();
     }
-    updateHangingVariables();
+
+    if (variableNames !== null) {
+      updateHangingVariables();
+    }
+    cacheBodyInput(bodyInput);
   }, [variableNames, bodyInput]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const cachedBodyInput = JSON.parse(localStorage.getItem("bodyInput"));
+    if (cachedBodyInput !== null) {
+      handleBodyInput(cachedBodyInput);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "center" }}>
         {Object.keys(headerVariables)
           .filter(
-            (r) => ["email", "subject"].indexOf(headerVariables[r]) === -1
+            (r) => ["Recipient", "Subject"].indexOf(headerVariables[r]) === -1
           )
           .map((k) => (
             <p

@@ -47,18 +47,24 @@ function App() {
 
   function handleBodyInput(v) {
     if (v === "") {
+      localStorage.removeItem("bodyInput");
       setBodyInput("");
     } else {
       setBodyInput(v);
     }
   }
 
+  function handleSetFromLocalStorage(cachedHeaderVariables, cachedTableData) {
+    setTableHeaderVariables(cachedHeaderVariables);
+    setTableData(cachedTableData);
+  }
+
   function handleUpload(headers, data) {
     if (headers.length <= 2) {
-      headers = ["email", "subject"];
+      headers = ["Recipient", "Subject"];
     } else {
-      headers[0] = "email";
-      headers[1] = "subject";
+      headers[0] = "Recipient";
+      headers[1] = "Subject";
     }
     setTableHeaderVariables(headers);
     setTableData(data);
@@ -75,6 +81,11 @@ function App() {
     const newTableData = [...tableData];
     newTableData.push(newRow);
     setTableData(newTableData);
+  }
+
+  function handleDataColdStart() {
+    setTableHeaderVariables(["Recipient", "Subject"]);
+    setTableData([]);
   }
 
   function handleAddHeaderVariable() {
@@ -127,6 +138,7 @@ function App() {
     ) {
       setTableHeaderVariables(null);
       setTableData(null);
+      resetLocalStorage();
     }
   }
 
@@ -134,6 +146,25 @@ function App() {
     console.log("Data ------");
     console.log(tableData);
     console.log(bodyInput);
+  }
+
+  function resetLocalStorage() {
+    localStorage.removeItem("tableHeaders");
+    localStorage.removeItem("tableData");
+    localStorage.removeItem("bodyInput");
+  }
+
+  function handleResetTable() {
+    if (
+      window.confirm(
+        "Are you sure you want to clear all your progress? You cannot undo this action"
+      )
+    ) {
+      setTableHeaderVariables(null);
+      setTableData(null);
+      localStorage.removeItem("tableHeaders");
+      localStorage.removeItem("tableData");
+    }
   }
 
   function handleHeaderEdit(arrIndex, newValue) {
@@ -194,6 +225,8 @@ function App() {
         <h1>PostOffice</h1>
         <button onClick={loadTestData}>Set Data</button>
         <button onClick={unsetTestData}>UNSET Data</button>
+        <button onClick={handleDataColdStart}>Cold Start</button>
+        <button onClick={resetLocalStorage}>UNSET Local Storage</button>
         <button onClick={printStates}>Print Data</button>
 
         {/* Component to handle file upload*/}
@@ -208,6 +241,8 @@ function App() {
             tableHeaders={tableHeaderVariables}
             headerWarning={headerVariableWarning}
             tableData={tableData}
+            handleResetTable={handleResetTable}
+            handleSetFromLocalStorage={handleSetFromLocalStorage}
             handleFieldEdit={handleFieldEdit}
             handleHeaderEdit={handleHeaderEdit}
             handleAddRow={handleAddRow}

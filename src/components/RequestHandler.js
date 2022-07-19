@@ -26,8 +26,8 @@ const RequestHandler = ({ body, data, token }) => {
         replacedBody = replacedBody.replace(`{${k}}`, data[rowIndex][k]);
       }
       const email = {
-        recipient: data[rowIndex].email,
-        subject: data[rowIndex].subject,
+        recipient: data[rowIndex]["Recipient"],
+        subject: data[rowIndex]["Subject"],
         body: replacedBody,
       };
       newRequest.emails.push(email);
