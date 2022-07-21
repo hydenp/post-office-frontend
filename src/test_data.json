@@ -1,20 +1,21 @@
 {
   "tableHeaders": [
-    "email",
-    "subject",
+    "Recipient",
+    "Subject",
     "var1",
     "var2"
   ],
   "tableData": [
     {
-      "email": "hyden.testing@gmail.com",
-      "subject": "Test subject 1",
+      "Recipient": "hyden.testing@gmail.com",
+      "Subject": "Test subject 1",
       "var1": "Hyden",
       "var2": "A-"
     }
   ],
   "bodyInput": "Hello {var1}\n\nHere is your grade for the semester {var2}.\n\nHave a good summer.",
   "token": {
-    "access_token": "TOKEN"
+    "expiry": 3901092380921,
+    "token": "TOKEN"
   }
 }

@@ -14,19 +14,81 @@ function App() {
   const [headerVariableWarning, setHeaderVariableWarning] = useState(false);
   const [numVariablesAdded, setNumVariablesAdded] = useState(0);
   const [tableData, setTableData] = useState(null);
+  const [validEmails, setValidEmails] = useState(false);
   const [bodyInput, setBodyInput] = useState("");
   const [token, setToken] = useState(null);
+  const [profileInfo, setProfileInfo] = useState(null);
 
   useEffect(() => {
-    console.log("re-render");
-    // loadTestData();
-  });
+    checkCachedGoogleUser();
+  }, []);
+
+  function handleValidEmailsUpdate(v) {
+    setValidEmails(v);
+  }
+
+  function checkCachedGoogleUser() {
+    // check for a logged-in user and if still valid
+    const cachedUser = JSON.parse(localStorage.getItem("googleInfo"));
+    if (cachedUser !== null) {
+      if (new Date().getTime() > cachedUser.expiry) {
+        localStorage.removeItem("googleInfo");
+      } else {
+        setToken({
+          token: cachedUser.token,
+          expiry: cachedUser.expiry,
+        });
+        setProfileInfo(cachedUser.profileInfo);
+      }
+    }
+  }
+
+  function resetToken() {
+    setToken(null);
+    setProfileInfo(null);
+  }
+
+  function handleGoogleLogin(token, profileInfo) {
+    setToken({
+      token: token,
+      // expiry: new Date().getTime() + 10 * 1000,
+      expiry: new Date().getTime() + 3500 * 1000,
+    });
+    setProfileInfo(profileInfo);
+
+    // set the login
+    localStorage.setItem(
+      "googleInfo",
+      JSON.stringify({
+        token: token,
+        profileInfo: profileInfo,
+        // set for 100 seconds less than an hour
+        expiry: new Date().getTime() + 3500 * 1000,
+        // expiry: new Date().getTime() + 10 * 1000,
+      })
+    );
+  }
+
+  function resetInputRequest() {
+    setTableHeaderVariables(null);
+    localStorage.removeItem("tableHeaders");
+    setTableData(null);
+    localStorage.removeItem("tableData");
+    setBodyInput("");
+    localStorage.removeItem("bodyInput");
+    setNumVariablesAdded(0);
+  }
+
+  function resetBody() {
+    setBodyInput("");
+    localStorage.removeItem("bodyInput");
+  }
 
   function loadTestData() {
     setTableHeaderVariables(testData.tableHeaders);
     setTableData(testData.tableData);
     setBodyInput(testData.bodyInput);
-    setToken(testData.token);
+    // setToken(testData.token);
   }
 
   function unsetTestData() {
@@ -39,27 +101,24 @@ function App() {
   function printStates() {
     console.log("headers = ", tableHeaderVariables);
     console.log("data = ", tableData);
-  }
-
-  function handleToken(t) {
-    setToken(t);
+    console.log("profile = ", profileInfo);
   }
 
   function handleBodyInput(v) {
     if (v === "") {
+      localStorage.removeItem("bodyInput");
       setBodyInput("");
     } else {
       setBodyInput(v);
     }
   }
 
+  function handleSetFromLocalStorage(cachedHeaderVariables, cachedTableData) {
+    setTableHeaderVariables(cachedHeaderVariables);
+    setTableData(cachedTableData);
+  }
+
   function handleUpload(headers, data) {
-    if (headers.length <= 2) {
-      headers = ["email", "subject"];
-    } else {
-      headers[0] = "email";
-      headers[1] = "subject";
-    }
     setTableHeaderVariables(headers);
     setTableData(data);
   }
@@ -75,6 +134,11 @@ function App() {
     const newTableData = [...tableData];
     newTableData.push(newRow);
     setTableData(newTableData);
+  }
+
+  function handleDataColdStart() {
+    setTableHeaderVariables(["Recipient", "Subject"]);
+    setTableData([]);
   }
 
   function handleAddHeaderVariable() {
@@ -127,6 +191,7 @@ function App() {
     ) {
       setTableHeaderVariables(null);
       setTableData(null);
+      resetLocalStorage();
     }
   }
 
@@ -134,6 +199,25 @@ function App() {
     console.log("Data ------");
     console.log(tableData);
     console.log(bodyInput);
+  }
+
+  function resetLocalStorage() {
+    localStorage.removeItem("tableHeaders");
+    localStorage.removeItem("tableData");
+    localStorage.removeItem("bodyInput");
+  }
+
+  function handleResetTable() {
+    if (
+      window.confirm(
+        "Are you sure you want to clear all your progress? You cannot undo this action"
+      )
+    ) {
+      setTableHeaderVariables(null);
+      setTableData(null);
+      localStorage.removeItem("tableHeaders");
+      localStorage.removeItem("tableData");
+    }
   }
 
   function handleHeaderEdit(arrIndex, newValue) {
@@ -194,6 +278,8 @@ function App() {
         <h1>PostOffice</h1>
         <button onClick={loadTestData}>Set Data</button>
         <button onClick={unsetTestData}>UNSET Data</button>
+        <button onClick={handleDataColdStart}>Cold Start</button>
+        <button onClick={resetLocalStorage}>UNSET Local Storage</button>
         <button onClick={printStates}>Print Data</button>
 
         {/* Component to handle file upload*/}
@@ -208,7 +294,10 @@ function App() {
             tableHeaders={tableHeaderVariables}
             headerWarning={headerVariableWarning}
             tableData={tableData}
+            handleResetTable={handleResetTable}
+            handleSetFromLocalStorage={handleSetFromLocalStorage}
             handleFieldEdit={handleFieldEdit}
+            handleValidEmailsUpdate={handleValidEmailsUpdate}
             handleHeaderEdit={handleHeaderEdit}
             handleAddRow={handleAddRow}
             handleAddHeaderVariable={handleAddHeaderVariable}
@@ -226,13 +315,14 @@ function App() {
             variableNames={tableHeaderVariables}
             bodyInput={bodyInput}
             handleBodyInput={handleBodyInput}
+            resetBody={resetBody}
           />
         </div>
 
         {/* Component to start google oauth flow, store it in state variable and print token */}
         <div>
           <h2>Get Google the Keys</h2>
-          <GoogleOauth handleToken={handleToken} />
+          <GoogleOauth handleGoogleLogin={handleGoogleLogin} />
         </div>
 
         <div
@@ -240,7 +330,14 @@ function App() {
             marginBottom: 50,
           }}
         >
-          <RequestHandler body={bodyInput} data={tableData} token={token} />
+          <RequestHandler
+            body={bodyInput}
+            validEmails={validEmails}
+            resetToken={resetToken}
+            data={tableData}
+            token={token}
+            resetInputRequest={resetInputRequest}
+          />
         </div>
       </div>
     </div>

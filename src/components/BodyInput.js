@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 
-const BodyInput = ({ variableNames, bodyInput, handleBodyInput }) => {
+const BodyInput = ({
+  variableNames,
+  bodyInput,
+  handleBodyInput,
+  resetBody,
+}) => {
   const [headerVariables, setHeaderVariables] = useState([]);
   const [hangingVariables, setHangingVariables] = useState([]);
 
@@ -14,14 +19,17 @@ const BodyInput = ({ variableNames, bodyInput, handleBodyInput }) => {
   function updateHangingVariables() {
     const regex = /\{([^{}]+)}/g;
     let match;
-
     let hangingVars = [];
     while ((match = regex.exec(bodyInput))) {
       const matchStart = regex.lastIndex - match[0].length + 1;
       const matchEnd = regex.lastIndex - 1;
       const possibleVar = bodyInput.substring(matchStart, matchEnd);
 
-      if (!(variableNames.indexOf(possibleVar) !== -1)) {
+      if (variableNames !== null) {
+        if (!(variableNames.indexOf(possibleVar) !== -1)) {
+          hangingVars.push(possibleVar);
+        }
+      } else {
         hangingVars.push(possibleVar);
       }
     }
@@ -37,6 +45,12 @@ const BodyInput = ({ variableNames, bodyInput, handleBodyInput }) => {
     handleBodyInput(val);
   }
 
+  function cacheBodyInput(data) {
+    if (data !== null && data !== "") {
+      localStorage.setItem("bodyInput", JSON.stringify(data));
+    }
+  }
+
   useEffect(() => {
     if (variableNames !== null) {
       const newVars = [];
@@ -45,16 +59,28 @@ const BodyInput = ({ variableNames, bodyInput, handleBodyInput }) => {
       }
       setHeaderVariables(newVars);
       updateUsedVars();
+    } else {
+      setHeaderVariables([]);
+      setHangingVariables([]);
     }
+
     updateHangingVariables();
+    cacheBodyInput(bodyInput);
   }, [variableNames, bodyInput]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const cachedBodyInput = JSON.parse(localStorage.getItem("bodyInput"));
+    if (cachedBodyInput !== null) {
+      handleBodyInput(cachedBodyInput);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "center" }}>
         {Object.keys(headerVariables)
           .filter(
-            (r) => ["email", "subject"].indexOf(headerVariables[r]) === -1
+            (r) => ["Recipient", "Subject"].indexOf(headerVariables[r]) === -1
           )
           .map((k) => (
             <p
@@ -92,6 +118,7 @@ const BodyInput = ({ variableNames, bodyInput, handleBodyInput }) => {
         cols="100"
         onChange={(event) => update(event)}
       ></textarea>
+      <button onClick={resetBody}>Clear</button>
     </div>
   );
 };

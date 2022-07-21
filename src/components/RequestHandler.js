@@ -2,7 +2,14 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ResponseView from "./ResponseView";
 
-const RequestHandler = ({ body, data, token }) => {
+const RequestHandler = ({
+  body,
+  validEmails,
+  resetToken,
+  data,
+  token,
+  resetInputRequest,
+}) => {
   const [request, setRequest] = useState({});
   const [requestReady, setRequestReady] = useState(false);
   const [response, setResponse] = useState(null);
@@ -26,22 +33,24 @@ const RequestHandler = ({ body, data, token }) => {
         replacedBody = replacedBody.replace(`{${k}}`, data[rowIndex][k]);
       }
       const email = {
-        recipient: data[rowIndex].email,
-        subject: data[rowIndex].subject,
+        recipient: data[rowIndex]["Recipient"],
+        subject: data[rowIndex]["Subject"],
         body: replacedBody,
       };
       newRequest.emails.push(email);
     }
-    newRequest.auth.token = token.access_token;
+    newRequest.auth.token = token.token.access_token;
     return newRequest;
   }
 
   useEffect(() => {
-    setRequestReady(body !== "" && data !== null && token !== null);
-    if (body !== null && data !== null && token !== null) {
+    if (body !== "" && data !== null && token !== null && validEmails) {
+      setRequestReady(true);
       setRequest(createRequest(body, data, token));
+    } else {
+      setRequestReady(false);
     }
-  }, [body, data, token]);
+  }, [body, data, validEmails, token]);
 
   function test() {
     console.log(request);
@@ -49,16 +58,24 @@ const RequestHandler = ({ body, data, token }) => {
   }
 
   function makeRequest() {
-    setRequestSent(true);
-    setRequestInProgress(true);
-    axios
-      // .post(process.env.REACT_APP_POSTMAN_TEST_ENDPOINT, request)
-      .post(process.env.REACT_APP_AWS_GATEWAY_DEV_API, request)
-      .then((response) => {
-        console.log(response);
-        setResponse(response);
-        setRequestInProgress(false);
-      });
+    if (new Date().getTime() > token.expiry) {
+      //  make sure the token is still valid before sending the request
+      resetToken();
+      window.alert(
+        "The Google token is no longer valid, please sign in again!"
+      );
+    } else {
+      setRequestSent(true);
+      setRequestInProgress(true);
+      axios
+        .post(process.env.REACT_APP_AWS_GATEWAY_DEV_API, request)
+        .then((response) => {
+          console.log(response);
+          setResponse(response);
+          setRequestInProgress(false);
+          resetInputRequest();
+        });
+    }
   }
 
   return (
@@ -69,7 +86,7 @@ const RequestHandler = ({ body, data, token }) => {
           return (
             <>
               <h2>Send Mail</h2>
-              <p style={{ color: data ? "green" : "red" }}>Data Uploaded</p>
+              <p style={{ color: validEmails ? "green" : "red" }}>Data Ready</p>
               <p style={{ color: body ? "green" : "red" }}>Body Added</p>
               <p style={{ color: token ? "green" : "red" }}>
                 Signed in with Google
@@ -88,6 +105,7 @@ const RequestHandler = ({ body, data, token }) => {
             <ul>
               <h2>Mail Status</h2>
               <ResponseView response={response} />
+              <button onClick={() => setRequestSent(false)}>Send more!</button>
             </ul>
           );
         }
