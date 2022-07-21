@@ -111,7 +111,6 @@ const DataView = ({
 
   function cacheDataToLocalStore(key, data) {
     if (data !== null && data !== {}) {
-      console.log("Setting data values in localStorage");
       localStorage.setItem(key, JSON.stringify(data));
     }
   }
@@ -131,8 +130,6 @@ const DataView = ({
         localStorageTableData
       );
     }
-    console.log("local store headers = ", localStorageTableHeaderVariables);
-    console.log("Local storage data = ", localStorageTableData);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (

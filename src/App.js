@@ -16,17 +16,69 @@ function App() {
   const [tableData, setTableData] = useState(null);
   const [bodyInput, setBodyInput] = useState("");
   const [token, setToken] = useState(null);
+  const [profileInfo, setProfileInfo] = useState(null);
 
   useEffect(() => {
-    console.log("re-render");
-    // loadTestData();
-  });
+    checkCachedGoogleUser();
+  }, []);
+
+  function checkCachedGoogleUser() {
+    // check for a logged-in user and if still valid
+    const cachedUser = JSON.parse(localStorage.getItem("googleInfo"));
+    if (cachedUser !== null) {
+      if (new Date().getTime() > cachedUser.expiry) {
+        localStorage.removeItem("googleInfo");
+      } else {
+        setToken({
+          token: cachedUser.token,
+          expiry: cachedUser.expiry,
+        });
+        setProfileInfo(cachedUser.profileInfo);
+      }
+    }
+  }
+
+  function handleGoogleLogin(token, profileInfo) {
+    setToken({
+      token: token,
+      // expiry: new Date().getTime() + 10 * 1000,
+      expiry: new Date().getTime() + 3500 * 1000,
+    });
+    setProfileInfo(profileInfo);
+
+    // set the login
+    localStorage.setItem(
+      "googleInfo",
+      JSON.stringify({
+        token: token,
+        profileInfo: profileInfo,
+        // set for 100 seconds less than an hour
+        expiry: new Date().getTime() + 3500 * 1000,
+        // expiry: new Date().getTime() + 10 * 1000,
+      })
+    );
+  }
+
+  function resetInputRequest() {
+    setTableHeaderVariables(null);
+    localStorage.removeItem("tableHeaders");
+    setTableData(null);
+    localStorage.removeItem("tableData");
+    setBodyInput("");
+    localStorage.removeItem("bodyInput");
+    setNumVariablesAdded(0);
+  }
+
+  function resetBody() {
+    setBodyInput("");
+    localStorage.removeItem("bodyInput");
+  }
 
   function loadTestData() {
     setTableHeaderVariables(testData.tableHeaders);
     setTableData(testData.tableData);
     setBodyInput(testData.bodyInput);
-    setToken(testData.token);
+    // setToken(testData.token);
   }
 
   function unsetTestData() {
@@ -39,10 +91,7 @@ function App() {
   function printStates() {
     console.log("headers = ", tableHeaderVariables);
     console.log("data = ", tableData);
-  }
-
-  function handleToken(t) {
-    setToken(t);
+    console.log("profile = ", profileInfo);
   }
 
   function handleBodyInput(v) {
@@ -60,12 +109,6 @@ function App() {
   }
 
   function handleUpload(headers, data) {
-    if (headers.length <= 2) {
-      headers = ["Recipient", "Subject"];
-    } else {
-      headers[0] = "Recipient";
-      headers[1] = "Subject";
-    }
     setTableHeaderVariables(headers);
     setTableData(data);
   }
@@ -261,13 +304,14 @@ function App() {
             variableNames={tableHeaderVariables}
             bodyInput={bodyInput}
             handleBodyInput={handleBodyInput}
+            resetBody={resetBody}
           />
         </div>
 
         {/* Component to start google oauth flow, store it in state variable and print token */}
         <div>
           <h2>Get Google the Keys</h2>
-          <GoogleOauth handleToken={handleToken} />
+          <GoogleOauth handleGoogleLogin={handleGoogleLogin} />
         </div>
 
         <div
@@ -275,7 +319,12 @@ function App() {
             marginBottom: 50,
           }}
         >
-          <RequestHandler body={bodyInput} data={tableData} token={token} />
+          <RequestHandler
+            body={bodyInput}
+            data={tableData}
+            token={token}
+            resetInputRequest={resetInputRequest}
+          />
         </div>
       </div>
     </div>

@@ -86,14 +86,26 @@ const CSVReader = ({ handleUpload, handleRemoveFile }) => {
 
   function parseDataForView(unparsedData) {
     if (unparsedData !== null) {
-      const headers = unparsedData.data[0];
+      let headers = unparsedData.data[0];
+      if (unparsedData.data[0].length <= 2) {
+        headers = ["Recipient", "Subject"];
+      } else {
+        headers[0] = "Recipient";
+        headers[1] = "Subject";
+      }
 
       // parse the body portions
       const parsedData = [];
       for (let i = 1; i < unparsedData.data.length; i++) {
         let parsedRow = {};
         for (let j = 0; j < headers.length; j++) {
-          parsedRow[headers[j]] = unparsedData.data[i][j];
+          if (j === 0) {
+            parsedRow["Recipient"] = unparsedData.data[i][j];
+          } else if (j === 1) {
+            parsedRow["Subject"] = unparsedData.data[i][j];
+          } else {
+            parsedRow[headers[j]] = unparsedData.data[i][j];
+          }
         }
         parsedData.push(parsedRow);
       }

@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 
-const BodyInput = ({ variableNames, bodyInput, handleBodyInput }) => {
+const BodyInput = ({
+  variableNames,
+  bodyInput,
+  handleBodyInput,
+  resetBody,
+}) => {
   const [headerVariables, setHeaderVariables] = useState([]);
   const [hangingVariables, setHangingVariables] = useState([]);
 
@@ -14,14 +19,17 @@ const BodyInput = ({ variableNames, bodyInput, handleBodyInput }) => {
   function updateHangingVariables() {
     const regex = /\{([^{}]+)}/g;
     let match;
-
     let hangingVars = [];
     while ((match = regex.exec(bodyInput))) {
       const matchStart = regex.lastIndex - match[0].length + 1;
       const matchEnd = regex.lastIndex - 1;
       const possibleVar = bodyInput.substring(matchStart, matchEnd);
 
-      if (!(variableNames.indexOf(possibleVar) !== -1)) {
+      if (variableNames !== null) {
+        if (!(variableNames.indexOf(possibleVar) !== -1)) {
+          hangingVars.push(possibleVar);
+        }
+      } else {
         hangingVars.push(possibleVar);
       }
     }
@@ -53,9 +61,7 @@ const BodyInput = ({ variableNames, bodyInput, handleBodyInput }) => {
       updateUsedVars();
     }
 
-    if (variableNames !== null) {
-      updateHangingVariables();
-    }
+    updateHangingVariables();
     cacheBodyInput(bodyInput);
   }, [variableNames, bodyInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -109,6 +115,7 @@ const BodyInput = ({ variableNames, bodyInput, handleBodyInput }) => {
         cols="100"
         onChange={(event) => update(event)}
       ></textarea>
+      <button onClick={resetBody}>Clear</button>
     </div>
   );
 };
