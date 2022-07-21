@@ -2,7 +2,14 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ResponseView from "./ResponseView";
 
-const RequestHandler = ({ body, data, token, resetInputRequest }) => {
+const RequestHandler = ({
+  body,
+  validEmails,
+  resetToken,
+  data,
+  token,
+  resetInputRequest,
+}) => {
   const [request, setRequest] = useState({});
   const [requestReady, setRequestReady] = useState(false);
   const [response, setResponse] = useState(null);
@@ -37,17 +44,13 @@ const RequestHandler = ({ body, data, token, resetInputRequest }) => {
   }
 
   useEffect(() => {
-    if (body !== "" && data !== null && token !== null) {
-      if (data.length > 0) {
-        setRequestReady(true);
-        setRequest(createRequest(body, data, token));
-      } else {
-        setRequestReady(false);
-      }
+    if (body !== "" && data !== null && token !== null && validEmails) {
+      setRequestReady(true);
+      setRequest(createRequest(body, data, token));
     } else {
       setRequestReady(false);
     }
-  }, [body, data, token]);
+  }, [body, data, validEmails, token]);
 
   function test() {
     console.log(request);
@@ -57,15 +60,14 @@ const RequestHandler = ({ body, data, token, resetInputRequest }) => {
   function makeRequest() {
     if (new Date().getTime() > token.expiry) {
       //  make sure the token is still valid before sending the request
+      resetToken();
       window.alert(
         "The Google token is no longer valid, please sign in again!"
       );
-      console.log("token bad");
     } else {
       setRequestSent(true);
       setRequestInProgress(true);
       axios
-        // .post(process.env.REACT_APP_POSTMAN_TEST_ENDPOINT, request)
         .post(process.env.REACT_APP_AWS_GATEWAY_DEV_API, request)
         .then((response) => {
           console.log(response);
@@ -84,9 +86,7 @@ const RequestHandler = ({ body, data, token, resetInputRequest }) => {
           return (
             <>
               <h2>Send Mail</h2>
-              <p style={{ color: requestReady ? "green" : "red" }}>
-                Data Ready
-              </p>
+              <p style={{ color: validEmails ? "green" : "red" }}>Data Ready</p>
               <p style={{ color: body ? "green" : "red" }}>Body Added</p>
               <p style={{ color: token ? "green" : "red" }}>
                 Signed in with Google

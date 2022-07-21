@@ -98,6 +98,7 @@ const DataView = ({
   handleHeaderEdit,
   handleFieldEdit,
   handleResetTable,
+  handleValidEmailsUpdate,
   handleAddRow,
   handleAddHeaderVariable,
   handleDeleteHeaderVariable,
@@ -107,7 +108,21 @@ const DataView = ({
   useEffect(() => {
     cacheDataToLocalStore("tableHeaders", tableHeaders);
     cacheDataToLocalStore("tableData", tableData);
-  }, [tableHeaders, tableData]);
+
+    if (tableData !== null) {
+      if (tableData.length > 0) {
+        let allValid = true;
+        for (const row in tableData) {
+          allValid =
+            allValid &&
+            /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+              tableData[row]["Recipient"]
+            );
+        }
+        handleValidEmailsUpdate(allValid);
+      }
+    }
+  }, [tableHeaders, tableData, handleValidEmailsUpdate]);
 
   function cacheDataToLocalStore(key, data) {
     if (data !== null && data !== {}) {

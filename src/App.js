@@ -14,6 +14,7 @@ function App() {
   const [headerVariableWarning, setHeaderVariableWarning] = useState(false);
   const [numVariablesAdded, setNumVariablesAdded] = useState(0);
   const [tableData, setTableData] = useState(null);
+  const [validEmails, setValidEmails] = useState(false);
   const [bodyInput, setBodyInput] = useState("");
   const [token, setToken] = useState(null);
   const [profileInfo, setProfileInfo] = useState(null);
@@ -21,6 +22,10 @@ function App() {
   useEffect(() => {
     checkCachedGoogleUser();
   }, []);
+
+  function handleValidEmailsUpdate(v) {
+    setValidEmails(v);
+  }
 
   function checkCachedGoogleUser() {
     // check for a logged-in user and if still valid
@@ -36,6 +41,11 @@ function App() {
         setProfileInfo(cachedUser.profileInfo);
       }
     }
+  }
+
+  function resetToken() {
+    setToken(null);
+    setProfileInfo(null);
   }
 
   function handleGoogleLogin(token, profileInfo) {
@@ -287,6 +297,7 @@ function App() {
             handleResetTable={handleResetTable}
             handleSetFromLocalStorage={handleSetFromLocalStorage}
             handleFieldEdit={handleFieldEdit}
+            handleValidEmailsUpdate={handleValidEmailsUpdate}
             handleHeaderEdit={handleHeaderEdit}
             handleAddRow={handleAddRow}
             handleAddHeaderVariable={handleAddHeaderVariable}
@@ -321,6 +332,8 @@ function App() {
         >
           <RequestHandler
             body={bodyInput}
+            validEmails={validEmails}
+            resetToken={resetToken}
             data={tableData}
             token={token}
             resetInputRequest={resetInputRequest}

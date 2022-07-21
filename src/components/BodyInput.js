@@ -59,6 +59,9 @@ const BodyInput = ({
       }
       setHeaderVariables(newVars);
       updateUsedVars();
+    } else {
+      setHeaderVariables([]);
+      setHangingVariables([]);
     }
 
     updateHangingVariables();
