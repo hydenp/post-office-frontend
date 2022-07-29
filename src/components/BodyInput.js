@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from "react";
 
 const BodyInput = ({
-  variableNames,
   bodyInput,
-  handleBodyInput,
-  resetBody,
+  variableNames,
+  handleBodyInputChange,
+  handleResetBodyInput,
 }) => {
-  const [headerVariables, setHeaderVariables] = useState([]);
   const [hangingVariables, setHangingVariables] = useState([]);
+  const [headerVariables, setHeaderVariables] = useState([]);
 
-  function updateUsedVars() {
-    const newUsedVars = {};
-    for (const v of headerVariables) {
-      newUsedVars[v] = bodyInput.indexOf(`{${v}}`) !== -1;
-    }
-  }
+  // FUNCTIONS
 
   function updateHangingVariables() {
+    // function that checks if the user has used any variables in the body that are not one of the header variables
+    // updates the hangingVariables state variable which displays a warning of the incorrect variable
+
     const regex = /\{([^{}]+)}/g;
     let match;
     let hangingVars = [];
@@ -36,20 +34,23 @@ const BodyInput = ({
     setHangingVariables([...new Set(hangingVars)]);
   }
 
-  function update(e) {
+  function updateUsedVars() {
+    const newUsedVars = {};
+    for (const v of headerVariables) {
+      newUsedVars[v] = bodyInput.indexOf(`{${v}}`) !== -1;
+    }
+  }
+
+  function updateVariable(e) {
     const val = e.target.value;
     updateUsedVars();
     updateHangingVariables();
 
     // check for check matching headerVariables
-    handleBodyInput(val);
+    handleBodyInputChange(val);
   }
 
-  function cacheBodyInput(data) {
-    if (data !== null && data !== "") {
-      localStorage.setItem("bodyInput", JSON.stringify(data));
-    }
-  }
+  // HOOKS
 
   useEffect(() => {
     if (variableNames !== null) {
@@ -65,13 +66,14 @@ const BodyInput = ({
     }
 
     updateHangingVariables();
-    cacheBodyInput(bodyInput);
+    // cacheBodyInput(bodyInput);
   }, [variableNames, bodyInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // check for cached input when the component loads
   useEffect(() => {
     const cachedBodyInput = JSON.parse(localStorage.getItem("bodyInput"));
     if (cachedBodyInput !== null) {
-      handleBodyInput(cachedBodyInput);
+      handleBodyInputChange(cachedBodyInput);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -116,9 +118,9 @@ const BodyInput = ({
         value={bodyInput}
         rows="20"
         cols="100"
-        onChange={(event) => update(event)}
+        onChange={(event) => updateVariable(event)}
       ></textarea>
-      <button onClick={resetBody}>Clear</button>
+      <button onClick={handleResetBodyInput}>Clear</button>
     </div>
   );
 };

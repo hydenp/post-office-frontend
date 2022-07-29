@@ -19,8 +19,9 @@ import React, { useEffect } from "react";
 //   ]
 // }
 
-const DataHeader = ({ item, handleHeaderEdit, handleDeleteHeaderVariable }) => {
-  const editable = item.value === "Recipient" || item.value === "Subject";
+const DataHeader = ({ item, handleDeleteHeaderVariable, handleHeaderEdit }) => {
+  const editable = !(item.value === "Recipient" || item.value === "Subject");
+
   return (
     <td key={item.index}>
       <div
@@ -30,7 +31,7 @@ const DataHeader = ({ item, handleHeaderEdit, handleDeleteHeaderVariable }) => {
       >
         <input
           type="text"
-          readOnly={editable}
+          readOnly={!editable}
           value={item.value}
           onChange={(e) => handleHeaderEdit(item.index, e.target.value)}
         />
@@ -73,7 +74,7 @@ const DataField = ({ item, handleFieldEdit }) => {
   );
 };
 
-const DataRow = ({ arrIndex, row, handleFieldEdit, handleDeleteRow }) => {
+const DataRow = ({ arrIndex, row, handleDeleteRow, handleFieldEdit }) => {
   return (
     <tr>
       {Object.keys(row).map((k) => (
@@ -91,22 +92,30 @@ const DataRow = ({ arrIndex, row, handleFieldEdit, handleDeleteRow }) => {
 };
 
 const DataView = ({
-  tableHeaders,
+  // data props
   headerWarning,
   tableData,
-  handleSetFromLocalStorage,
-  handleHeaderEdit,
-  handleFieldEdit,
-  handleResetTable,
-  handleValidEmailsUpdate,
-  handleAddRow,
+  tableHeaderVariables,
+  // function props
   handleAddHeaderVariable,
+  handleAddTableRow,
   handleDeleteHeaderVariable,
   handleDeleteRow,
+  handleHeaderEdit,
+  handleResetTableData,
+  handleSetTableDataFromLocalStorage,
+  handleTableFieldEdit,
+  handleValidEmailsUpdate,
 }) => {
+  function cacheDataToLocalStore(key, data) {
+    if (data !== null && data !== {}) {
+      localStorage.setItem(key, JSON.stringify(data));
+    }
+  }
+
   // updating the table data in user storage
   useEffect(() => {
-    cacheDataToLocalStore("tableHeaders", tableHeaders);
+    cacheDataToLocalStore("tableHeaders", tableHeaderVariables);
     cacheDataToLocalStore("tableData", tableData);
 
     if (tableData !== null) {
@@ -122,13 +131,7 @@ const DataView = ({
         handleValidEmailsUpdate(allValid);
       }
     }
-  }, [tableHeaders, tableData, handleValidEmailsUpdate]);
-
-  function cacheDataToLocalStore(key, data) {
-    if (data !== null && data !== {}) {
-      localStorage.setItem(key, JSON.stringify(data));
-    }
-  }
+  }, [tableHeaderVariables, tableData, handleValidEmailsUpdate]);
 
   // fetching the table data from local_storage on load
   useEffect(() => {
@@ -140,7 +143,7 @@ const DataView = ({
       localStorageTableData !== null &&
       localStorageTableHeaderVariables !== null
     ) {
-      handleSetFromLocalStorage(
+      handleSetTableDataFromLocalStorage(
         localStorageTableHeaderVariables,
         localStorageTableData
       );
@@ -154,7 +157,7 @@ const DataView = ({
         justifyContent: "center",
       }}
     >
-      {tableHeaders !== null ? (
+      {tableHeaderVariables !== null ? (
         <div>
           <p hidden={!headerWarning} style={{ backgroundColor: "yellow" }}>
             Please make sure all table headers are unique
@@ -162,12 +165,12 @@ const DataView = ({
           <table>
             <thead>
               <tr>
-                {Object.keys(tableHeaders).map((k) => (
+                {Object.keys(tableHeaderVariables).map((k) => (
                   <DataHeader
                     key={k}
-                    handleHeaderEdit={handleHeaderEdit}
+                    item={{ index: k, value: tableHeaderVariables[k] }}
                     handleDeleteHeaderVariable={handleDeleteHeaderVariable}
-                    item={{ index: k, value: tableHeaders[k] }}
+                    handleHeaderEdit={handleHeaderEdit}
                   />
                 ))}
                 <th>
@@ -183,15 +186,15 @@ const DataView = ({
                   key={k}
                   arrIndex={k}
                   row={tableData[k]}
-                  handleFieldEdit={handleFieldEdit}
+                  handleFieldEdit={handleTableFieldEdit}
                   handleDeleteRow={handleDeleteRow}
                 />
               ))}
             </tbody>
           </table>
           <div>
-            <button onClick={handleAddRow}>add row</button>
-            <button onClick={handleResetTable}>Reset</button>
+            <button onClick={handleAddTableRow}>add row</button>
+            <button onClick={handleResetTableData}>Reset</button>
           </div>
         </div>
       ) : (
