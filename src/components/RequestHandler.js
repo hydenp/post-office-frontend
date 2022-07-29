@@ -4,17 +4,25 @@ import ResponseView from "./ResponseView";
 
 const RequestHandler = ({
   body,
-  validEmails,
-  resetToken,
   data,
   token,
-  resetInputRequest,
+  handleResetInputRequest,
+  handleResetToken,
+  validEmails,
 }) => {
   const [request, setRequest] = useState({});
   const [requestReady, setRequestReady] = useState(false);
-  const [response, setResponse] = useState(null);
-  const [requestSent, setRequestSent] = useState(false);
   const [requestInProgress, setRequestInProgress] = useState(false);
+  const [requestSent, setRequestSent] = useState(false);
+  const [response, setResponse] = useState(null);
+
+  // DEBUG/DEV
+  function test() {
+    console.log(request);
+    console.log(requestReady);
+  }
+
+  // FUNCTIONS
 
   function createRequest(body, data, token) {
     // structure of request
@@ -26,7 +34,7 @@ const RequestHandler = ({
       auth: {},
     };
 
-    // loop through and make replacements
+    // loop through and make replacements of each variable in the body
     for (const rowIndex in data) {
       let replacedBody = body;
       for (const k in data[rowIndex]) {
@@ -43,24 +51,10 @@ const RequestHandler = ({
     return newRequest;
   }
 
-  useEffect(() => {
-    if (body !== "" && data !== null && token !== null && validEmails) {
-      setRequestReady(true);
-      setRequest(createRequest(body, data, token));
-    } else {
-      setRequestReady(false);
-    }
-  }, [body, data, validEmails, token]);
-
-  function test() {
-    console.log(request);
-    console.log(requestReady);
-  }
-
   function makeRequest() {
     if (new Date().getTime() > token.expiry) {
       //  make sure the token is still valid before sending the request
-      resetToken();
+      handleResetToken();
       window.alert(
         "The Google token is no longer valid, please sign in again!"
       );
@@ -73,10 +67,21 @@ const RequestHandler = ({
           console.log(response);
           setResponse(response);
           setRequestInProgress(false);
-          resetInputRequest();
+          handleResetInputRequest();
         });
     }
   }
+
+  // HOOKS
+
+  useEffect(() => {
+    if (body !== "" && data !== null && token !== null && validEmails) {
+      setRequestReady(true);
+      setRequest(createRequest(body, data, token));
+    } else {
+      setRequestReady(false);
+    }
+  }, [body, data, validEmails, token]);
 
   return (
     <div>

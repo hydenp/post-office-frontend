@@ -77,16 +77,17 @@ const styles = {
   },
 };
 
-const CSVReader = ({ handleUpload, handleRemoveFile }) => {
+const CSVReader = ({ handleRemoveFile, handleUpload }) => {
   const { CSVReader } = useCSVReader();
-  const [zoneHover, setZoneHover] = useState(false);
   const [removeHoverColor, setRemoveHoverColor] = useState(
     DEFAULT_REMOVE_HOVER_COLOR
   );
+  const [zoneHover, setZoneHover] = useState(false);
 
   function parseDataForView(unparsedData) {
     if (unparsedData !== null) {
       let headers = unparsedData.data[0];
+      // make the very first two headers "Recipient" and "Subject" respectively
       if (unparsedData.data[0].length <= 2) {
         headers = ["Recipient", "Subject"];
       } else {
@@ -94,7 +95,7 @@ const CSVReader = ({ handleUpload, handleRemoveFile }) => {
         headers[1] = "Subject";
       }
 
-      // parse the body portions
+      // parse the body portion of the uploaded data
       const parsedData = [];
       for (let i = 1; i < unparsedData.data.length; i++) {
         let parsedRow = {};
