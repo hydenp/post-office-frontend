@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap');
 
 .App {
   text-align: center;
@@ -43,6 +43,26 @@
   }
 }
 
+.custom-field input {
+  border: none;
+  -webkit-appearance: none;
+  /*-ms-appearance: none;*/
+  -moz-appearance: none;
+  appearance: none;
+  background: #f2f2f2;
+  padding: 12px;
+  border-radius: 3px;
+  width: 250px;
+  font-size: 14px;
+}
+
+table {
+  border: none;
+}
+
+*:focus {
+  outline: none;
+}
 
 /*.input-container {*/
 /*  border: 1px solid gray;*/

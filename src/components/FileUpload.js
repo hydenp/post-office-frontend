@@ -25,7 +25,6 @@ const styles = {
     flexDirection: "column",
     height: "100%",
     justifyContent: "center",
-    padding: 20,
   },
   file: {
     background: "#EEE",
@@ -77,7 +76,7 @@ const styles = {
   },
 };
 
-const CSVReader = ({ handleRemoveFile, handleUpload }) => {
+const CSVReader = ({ handleDataColdStart, handleRemoveFile, handleUpload }) => {
   const { CSVReader } = useCSVReader();
   const [removeHoverColor, setRemoveHoverColor] = useState(
     DEFAULT_REMOVE_HOVER_COLOR
@@ -117,86 +116,120 @@ const CSVReader = ({ handleRemoveFile, handleUpload }) => {
   return (
     <div
       style={{
+        height: 250,
         display: "flex",
-        width: "70%",
-        flexDirection: "column",
-        justifyContent: "center",
-        margin: "0 auto",
       }}
     >
-      <h2>Upload Your File</h2>
-
-      <CSVReader
-        onUploadAccepted={(results) => {
-          console.log("---------------------------");
-          console.log(results);
-          setZoneHover(false);
-          handleUpload(...parseDataForView(results));
-        }}
-        onDragOver={(event) => {
-          event.preventDefault();
-          setZoneHover(true);
-        }}
-        onDragLeave={(event) => {
-          event.preventDefault();
-          setZoneHover(false);
+      <div
+        style={{
+          width: "60%",
         }}
       >
-        {({
-          getRootProps,
-          acceptedFile,
-          // ProgressBar,
-          getRemoveFileProps,
-          Remove,
-        }) => (
-          <>
-            <div
-              {...getRootProps()}
-              style={Object.assign(
-                {},
-                styles.zone,
-                zoneHover && styles.zoneHover
-              )}
-            >
-              {acceptedFile ? (
-                <>
-                  <div style={styles.file}>
-                    <div style={styles.info}>
-                      <span style={styles.size}>
-                        {formatFileSize(acceptedFile.size)}
-                      </span>
-                      <span style={styles.name}>{acceptedFile.name}</span>
+        <CSVReader
+          onUploadAccepted={(results) => {
+            console.log("---------------------------");
+            console.log(results);
+            setZoneHover(false);
+            handleUpload(...parseDataForView(results));
+          }}
+          onDragOver={(event) => {
+            event.preventDefault();
+            setZoneHover(true);
+          }}
+          onDragLeave={(event) => {
+            event.preventDefault();
+            setZoneHover(false);
+          }}
+        >
+          {({
+            getRootProps,
+            acceptedFile,
+            // ProgressBar,
+            getRemoveFileProps,
+            Remove,
+          }) => (
+            <>
+              <div
+                {...getRootProps()}
+                style={Object.assign(
+                  {},
+                  styles.zone,
+                  zoneHover && styles.zoneHover
+                )}
+              >
+                {acceptedFile ? (
+                  <>
+                    <div style={styles.file}>
+                      <div style={styles.info}>
+                        <span style={styles.size}>
+                          {formatFileSize(acceptedFile.size)}
+                        </span>
+                        <span style={styles.name}>{acceptedFile.name}</span>
+                      </div>
+                      {/*<div style={styles.progressBar}>*/}
+                      {/*  <ProgressBar/>*/}
+                      {/*</div>*/}
+                      <div
+                        {...getRemoveFileProps()}
+                        style={styles.remove}
+                        onMouseOver={(event) => {
+                          event.preventDefault();
+                          setRemoveHoverColor(REMOVE_HOVER_COLOR_LIGHT);
+                        }}
+                        onMouseOut={(event) => {
+                          event.preventDefault();
+                          setRemoveHoverColor(DEFAULT_REMOVE_HOVER_COLOR);
+                        }}
+                        onClick={(event) => {
+                          getRemoveFileProps().onClick(event);
+                          handleRemoveFile();
+                        }}
+                      >
+                        <Remove color={removeHoverColor} />
+                      </div>
                     </div>
-                    {/*<div style={styles.progressBar}>*/}
-                    {/*  <ProgressBar/>*/}
-                    {/*</div>*/}
-                    <div
-                      {...getRemoveFileProps()}
-                      style={styles.remove}
-                      onMouseOver={(event) => {
-                        event.preventDefault();
-                        setRemoveHoverColor(REMOVE_HOVER_COLOR_LIGHT);
-                      }}
-                      onMouseOut={(event) => {
-                        event.preventDefault();
-                        setRemoveHoverColor(DEFAULT_REMOVE_HOVER_COLOR);
-                      }}
-                      onClick={(event) => {
-                        getRemoveFileProps().onClick(event);
-                        handleRemoveFile();
-                      }}
-                    >
-                      <Remove color={removeHoverColor} />
-                    </div>
-                  </div>
-                </>
-              ) : (
-                "Drop CSV file here or click to upload"
-              )}
-            </div>
-          </>
-        )}
-      </CSVReader>
+                  </>
+                ) : (
+                  "Drag and drop a CSV or click to upload"
+                )}
+              </div>
+            </>
+          )}
+        </CSVReader>
+      </div>
+      <div
+        style={{
+          width: "40%",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center",
+          alignContent: "center",
+        }}
+      >
+        <p
+          style={{
+            alignSelf: "center",
+            margin: 0,
+            marginRight: 20,
+          }}
+        >
+          OR
+        </p>
+        <button
+          style={{
+            height: "auto",
+            margin: 0,
+            alignSelf: "center",
+            all: "unset",
+            background: "none",
+            cursor: "pointer",
+            color: "#0066FF",
+          }}
+          onClick={handleDataColdStart}
+        >
+          Continue without uploading
+        </button>
+      </div>
     </div>
   );
 };

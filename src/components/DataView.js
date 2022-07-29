@@ -1,4 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+
+import white_x from "../assets/white_x.svg";
+import blue_x from "../assets/blue_x.svg";
 
 // this is how the parsed data will be delivered from the parser
 // const testData = {
@@ -22,33 +25,72 @@ import React, { useEffect } from "react";
 const DataHeader = ({ item, handleDeleteHeaderVariable, handleHeaderEdit }) => {
   const editable = !(item.value === "Recipient" || item.value === "Subject");
 
+  console.log(item);
+  console.log("var", item.value, "editable =", editable);
+
   return (
-    <td key={item.index}>
-      <div
+    <div
+      key={item.index}
+      style={{
+        height: 40,
+        width: 220,
+        borderRadius: 10,
+        margin: 10,
+        display: "flex",
+        alignItems: "center",
+        borderStyle: "none",
+        backgroundColor: "red",
+        // backgroundColor: editable ? "#4B5C72" : "#192636",
+      }}
+    >
+      <input
+        type="text"
+        readOnly={!editable}
+        value={item.value}
+        onChange={(e) => handleHeaderEdit(item.index, e.target.value)}
         style={{
-          display: "flex",
+          height: 35,
+          width: 180,
+          borderRadius: 10,
+          paddingLeft: 10,
+          fontSize: 16,
+          color: "white",
+          border: "none",
+          backgroundColor: "transparent",
         }}
+        className="custom-field"
+      />
+      <button
+        style={{
+          all: "unset",
+          background: "none",
+          marginRight: 10,
+          width: 20,
+          display: "flex",
+          alignItems: "center",
+          cursor: "pointer",
+        }}
+        onClick={() => handleDeleteHeaderVariable(item.index)}
+        hidden={editable}
       >
-        <input
-          type="text"
-          readOnly={!editable}
-          value={item.value}
-          onChange={(e) => handleHeaderEdit(item.index, e.target.value)}
+        <img
+          src={white_x}
+          alt="X"
+          hidden={!editable}
+          style={{
+            height: 20,
+            width: 20,
+            margin: 0,
+          }}
         />
-        <button
-          onClick={() => handleDeleteHeaderVariable(item.index)}
-          hidden={editable}
-        >
-          X
-        </button>
-      </div>
-    </td>
+      </button>
+    </div>
   );
 };
 
 const DataField = ({ item, handleFieldEdit }) => {
   const invalidStyle = {
-    borderColor: "yellow",
+    // borderColor: "yellow",
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -63,20 +105,48 @@ const DataField = ({ item, handleFieldEdit }) => {
   }, [item.value, validateEmail]);
 
   return (
-    <td key={item.key}>
+    <div
+      style={{
+        borderColor: "white",
+        margin: 10,
+        width: 220,
+      }}
+      key={item.key}
+    >
       <input
         type="text"
-        style={validateEmail(item.value) ? invalidStyle : {}}
+        style={{
+          ...(validateEmail(item.value) ? invalidStyle : null),
+          border: "none",
+          height: 35,
+          width: 210,
+          borderRadius: 10,
+          paddingLeft: 10,
+          backgroundColor: "#E8E8E8",
+        }}
         value={item.value}
         onChange={(e) => handleFieldEdit(item.index, item.key, e.target.value)}
       />
-    </td>
+    </div>
   );
 };
 
 const DataRow = ({ arrIndex, row, handleDeleteRow, handleFieldEdit }) => {
+  const [mouseOver, setMouseOver] = useState(false);
   return (
-    <tr>
+    <div
+      style={{
+        display: "flex",
+        backgroundColor: mouseOver ? "#F6F6F6" : null,
+        // backgroundColor: "red",
+        borderRadius: 10,
+        marginBottom: 6,
+        marginTop: 6,
+        borderColor: "red",
+      }}
+      onMouseEnter={() => setMouseOver(true)}
+      onMouseLeave={() => setMouseOver(false)}
+    >
       {Object.keys(row).map((k) => (
         <DataField
           key={k}
@@ -84,10 +154,33 @@ const DataRow = ({ arrIndex, row, handleDeleteRow, handleFieldEdit }) => {
           handleFieldEdit={handleFieldEdit}
         />
       ))}
-      <td>
-        <button onClick={() => handleDeleteRow(arrIndex)}>delete</button>
-      </td>
-    </tr>
+      <div>
+        <button
+          style={{
+            all: "unset",
+            background: "none",
+            marginRight: 10,
+            width: 20,
+            display: "flex",
+            height: "100%",
+            alignItems: "center",
+            cursor: "pointer",
+          }}
+          onClick={() => handleDeleteRow(arrIndex)}
+        >
+          <img
+            hidden={!mouseOver}
+            src={blue_x}
+            alt="X"
+            style={{
+              height: 20,
+              width: 20,
+              margin: 0,
+            }}
+          />
+        </button>
+      </div>
+    </div>
   );
 };
 
@@ -162,9 +255,31 @@ const DataView = ({
           <p hidden={!headerWarning} style={{ backgroundColor: "yellow" }}>
             Please make sure all table headers are unique
           </p>
-          <table>
-            <thead>
-              <tr>
+          <div
+            style={{
+              backgroundColor: "white",
+              borderRadius: 10,
+              borderCollapse: "collapse",
+            }}
+          >
+            <div
+              style={{
+                height: 60,
+                borderRadius: 10,
+              }}
+            >
+              {/* table head*/}
+              <div
+                style={{
+                  width: 1000,
+                  borderTopLeftRadius: 20,
+                  borderTopRightRadius: 20,
+                  height: 60,
+                  display: "flex",
+                  alignItems: "center",
+                  backgroundColor: "#192636",
+                }}
+              >
                 {Object.keys(tableHeaderVariables).map((k) => (
                   <DataHeader
                     key={k}
@@ -173,14 +288,21 @@ const DataView = ({
                     handleHeaderEdit={handleHeaderEdit}
                   />
                 ))}
-                <th>
-                  <button onClick={handleAddHeaderVariable}>
-                    Add Variable
-                  </button>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
+                <button onClick={handleAddHeaderVariable}>Add Variable</button>
+                <div
+                  style={{
+                    backgroundColor: "#192636",
+                    borderTopRightRadius: 20,
+                  }}
+                ></div>
+              </div>
+            </div>
+            <div
+              style={{
+                backgroundColor: "white",
+                paddingBottom: 10,
+              }}
+            >
               {Object.keys(tableData).map((k) => (
                 <DataRow
                   key={k}
@@ -190,8 +312,8 @@ const DataView = ({
                   handleDeleteRow={handleDeleteRow}
                 />
               ))}
-            </tbody>
-          </table>
+            </div>
+          </div>
           <div>
             <button onClick={handleAddTableRow}>add row</button>
             <button onClick={handleResetTableData}>Reset</button>

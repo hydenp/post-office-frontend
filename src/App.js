@@ -8,7 +8,7 @@ import BodyInput from "./components/BodyInput";
 import RequestHandler from "./components/RequestHandler";
 
 import testData from "./test_data.json";
-import CardTitle from "./components/CardTitle";
+import StepCard from "./components/StepCard";
 
 function App() {
   const [bodyInput, setBodyInput] = useState("");
@@ -299,51 +299,50 @@ function App() {
         <button onClick={resetLocalStorage}>UNSET Local Storage</button>
         <button onClick={printStates}>Print Data</button>
 
-        <div>
-          <CardTitle
-            number={1}
-            status={"not-started"}
-            title={"Upload and View data"}
-          />
-          <CardTitle
-            number={2}
-            status={"in-progress"}
-            title={"Upload and View data"}
-          />
-          <CardTitle
-            number={2}
-            status={"complete"}
-            title={"Upload and View data"}
-          />
-        </div>
-
         {/* Component to handle file upload*/}
-        <FileUpload
-          handleRemoveFile={handleRemoveFile}
-          handleUpload={handleUpload}
+        <StepCard
+          cardInfo={{
+            number: 1,
+            status: "complete",
+            title: "Upload CSV or start with a blank table",
+          }}
+          childComponent={
+            <FileUpload
+              handleDataColdStart={handleDataColdStart}
+              handleRemoveFile={handleRemoveFile}
+              handleUpload={handleUpload}
+            />
+          }
         />
 
-        <div>
-          <h2>View and Edit your uploaded data</h2>
-          <DataView
-            headerWarning={headerVariableWarning}
-            tableData={tableData}
-            tableHeaderVariables={tableHeaderVariables}
-            handleAddHeaderVariable={handleAddHeaderVariable}
-            handleAddTableRow={handleAddTableRow}
-            handleDeleteHeaderVariable={handleDeleteHeaderVariable}
-            handleDeleteRow={handleDeleteRow}
-            handleHeaderEdit={handleHeaderEdit}
-            handleResetTableData={handleResetTableData}
-            handleSetTableDataFromLocalStorage={
-              handleSetTableDataFromLocalStorage
-            }
-            handleTableFieldEdit={handleTableFieldEdit}
-            handleValidEmailsUpdate={handleValidEmailsUpdate}
-          />
-          <br />
-          <button onClick={printData}>print data</button>
-        </div>
+        <StepCard
+          cardInfo={{
+            number: 2,
+            status: "in-progress",
+            title: "View and Edit your Data",
+          }}
+          childComponent={
+            <DataView
+              headerWarning={headerVariableWarning}
+              tableData={tableData}
+              tableHeaderVariables={tableHeaderVariables}
+              handleAddHeaderVariable={handleAddHeaderVariable}
+              handleAddTableRow={handleAddTableRow}
+              handleDeleteHeaderVariable={handleDeleteHeaderVariable}
+              handleDeleteRow={handleDeleteRow}
+              handleHeaderEdit={handleHeaderEdit}
+              handleResetTableData={handleResetTableData}
+              handleSetTableDataFromLocalStorage={
+                handleSetTableDataFromLocalStorage
+              }
+              handleTableFieldEdit={handleTableFieldEdit}
+              handleValidEmailsUpdate={handleValidEmailsUpdate}
+            />
+          }
+        />
+
+        <br />
+        <button onClick={printData}>print data</button>
 
         {/* Component to handle creating body of email */}
         <div>
