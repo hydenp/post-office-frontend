@@ -8,6 +8,7 @@ import BodyInput from "./components/BodyInput";
 import RequestHandler from "./components/RequestHandler";
 
 import testData from "./test_data.json";
+import CardTitle from "./components/CardTitle";
 
 function App() {
   const [bodyInput, setBodyInput] = useState("");
@@ -297,6 +298,24 @@ function App() {
         <button onClick={handleDataColdStart}>Cold Start</button>
         <button onClick={resetLocalStorage}>UNSET Local Storage</button>
         <button onClick={printStates}>Print Data</button>
+
+        <div>
+          <CardTitle
+            number={1}
+            status={"not-started"}
+            title={"Upload and View data"}
+          />
+          <CardTitle
+            number={2}
+            status={"in-progress"}
+            title={"Upload and View data"}
+          />
+          <CardTitle
+            number={2}
+            status={"complete"}
+            title={"Upload and View data"}
+          />
+        </div>
 
         {/* Component to handle file upload*/}
         <FileUpload
