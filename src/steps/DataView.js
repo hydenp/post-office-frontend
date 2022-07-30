@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-
-import white_x from "../assets/white_x.svg";
-import blue_x from "../assets/blue_x.svg";
+import DeleteSymbol from "../components/DeleteSymbol";
+import PlusSymbol from "../components/PlusSymbol";
+import PrimaryButton from "../components/PrimaryButton";
 
 // this is how the parsed data will be delivered from the parser
 // const testData = {
@@ -39,8 +39,7 @@ const DataHeader = ({ item, handleDeleteHeaderVariable, handleHeaderEdit }) => {
         display: "flex",
         alignItems: "center",
         borderStyle: "none",
-        backgroundColor: "red",
-        // backgroundColor: editable ? "#4B5C72" : "#192636",
+        backgroundColor: editable ? "#4B5C72" : "#192636",
       }}
     >
       <input
@@ -54,6 +53,7 @@ const DataHeader = ({ item, handleDeleteHeaderVariable, handleHeaderEdit }) => {
           borderRadius: 10,
           paddingLeft: 10,
           fontSize: 16,
+          fontWeight: editable ? 700 : null,
           color: "white",
           border: "none",
           backgroundColor: "transparent",
@@ -73,16 +73,7 @@ const DataHeader = ({ item, handleDeleteHeaderVariable, handleHeaderEdit }) => {
         onClick={() => handleDeleteHeaderVariable(item.index)}
         hidden={editable}
       >
-        <img
-          src={white_x}
-          alt="X"
-          hidden={!editable}
-          style={{
-            height: 20,
-            width: 20,
-            margin: 0,
-          }}
-        />
+        <DeleteSymbol dimension={20} color={"white"} hidden={!editable} />
       </button>
     </div>
   );
@@ -90,13 +81,19 @@ const DataHeader = ({ item, handleDeleteHeaderVariable, handleHeaderEdit }) => {
 
 const DataField = ({ item, handleFieldEdit }) => {
   const invalidStyle = {
-    // borderColor: "yellow",
+    borderColor: "rgba(205, 00, 00)",
+    backgroundColor: "white",
+    borderWidth: 2,
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  function validateEmail(email) {
+  function validateEmail(dataFieldValue) {
     if (item.key === "Recipient") {
-      return !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email);
+      return !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+        dataFieldValue
+      );
+    } else {
+      return dataFieldValue === "";
     }
   }
 
@@ -116,11 +113,16 @@ const DataField = ({ item, handleFieldEdit }) => {
       <input
         type="text"
         style={{
-          ...(validateEmail(item.value) ? invalidStyle : null),
-          border: "none",
+          ...(validateEmail(item.value)
+            ? invalidStyle
+            : {
+                borderWidth: 2,
+                borderColor: "#E8E8E8",
+              }),
           height: 35,
           width: 210,
           borderRadius: 10,
+          borderStyle: "solid",
           paddingLeft: 10,
           backgroundColor: "#E8E8E8",
         }}
@@ -131,22 +133,40 @@ const DataField = ({ item, handleFieldEdit }) => {
   );
 };
 
-const DataRow = ({ arrIndex, row, handleDeleteRow, handleFieldEdit }) => {
+const DataRow = ({
+  arrIndex,
+  dataLength,
+  row,
+  handleDeleteRow,
+  handleFieldEdit,
+}) => {
   const [mouseOver, setMouseOver] = useState(false);
   return (
     <div
       style={{
         display: "flex",
+        width: "fit-content",
         backgroundColor: mouseOver ? "#F6F6F6" : null,
-        // backgroundColor: "red",
         borderRadius: 10,
-        marginBottom: 6,
         marginTop: 6,
+        marginLeft: 25,
         borderColor: "red",
       }}
       onMouseEnter={() => setMouseOver(true)}
       onMouseLeave={() => setMouseOver(false)}
     >
+      <p
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: 35,
+          fontSize: 16,
+          fontWeight: 500,
+        }}
+      >
+        {parseInt(arrIndex) + 1}.
+      </p>
       {Object.keys(row).map((k) => (
         <DataField
           key={k}
@@ -160,24 +180,17 @@ const DataRow = ({ arrIndex, row, handleDeleteRow, handleFieldEdit }) => {
             all: "unset",
             background: "none",
             marginRight: 10,
-            width: 20,
+            marginLeft: 5,
+            width: 25,
             display: "flex",
             height: "100%",
             alignItems: "center",
             cursor: "pointer",
           }}
           onClick={() => handleDeleteRow(arrIndex)}
+          disabled={!mouseOver || dataLength < 2}
         >
-          <img
-            hidden={!mouseOver}
-            src={blue_x}
-            alt="X"
-            style={{
-              height: 20,
-              width: 20,
-              margin: 0,
-            }}
-          />
+          <DeleteSymbol dimension={20} color={"#192636"} hidden={!mouseOver} />
         </button>
       </div>
     </div>
@@ -200,6 +213,9 @@ const DataView = ({
   handleTableFieldEdit,
   handleValidEmailsUpdate,
 }) => {
+  const [mouseOverAddVarButton, setMouseOverAddVarButton] = useState(false);
+  const [mouseOverAddRowButton, setMouseOverAddRowButton] = useState(false);
+
   function cacheDataToLocalStore(key, data) {
     if (data !== null && data !== {}) {
       localStorage.setItem(key, JSON.stringify(data));
@@ -260,6 +276,7 @@ const DataView = ({
               backgroundColor: "white",
               borderRadius: 10,
               borderCollapse: "collapse",
+              paddingBottom: 10,
             }}
           >
             <div
@@ -271,15 +288,20 @@ const DataView = ({
               {/* table head*/}
               <div
                 style={{
-                  width: 1000,
                   borderTopLeftRadius: 20,
                   borderTopRightRadius: 20,
+                  paddingLeft: 25,
                   height: 60,
                   display: "flex",
                   alignItems: "center",
                   backgroundColor: "#192636",
                 }}
               >
+                <div
+                  style={{
+                    width: 35,
+                  }}
+                ></div>
                 {Object.keys(tableHeaderVariables).map((k) => (
                   <DataHeader
                     key={k}
@@ -288,7 +310,6 @@ const DataView = ({
                     handleHeaderEdit={handleHeaderEdit}
                   />
                 ))}
-                <button onClick={handleAddHeaderVariable}>Add Variable</button>
                 <div
                   style={{
                     backgroundColor: "#192636",
@@ -297,26 +318,87 @@ const DataView = ({
                 ></div>
               </div>
             </div>
+            {/* table body */}
             <div
               style={{
-                backgroundColor: "white",
-                paddingBottom: 10,
+                display: "flex",
               }}
             >
-              {Object.keys(tableData).map((k) => (
-                <DataRow
-                  key={k}
-                  arrIndex={k}
-                  row={tableData[k]}
-                  handleFieldEdit={handleTableFieldEdit}
-                  handleDeleteRow={handleDeleteRow}
-                />
-              ))}
+              <div
+                style={{
+                  width: "fit-content",
+                }}
+              >
+                {Object.keys(tableData).map((k) => (
+                  <DataRow
+                    key={k}
+                    arrIndex={k}
+                    dataLength={tableData.length}
+                    row={tableData[k]}
+                    handleFieldEdit={handleTableFieldEdit}
+                    handleDeleteRow={handleDeleteRow}
+                  />
+                ))}
+                {/* Add Row*/}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: 0,
+                    marginLeft: 35 + 35,
+                    marginRight: 35 + 10,
+                    borderRadius: 10,
+                    height: 32,
+                    marginTop: 6,
+                    marginBottom: 6,
+                    backgroundColor: mouseOverAddRowButton
+                      ? "#E8E8E8"
+                      : "#F6F6F6",
+                  }}
+                  onClick={() => handleAddTableRow()}
+                  onMouseEnter={() => setMouseOverAddRowButton(true)}
+                  onMouseLeave={() => setMouseOverAddRowButton(false)}
+                >
+                  <PlusSymbol
+                    color={"#192636"}
+                    dimension={15}
+                    style={{
+                      marginRight: 5,
+                    }}
+                  />
+                  <p>Add Row</p>
+                </div>
+              </div>
+              {/* Add Variable */}
+              <div
+                style={{
+                  borderRadius: 10,
+                  marginLeft: 20,
+                  marginRight: 20,
+                  marginTop: 6,
+                  width: 50,
+                  backgroundColor: mouseOverAddVarButton ? "#F6F6F6" : null,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                onClick={() => handleAddHeaderVariable()}
+                onMouseEnter={() => setMouseOverAddVarButton(true)}
+                onMouseLeave={() => setMouseOverAddVarButton(false)}
+              >
+                <PlusSymbol color={"#192636"} dimension={30} />
+              </div>
             </div>
           </div>
-          <div>
-            <button onClick={handleAddTableRow}>add row</button>
-            <button onClick={handleResetTableData}>Reset</button>
+          <div
+            style={{
+              padding: 10,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <PrimaryButton title={"Clear"} onClick={handleResetTableData} />
           </div>
         </div>
       ) : (

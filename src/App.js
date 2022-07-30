@@ -1,11 +1,11 @@
 import "./App.css";
 
-import GoogleOauth from "./components/GoogleAuth";
-import FileUpload from "./components/FileUpload";
+import GoogleOauth from "./steps/GoogleAuth";
+import FileUpload from "./steps/FileUpload";
 import { useEffect, useState } from "react";
-import DataView from "./components/DataView";
-import BodyInput from "./components/BodyInput";
-import RequestHandler from "./components/RequestHandler";
+import DataView from "./steps/DataView";
+import BodyInput from "./steps/BodyInput";
+import RequestHandler from "./steps/RequestHandler";
 
 import testData from "./test_data.json";
 import StepCard from "./components/StepCard";
@@ -200,7 +200,11 @@ function App() {
 
   function handleDataColdStart() {
     setTableHeaderVariables(["Recipient", "Subject"]);
-    setTableData([]);
+    const blankRow = {
+      Recipient: "",
+      Subject: "",
+    };
+    setTableData([blankRow]);
   }
 
   function handleRemoveFile() {
@@ -308,6 +312,7 @@ function App() {
           }}
           childComponent={
             <FileUpload
+              tableData={tableData}
               handleDataColdStart={handleDataColdStart}
               handleRemoveFile={handleRemoveFile}
               handleUpload={handleUpload}

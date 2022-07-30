@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import CardTitle from "./CardTitle";
 
-const StepCard = ({ cardInfo, childComponent }) => {
+const StepCard = ({ cardInfo, childComponent, footer }) => {
   const [show, setShow] = useState(true);
 
   return (
@@ -22,27 +22,43 @@ const StepCard = ({ cardInfo, childComponent }) => {
             : null,
       }}
     >
-      <CardTitle
-        number={cardInfo.number}
-        status={cardInfo.status}
-        title={cardInfo.title}
-      />
+      <div
+        onClick={() => setShow(!show)}
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "flex-start",
+          cursor: "pointer",
+        }}
+      >
+        <CardTitle
+          number={cardInfo.number}
+          status={cardInfo.status}
+          title={cardInfo.title}
+        />
+      </div>
       <div
         style={{
-          // backgroundColor: "yellow",
+          display: show ? "flex" : "none",
+          alignContent: "flex-start",
           marginTop: 20,
           marginLeft: 60,
-          display: show ? "block" : "none",
+          overflow: "scroll auto",
+          scrollbarColor: "#E8E8E8 transparent",
         }}
       >
         {childComponent}
       </div>
-      <div style={{ height: 20 }}></div>
-      <button onClick={() => setShow(!show)}>show/hide</button>
+      <div
+        style={{
+          marginLeft: 60,
+          padding: footer ? 10 : 0,
+        }}
+      >
+        {footer}
+      </div>
     </div>
   );
 };
-
-StepCard.propTypes = {};
 
 export default StepCard;

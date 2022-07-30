@@ -1,8 +1,7 @@
-import {GoogleOAuthProvider, useGoogleLogin} from "@react-oauth/google";
+import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
-const Login = ({handleGoogleLogin}) => {
-
+const Login = ({ handleGoogleLogin }) => {
   async function getGoogleProfile(accessToken) {
     return axios.get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json", {
       headers: {
@@ -27,12 +26,12 @@ const Login = ({handleGoogleLogin}) => {
   return <button onClick={() => login()}>Sign In with Google</button>;
 };
 
-const GoogleOauth = ({handleGoogleLogin}) => {
+const GoogleOauth = ({ handleGoogleLogin }) => {
   return (
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-      <br/>
-      <Login handleGoogleLogin={handleGoogleLogin}/>
-      <hr/>
+      <br />
+      <Login handleGoogleLogin={handleGoogleLogin} />
+      <hr />
     </GoogleOAuthProvider>
   );
 };
