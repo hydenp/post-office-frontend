@@ -345,7 +345,7 @@ function App() {
         <StepCard
           cardInfo={{
             number: 3,
-            status: "in-progress",
+            status: "complete",
             title: "Create a Template Body for your Emails",
           }}
           childComponent={
@@ -358,10 +358,20 @@ function App() {
         />
 
         {/* Component to start google oauth flow, store it in state variable and print token */}
-        <div>
-          <h2>Get Google the Keys</h2>
-          <GoogleOauth handleGoogleLogin={handleGoogleLogin} />
-        </div>
+        <StepCard
+          cardInfo={{
+            number: 4,
+            status: "in-progress",
+            title: "Authorize Google",
+          }}
+          childComponent={
+            <GoogleOauth
+              profileInfo={profileInfo}
+              token={token}
+              handleGoogleLogin={handleGoogleLogin}
+            />
+          }
+        />
 
         <div
           style={{
