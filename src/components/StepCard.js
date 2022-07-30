@@ -45,6 +45,7 @@ const StepCard = ({ cardInfo, childComponent, footer }) => {
           marginLeft: 60,
           overflow: "scroll auto",
           scrollbarColor: "#E8E8E8 transparent",
+          // backgroundColor: "yellow",
         }}
       >
         {childComponent}
@@ -52,7 +53,6 @@ const StepCard = ({ cardInfo, childComponent, footer }) => {
       <div
         style={{
           marginLeft: 60,
-          padding: footer ? 10 : 0,
         }}
       >
         {footer}

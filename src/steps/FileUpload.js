@@ -256,10 +256,11 @@ const CSVReader = ({
           <p
             style={{
               margin: 0,
+              color: "#676767",
             }}
           >
             This step is complete, you can clear your data below if you'd like
-            to restart here
+            to restart this step.
           </p>
         </div>
       )}

@@ -28,12 +28,6 @@ function App() {
     setBodyInput(testData.bodyInput);
   }
 
-  function printData() {
-    console.log("Data ------");
-    console.log(tableData);
-    console.log(bodyInput);
-  }
-
   function printStates() {
     console.log("headers = ", tableHeaderVariables);
     console.log("data = ", tableData);
@@ -65,10 +59,10 @@ function App() {
     }
   }
 
-  function handleResetBodyInput() {
-    setBodyInput("");
-    localStorage.removeItem("bodyInput");
-  }
+  // function handleResetBodyInput() {
+  //   setBodyInput("");
+  //   localStorage.removeItem("bodyInput");
+  // }
 
   // COMPONENT: DataView
 
@@ -303,12 +297,12 @@ function App() {
         <button onClick={resetLocalStorage}>UNSET Local Storage</button>
         <button onClick={printStates}>Print Data</button>
 
-        {/* Component to handle file upload*/}
+        {/*File upload step */}
         <StepCard
           cardInfo={{
             number: 1,
             status: "complete",
-            title: "Upload CSV or start with a blank table",
+            title: "Upload CSV or start with a Blank Data Table",
           }}
           childComponent={
             <FileUpload
@@ -320,10 +314,11 @@ function App() {
           }
         />
 
+        {/* View end Edit the data step */}
         <StepCard
           cardInfo={{
             number: 2,
-            status: "in-progress",
+            status: "complete",
             title: "View and Edit your Data",
           }}
           childComponent={
@@ -346,19 +341,21 @@ function App() {
           }
         />
 
-        <br />
-        <button onClick={printData}>print data</button>
-
-        {/* Component to handle creating body of email */}
-        <div>
-          <h2>Create a body for your email</h2>
-          <BodyInput
-            bodyInput={bodyInput}
-            variableNames={tableHeaderVariables}
-            handleBodyInputChange={handleBodyInputChange}
-            handleResetBodyInput={handleResetBodyInput}
-          />
-        </div>
+        {/* Creating body of email step */}
+        <StepCard
+          cardInfo={{
+            number: 3,
+            status: "in-progress",
+            title: "Create a Template Body for your Emails",
+          }}
+          childComponent={
+            <BodyInput
+              bodyInput={bodyInput}
+              variableNames={tableHeaderVariables}
+              handleBodyInputChange={handleBodyInputChange}
+            />
+          }
+        />
 
         {/* Component to start google oauth flow, store it in state variable and print token */}
         <div>

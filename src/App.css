@@ -34,6 +34,10 @@
   color: #61dafb;
 }
 
+.p {
+  margin: 0;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -73,4 +77,20 @@ table {
 ::-webkit-scrollbar-thumb {
   background: #E8E8E8;
   -webkit-border-radius: 1ex;
+}
+
+/* remove styling from text area */
+textarea {
+  border: none;
+  overflow: auto;
+  outline: none;
+  padding: 20px;
+
+  font-family: Inter, serif;
+  font-size: 16px;
+
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  resize: none; /*remove the resize handle on the bottom right*/
 }

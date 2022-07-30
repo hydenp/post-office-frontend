@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
+import VariablePill from "../components/VariablePill";
 
-const BodyInput = ({
-  bodyInput,
-  variableNames,
-  handleBodyInputChange,
-  handleResetBodyInput,
-}) => {
+const BodyInput = ({ bodyInput, variableNames, handleBodyInputChange }) => {
   const [hangingVariables, setHangingVariables] = useState([]);
   const [headerVariables, setHeaderVariables] = useState([]);
+  const [allVars, setAllVars] = useState([]);
 
   // FUNCTIONS
 
@@ -77,50 +74,151 @@ const BodyInput = ({
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    setAllVars([...headerVariables, ...hangingVariables]);
+  }, [headerVariables, hangingVariables]);
+
   return (
-    <div>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        {Object.keys(headerVariables)
-          .filter(
-            (r) => ["Recipient", "Subject"].indexOf(headerVariables[r]) === -1
-          )
-          .map((k) => (
+    <div
+      style={{
+        width: "100%",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          color: "#676767",
+        }}
+      >
+        <p
+          style={{
+            marginTop: 0,
+            textAlign: "left",
+          }}
+        >
+          You can access the variables using the this syntax:{" "}
+          {"{variable_name}"}
+        </p>
+      </div>
+      <div
+        style={{
+          display: hangingVariables.length > 0 ? "flex" : "none",
+          alignItems: "center",
+          borderRadius: 10,
+          paddingLeft: 10,
+          marginBottom: 10,
+
+          backgroundColor: "rgba(254, 249, 167, 0.5)",
+        }}
+      >
+        <p>Looks like you tried using a</p>
+        <VariablePill
+          title={"variable"}
+          type={"warning"}
+          style={{
+            marginLeft: 10,
+            marginRight: 10,
+          }}
+        />
+        <p> that is not in the table data</p>
+      </div>
+
+      {/* text input*/}
+      <div
+        style={{
+          display: "flex",
+          width: "100%",
+          flexDirection: "column",
+        }}
+      >
+        {/* header */}
+        <div
+          style={{
+            minHeight: 60,
+            height: "auto",
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            width: "100%",
+            paddingBottom: allVars.length > 2 ? 15 : 0,
+            borderTopLeftRadius: 10,
+            borderTopRightRadius: 10,
+            backgroundColor: "#192636",
+          }}
+        >
+          {/*  list of variables in header */}
+          {allVars.length > 2 ? (
+            Object.keys(allVars)
+              .filter(
+                (r) =>
+                  ["Recipient", "Subject"].indexOf(headerVariables[r]) === -1
+              )
+              .map((k) => {
+                if (
+                  headerVariables.includes(allVars[k]) &&
+                  bodyInput.indexOf(`{${allVars[k]}}`) !== -1
+                ) {
+                  return (
+                    <VariablePill
+                      key={k}
+                      title={allVars[k]}
+                      type={"used"}
+                      style={{
+                        marginLeft: 15,
+                        marginTop: 15,
+                      }}
+                    />
+                  );
+                } else {
+                  if (bodyInput.indexOf(`{${allVars[k]}}`) !== -1) {
+                    return (
+                      <VariablePill
+                        key={k}
+                        title={allVars[k]}
+                        type={"warning"}
+                        style={{
+                          marginLeft: 15,
+                          marginTop: 15,
+                        }}
+                      />
+                    );
+                  } else {
+                    return (
+                      <VariablePill
+                        key={k}
+                        title={allVars[k]}
+                        type={"unused"}
+                        style={{
+                          marginLeft: 15,
+                          marginTop: 15,
+                        }}
+                      />
+                    );
+                  }
+                }
+              })
+          ) : (
             <p
-              key={k}
               style={{
-                padding: 3,
-                color:
-                  bodyInput.indexOf(`{${headerVariables[k]}}`) !== -1
-                    ? "green"
-                    : "red",
+                marginLeft: 10,
+                color: "white",
               }}
             >
-              {headerVariables[k]}
+              You can add variables in the previous step
             </p>
-          ))}
+          )}
+        </div>
+        <textarea
+          placeholder="Start your email template here..."
+          value={bodyInput}
+          style={{
+            height: 240,
+            borderBottomLeftRadius: 5,
+            borderBottomRightRadius: 5,
+          }}
+          onChange={(event) => updateVariable(event)}
+        ></textarea>
       </div>
-      <div hidden={!(hangingVariables.length > 0)}>
-        <p>
-          Looks like you tried using a variable that is not in the table data
-        </p>
-        {hangingVariables.map((v) => (
-          <p
-            key={v}
-            style={{
-              backgroundColor: "yellow",
-            }}
-          >
-            {v}
-          </p>
-        ))}
-      </div>
-      <textarea
-        value={bodyInput}
-        rows="20"
-        cols="100"
-        onChange={(event) => updateVariable(event)}
-      ></textarea>
-      <button onClick={handleResetBodyInput}>Clear</button>
     </div>
   );
 };

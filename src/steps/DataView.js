@@ -25,9 +25,6 @@ import PrimaryButton from "../components/PrimaryButton";
 const DataHeader = ({ item, handleDeleteHeaderVariable, handleHeaderEdit }) => {
   const editable = !(item.value === "Recipient" || item.value === "Subject");
 
-  console.log(item);
-  console.log("var", item.value, "editable =", editable);
-
   return (
     <div
       key={item.index}
@@ -268,13 +265,29 @@ const DataView = ({
     >
       {tableHeaderVariables !== null ? (
         <div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-start",
+            }}
+          >
+            <p
+              style={{
+                marginTop: 0,
+                color: "#676767",
+              }}
+            >
+              View and edit all of your data. Every cell must have a value in
+              order to proceed.
+            </p>
+          </div>
           <p hidden={!headerWarning} style={{ backgroundColor: "yellow" }}>
             Please make sure all table headers are unique
           </p>
           <div
             style={{
               backgroundColor: "white",
-              borderRadius: 10,
+              borderRadius: 20,
               borderCollapse: "collapse",
               paddingBottom: 10,
             }}
