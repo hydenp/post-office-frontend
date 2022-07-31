@@ -361,7 +361,7 @@ function App() {
         <StepCard
           cardInfo={{
             number: 4,
-            status: "in-progress",
+            status: "complete",
             title: "Authorize Google",
           }}
           childComponent={
@@ -373,21 +373,26 @@ function App() {
           }
         />
 
-        <div
-          style={{
-            marginBottom: 50,
+        {/* Component to handle sending of request and displaying response*/}
+
+        <StepCard
+          cardInfo={{
+            number: 5,
+            status: "in-progress",
+            title: "Review and Send",
           }}
-        >
-          {/* Component to handle sending of request and displaying response*/}
-          <RequestHandler
-            body={bodyInput}
-            data={tableData}
-            token={token}
-            validEmails={validEmails}
-            handleResetInputRequest={handleResetInputRequest}
-            handleResetToken={handleResetToken}
-          />
-        </div>
+          childComponent={
+            <RequestHandler
+              body={bodyInput}
+              data={tableData}
+              profileInfo={profileInfo}
+              token={token}
+              validEmails={validEmails}
+              handleResetInputRequest={handleResetInputRequest}
+              handleResetToken={handleResetToken}
+            />
+          }
+        />
       </div>
     </div>
   );

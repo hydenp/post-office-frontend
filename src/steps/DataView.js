@@ -50,7 +50,6 @@ const DataHeader = ({ item, handleDeleteHeaderVariable, handleHeaderEdit }) => {
           borderRadius: 10,
           paddingLeft: 10,
           fontSize: 16,
-          fontWeight: editable ? 700 : null,
           color: "white",
           border: "none",
           backgroundColor: "transparent",
@@ -179,7 +178,7 @@ const DataRow = ({
             marginRight: 10,
             marginLeft: 5,
             width: 25,
-            display: "flex",
+            display: dataLength > 1 ? "flex" : "none",
             height: "100%",
             alignItems: "center",
             cursor: "pointer",
@@ -212,6 +211,7 @@ const DataView = ({
 }) => {
   const [mouseOverAddVarButton, setMouseOverAddVarButton] = useState(false);
   const [mouseOverAddRowButton, setMouseOverAddRowButton] = useState(false);
+  const [mouseOverClearData, setMouseOverClearData] = useState(false);
 
   function cacheDataToLocalStore(key, data) {
     if (data !== null && data !== {}) {
@@ -275,6 +275,7 @@ const DataView = ({
               style={{
                 marginTop: 0,
                 color: "#676767",
+                // textAlign: "left",
               }}
             >
               View and edit all of your data. Every cell must have a value in
@@ -358,6 +359,7 @@ const DataView = ({
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
+                    cursor: "pointer",
                     margin: 0,
                     marginLeft: 35 + 35,
                     marginRight: 35 + 10,
@@ -382,6 +384,36 @@ const DataView = ({
                   />
                   <p>Add Row</p>
                 </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    margin: 0,
+                    marginLeft: 35 + 35,
+                    marginRight: 35 + 10,
+                    borderRadius: 10,
+                    height: 32,
+                    marginTop: 6,
+                    marginBottom: 6,
+                    backgroundColor: mouseOverClearData ? "#E8E8E8" : "#F6F6F6",
+                  }}
+                  onClick={() => {
+                    handleResetTableData();
+                    setMouseOverClearData(false);
+                  }}
+                  onMouseEnter={() => setMouseOverClearData(true)}
+                  onMouseLeave={() => setMouseOverClearData(false)}
+                >
+                  <p
+                    style={{
+                      color: "rgba(205, 00, 00)",
+                    }}
+                  >
+                    Clear All Values
+                  </p>
+                </div>
               </div>
               {/* Add Variable */}
               <div
@@ -404,18 +436,15 @@ const DataView = ({
               </div>
             </div>
           </div>
-          <div
-            style={{
-              padding: 10,
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <PrimaryButton title={"Clear"} onClick={handleResetTableData} />
-          </div>
         </div>
       ) : (
-        <p>Upload a CSV above to get started!</p>
+        <p
+          style={{
+            color: "#676767",
+          }}
+        >
+          Upload a CSV above to get started!
+        </p>
       )}
     </div>
   );

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ResponseView from "./ResponseView";
+import PrimaryButton from "../components/PrimaryButton";
 
 const RequestHandler = ({
   body,
   data,
+  profileInfo,
   token,
   handleResetInputRequest,
   handleResetToken,
@@ -90,17 +92,42 @@ const RequestHandler = ({
         if (requestSent === false) {
           return (
             <>
-              <h2>Send Mail</h2>
-              <p style={{ color: validEmails ? "green" : "red" }}>Data Ready</p>
-              <p style={{ color: body ? "green" : "red" }}>Body Added</p>
+              <p style={{ color: validEmails ? "green" : "red" }}>
+                Data uploaded and Ready
+              </p>
+              <p style={{ color: body ? "green" : "red" }}>
+                Body Template Added
+              </p>
               <p style={{ color: token ? "green" : "red" }}>
-                Signed in with Google
+                Google Authorized
               </p>
               <br />
               <br />
-              <button onClick={makeRequest} disabled={!requestReady}>
-                Send Emails
-              </button>
+              {profileInfo ? (
+                <div
+                  style={{
+                    display: "flex",
+                  }}
+                >
+                  <PrimaryButton
+                    title={`Send ${data ? data.length : ""} email(s)`}
+                    onClick={makeRequest}
+                    disabled={!requestReady}
+                  />
+                  <p
+                    style={{
+                      marginLeft: 10,
+                    }}
+                  >
+                    from the address{" "}
+                    <span style={{ color: "#0066FF" }}>
+                      {profileInfo.email}
+                    </span>
+                  </p>
+                </div>
+              ) : (
+                <p> sign in plz </p>
+              )}
             </>
           );
         } else if (requestSent && requestInProgress) {
@@ -110,7 +137,9 @@ const RequestHandler = ({
             <ul>
               <h2>Mail Status</h2>
               <ResponseView response={response} />
-              <button onClick={() => setRequestSent(false)}>Send more!</button>
+              <PrimaryButton onClick={() => setRequestSent(false)}>
+                Send more!
+              </PrimaryButton>
             </ul>
           );
         }

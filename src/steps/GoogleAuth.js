@@ -62,7 +62,6 @@ const Login = ({ handleGoogleLogin, title }) => {
 };
 
 const GoogleOauth = ({ profileInfo, token, handleGoogleLogin }) => {
-  console.log(profileInfo);
   return (
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
       <div>

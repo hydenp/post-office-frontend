@@ -16,7 +16,7 @@ const PrimaryButton = ({ title, disabled, onClick, style }) => {
         paddingTop: 10,
         paddingBottom: 10,
         cursor: "pointer",
-        backgroundColor: "#0066FF",
+        backgroundColor: disabled ? "#676767" : "#0066FF",
         color: "white",
         fontWeight: 500,
         fontSize: 16,
