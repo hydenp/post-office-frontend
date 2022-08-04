@@ -13,10 +13,7 @@ const Login = ({ handleGoogleLogin, title }) => {
   }
 
   const login = useGoogleLogin({
-    scopes: [
-      "https://www.googleapis.com/auth/gmail.send",
-      "https://www.googleapis.com/auth/userinfo.profile",
-    ],
+    scope: "https://www.googleapis.com/auth/gmail.send",
     onSuccess: async (tokenResponse) => {
       await getGoogleProfile(tokenResponse.access_token).then((r) => {
         console.log(r);

@@ -284,7 +284,7 @@ function App() {
     <div className="App">
       <div
         style={{
-          width: "70%",
+          width: "90%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
@@ -292,16 +292,16 @@ function App() {
       >
         <h1>PostOffice</h1>
         <button onClick={loadTestData}>Set Data</button>
-        <button onClick={unsetTestData}>UNSET Data</button>
-        <button onClick={handleDataColdStart}>Cold Start</button>
-        <button onClick={resetLocalStorage}>UNSET Local Storage</button>
-        <button onClick={printStates}>Print Data</button>
+        {/*<button onClick={unsetTestData}>UNSET Data</button>*/}
+        {/*<button onClick={handleDataColdStart}>Cold Start</button>*/}
+        {/*<button onClick={resetLocalStorage}>UNSET Local Storage</button>*/}
+        {/*<button onClick={printStates}>Print Data</button>*/}
 
         {/*File upload step */}
         <StepCard
           cardInfo={{
             number: 1,
-            status: "complete",
+            status: "not-started",
             title: "Upload CSV or start with a Blank Data Table",
           }}
           childComponent={

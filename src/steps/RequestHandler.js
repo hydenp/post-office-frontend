@@ -1,22 +1,28 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import ResponseView from "./ResponseView";
 import PrimaryButton from "../components/PrimaryButton";
+import StepStatus from "../components/StepStatus";
+
+const requestStatuses = {
+  notSent: 0,
+  sending: 1,
+  complete: 2,
+};
 
 const RequestHandler = ({
   body,
   data,
   profileInfo,
   token,
+  validEmails,
   handleResetInputRequest,
   handleResetToken,
-  validEmails,
 }) => {
   const [request, setRequest] = useState({});
   const [requestReady, setRequestReady] = useState(false);
-  const [requestInProgress, setRequestInProgress] = useState(false);
-  const [requestSent, setRequestSent] = useState(false);
   const [response, setResponse] = useState(null);
+  const [requestStatus, setRequestStatus] = useState(requestStatuses.notSent);
+  // const [requestStatus, setRequestStatus] = useState(requestStatuses.sending);
 
   // DEBUG/DEV
   function test() {
@@ -50,10 +56,15 @@ const RequestHandler = ({
       newRequest.emails.push(email);
     }
     newRequest.auth.token = token.token.access_token;
+    // newRequest.auth.token = "broke";
     return newRequest;
   }
 
   function makeRequest() {
+    return axios.post(process.env.REACT_APP_AWS_GATEWAY_DEV_API, request);
+  }
+
+  async function handleRequest() {
     if (new Date().getTime() > token.expiry) {
       //  make sure the token is still valid before sending the request
       handleResetToken();
@@ -61,16 +72,12 @@ const RequestHandler = ({
         "The Google token is no longer valid, please sign in again!"
       );
     } else {
-      setRequestSent(true);
-      setRequestInProgress(true);
-      axios
-        .post(process.env.REACT_APP_AWS_GATEWAY_DEV_API, request)
-        .then((response) => {
-          console.log(response);
-          setResponse(response);
-          setRequestInProgress(false);
-          handleResetInputRequest();
-        });
+      // set status to sending
+      setRequestStatus(requestStatuses.sending);
+      await makeRequest().then((r) => {
+        setResponse(r);
+      });
+      setRequestStatus(requestStatuses.complete);
     }
   }
 
@@ -87,22 +94,23 @@ const RequestHandler = ({
 
   return (
     <div>
-      <button onClick={test}>Print request</button>
+      {/*<button onClick={test}>Print request</button>*/}
       {(() => {
-        if (requestSent === false) {
+        if (requestStatus === requestStatuses.notSent) {
           return (
-            <>
-              <p style={{ color: validEmails ? "green" : "red" }}>
-                Data uploaded and Ready
-              </p>
-              <p style={{ color: body ? "green" : "red" }}>
-                Body Template Added
-              </p>
-              <p style={{ color: token ? "green" : "red" }}>
-                Google Authorized
-              </p>
-              <br />
-              <br />
+            <div>
+              <StepStatus
+                title={"Data Upload and Ready"}
+                status={validEmails ? "complete" : ""}
+              />
+              <StepStatus
+                title={"Body Template Added"}
+                status={body ? "complete" : ""}
+              />
+              <StepStatus
+                title={"Google Authorized"}
+                status={token ? "complete" : ""}
+              />
               {profileInfo ? (
                 <div
                   style={{
@@ -111,7 +119,7 @@ const RequestHandler = ({
                 >
                   <PrimaryButton
                     title={`Send ${data ? data.length : ""} email(s)`}
-                    onClick={makeRequest}
+                    onClick={() => handleRequest()}
                     disabled={!requestReady}
                   />
                   <p
@@ -126,22 +134,63 @@ const RequestHandler = ({
                   </p>
                 </div>
               ) : (
-                <p> sign in plz </p>
+                <p>Sign In with Google above to send!</p>
               )}
-            </>
+            </div>
           );
-        } else if (requestSent && requestInProgress) {
-          return <p>Request Sending!!!</p>;
-        } else {
+        } else if (requestStatus === requestStatuses.sending) {
           return (
-            <ul>
-              <h2>Mail Status</h2>
-              <ResponseView response={response} />
-              <PrimaryButton onClick={() => setRequestSent(false)}>
-                Send more!
-              </PrimaryButton>
-            </ul>
+            <div
+              style={{
+                // backgroundColor: "yellow",
+                display: "flex",
+                alignItems: "flex-start",
+                alignContent: "flex-start",
+                justifyContent: "flex-start",
+              }}
+            >
+              <p
+                style={{
+                  marginRight: 15,
+                }}
+              >
+                Sending emails (hopefully)
+              </p>
+              <div className="loading-spinner"></div>
+            </div>
           );
+        } else if (requestStatus === requestStatuses.complete) {
+          if (response.data.status === "success") {
+            return (
+              <>
+                <StepStatus
+                  title={"All messages successfully sent"}
+                  status={"complete"}
+                />
+                <PrimaryButton
+                  onClick={() => {
+                    handleResetInputRequest();
+                    setRequestStatus(requestStatuses.notSent);
+                  }}
+                  title={"Clear input and Send More :)"}
+                />
+              </>
+            );
+          } else {
+            return (
+              <>
+                <StepStatus
+                  title={"Bad Sign In! Please try Authorizing Google again!"}
+                  status={"not-complete"}
+                />
+                <PrimaryButton
+                  title={"Okay"}
+                  disabled={false}
+                  onClick={() => setRequestStatus(requestStatuses.notSent)}
+                />
+              </>
+            );
+          }
         }
       })()}
     </div>
