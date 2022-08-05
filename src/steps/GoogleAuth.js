@@ -1,11 +1,15 @@
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+import { colors } from "../assets/colors";
 
 import GmailIcon from "../assets/gmail.svg";
 
+const PROFILE_URL = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json";
+const GOOGLE_API_SCOPE = "https://www.googleapis.com/auth/gmail.send";
+
 const Login = ({ handleGoogleLogin, title }) => {
   async function getGoogleProfile(accessToken) {
-    return axios.get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json", {
+    return axios.get(PROFILE_URL, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -13,7 +17,7 @@ const Login = ({ handleGoogleLogin, title }) => {
   }
 
   const login = useGoogleLogin({
-    scope: "https://www.googleapis.com/auth/gmail.send",
+    scope: GOOGLE_API_SCOPE,
     onSuccess: async (tokenResponse) => {
       await getGoogleProfile(tokenResponse.access_token).then((r) => {
         console.log(r);
@@ -23,7 +27,6 @@ const Login = ({ handleGoogleLogin, title }) => {
   });
 
   return (
-    // <div>
     <button
       style={{
         height: 50,
@@ -36,7 +39,7 @@ const Login = ({ handleGoogleLogin, title }) => {
 
         borderRadius: 10,
         borderStyle: "solid",
-        borderColor: "#0066FF",
+        borderColor: colors.ACCENT,
         cursor: "pointer",
         flexWrap: "nowrap",
         alignContent: "center",
@@ -46,14 +49,14 @@ const Login = ({ handleGoogleLogin, title }) => {
     >
       <p
         style={{
-          color: "#0066FF",
+          color: colors.ACCENT,
           fontSize: 16,
           marginRight: 10,
         }}
       >
         {title}
       </p>
-      <img src={GmailIcon} alt="" />
+      <img src={GmailIcon} alt="gmail" />
     </button>
   );
 };
@@ -70,7 +73,7 @@ const GoogleOauth = ({ profileInfo, token, handleGoogleLogin }) => {
             }}
           >
             Welcome{" "}
-            <span style={{ color: "#0066FF" }}>{profileInfo.email}</span>
+            <span style={{ color: colors.ACCENT }}>{profileInfo.email}</span>
           </p>
         ) : (
           <p

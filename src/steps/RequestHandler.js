@@ -3,10 +3,13 @@ import axios from "axios";
 import PrimaryButton from "../components/PrimaryButton";
 import StepStatus from "../components/StepStatus";
 
-const requestStatuses = {
-  notSent: 0,
+import SpinnerCSS from "../assets/Spinner.module.css";
+import { colors } from "../assets/colors";
+
+const requestStates = {
+  unsent: 0,
   sending: 1,
-  complete: 2,
+  sent: 2,
 };
 
 const RequestHandler = ({
@@ -21,14 +24,15 @@ const RequestHandler = ({
   const [request, setRequest] = useState({});
   const [requestReady, setRequestReady] = useState(false);
   const [response, setResponse] = useState(null);
-  const [requestStatus, setRequestStatus] = useState(requestStatuses.notSent);
-  // const [requestStatus, setRequestStatus] = useState(requestStatuses.sending);
+  const [currentRequestState, setCurrentRequestState] = useState(
+    requestStates.sending
+  );
 
   // DEBUG/DEV
-  function test() {
-    console.log(request);
-    console.log(requestReady);
-  }
+  // function test() {
+  //   console.log(request);
+  //   console.log(requestReady);
+  // }
 
   // FUNCTIONS
 
@@ -73,11 +77,11 @@ const RequestHandler = ({
       );
     } else {
       // set status to sending
-      setRequestStatus(requestStatuses.sending);
+      setCurrentRequestState(requestStates.sending);
       await makeRequest().then((r) => {
         setResponse(r);
       });
-      setRequestStatus(requestStatuses.complete);
+      setCurrentRequestState(requestStates.sent);
     }
   }
 
@@ -96,7 +100,7 @@ const RequestHandler = ({
     <div>
       {/*<button onClick={test}>Print request</button>*/}
       {(() => {
-        if (requestStatus === requestStatuses.notSent) {
+        if (currentRequestState === requestStates.unsent) {
           return (
             <div>
               <StepStatus
@@ -128,7 +132,7 @@ const RequestHandler = ({
                     }}
                   >
                     from the address{" "}
-                    <span style={{ color: "#0066FF" }}>
+                    <span style={{ color: colors.ACCENT }}>
                       {profileInfo.email}
                     </span>
                   </p>
@@ -138,11 +142,10 @@ const RequestHandler = ({
               )}
             </div>
           );
-        } else if (requestStatus === requestStatuses.sending) {
+        } else if (currentRequestState === requestStates.sending) {
           return (
             <div
               style={{
-                // backgroundColor: "yellow",
                 display: "flex",
                 alignItems: "flex-start",
                 alignContent: "flex-start",
@@ -156,10 +159,10 @@ const RequestHandler = ({
               >
                 Sending emails (hopefully)
               </p>
-              <div className="loading-spinner"></div>
+              <div className={SpinnerCSS.loadingSpinner}></div>
             </div>
           );
-        } else if (requestStatus === requestStatuses.complete) {
+        } else if (currentRequestState === requestStates.sent) {
           if (response.data.status === "success") {
             return (
               <>
@@ -170,7 +173,7 @@ const RequestHandler = ({
                 <PrimaryButton
                   onClick={() => {
                     handleResetInputRequest();
-                    setRequestStatus(requestStatuses.notSent);
+                    setCurrentRequestState(requestStates.unsent);
                   }}
                   title={"Clear input and Send More :)"}
                 />
@@ -186,7 +189,7 @@ const RequestHandler = ({
                 <PrimaryButton
                   title={"Okay"}
                   disabled={false}
-                  onClick={() => setRequestStatus(requestStatuses.notSent)}
+                  onClick={() => setCurrentRequestState(requestStates.unsent)}
                 />
               </>
             );

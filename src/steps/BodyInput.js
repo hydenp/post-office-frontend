@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import VariablePill from "../components/VariablePill";
+import { colors } from "../assets/colors";
 
 const BodyInput = ({ bodyInput, variableNames, handleBodyInputChange }) => {
   const [hangingVariables, setHangingVariables] = useState([]);
@@ -63,7 +64,6 @@ const BodyInput = ({ bodyInput, variableNames, handleBodyInputChange }) => {
     }
 
     updateHangingVariables();
-    // cacheBodyInput(bodyInput);
   }, [variableNames, bodyInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // check for cached input when the component loads
@@ -87,7 +87,7 @@ const BodyInput = ({ bodyInput, variableNames, handleBodyInputChange }) => {
       <div
         style={{
           display: "flex",
-          color: "#676767",
+          color: colors.DEACTIVATED,
         }}
       >
         <p
@@ -143,7 +143,7 @@ const BodyInput = ({ bodyInput, variableNames, handleBodyInputChange }) => {
             paddingBottom: allVars.length > 2 ? 15 : 0,
             borderTopLeftRadius: 10,
             borderTopRightRadius: 10,
-            backgroundColor: "#192636",
+            backgroundColor: colors.PRIMARY,
           }}
         >
           {/*  list of variables in header */}

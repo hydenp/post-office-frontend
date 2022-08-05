@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DeleteSymbol from "../components/DeleteSymbol";
 import PlusSymbol from "../components/PlusSymbol";
-import PrimaryButton from "../components/PrimaryButton";
+import { colors } from "../assets/colors";
 
 // this is how the parsed data will be delivered from the parser
 // const testData = {
@@ -36,7 +36,7 @@ const DataHeader = ({ item, handleDeleteHeaderVariable, handleHeaderEdit }) => {
         display: "flex",
         alignItems: "center",
         borderStyle: "none",
-        backgroundColor: editable ? "#4B5C72" : "#192636",
+        backgroundColor: editable ? "#4B5C72" : colors.PRIMARY,
       }}
     >
       <input
@@ -142,7 +142,7 @@ const DataRow = ({
       style={{
         display: "flex",
         width: "fit-content",
-        backgroundColor: mouseOver ? "#F6F6F6" : null,
+        backgroundColor: mouseOver ? colors.BACKGROUND : null,
         borderRadius: 10,
         marginTop: 6,
         marginLeft: 25,
@@ -186,7 +186,11 @@ const DataRow = ({
           onClick={() => handleDeleteRow(arrIndex)}
           disabled={!mouseOver || dataLength < 2}
         >
-          <DeleteSymbol dimension={20} color={"#192636"} hidden={!mouseOver} />
+          <DeleteSymbol
+            dimension={20}
+            color={colors.PRIMARY}
+            hidden={!mouseOver}
+          />
         </button>
       </div>
     </div>
@@ -274,8 +278,7 @@ const DataView = ({
             <p
               style={{
                 marginTop: 0,
-                color: "#676767",
-                // textAlign: "left",
+                color: colors.DEACTIVATED,
               }}
             >
               View and edit all of your data. Every cell must have a value in
@@ -308,7 +311,7 @@ const DataView = ({
                   height: 60,
                   display: "flex",
                   alignItems: "center",
-                  backgroundColor: "#192636",
+                  backgroundColor: colors.PRIMARY,
                 }}
               >
                 <div
@@ -326,7 +329,7 @@ const DataView = ({
                 ))}
                 <div
                   style={{
-                    backgroundColor: "#192636",
+                    backgroundColor: colors.PRIMARY,
                     borderTopRightRadius: 20,
                   }}
                 ></div>
@@ -369,14 +372,14 @@ const DataView = ({
                     marginBottom: 6,
                     backgroundColor: mouseOverAddRowButton
                       ? "#E8E8E8"
-                      : "#F6F6F6",
+                      : colors.BACKGROUND,
                   }}
                   onClick={() => handleAddTableRow()}
                   onMouseEnter={() => setMouseOverAddRowButton(true)}
                   onMouseLeave={() => setMouseOverAddRowButton(false)}
                 >
                   <PlusSymbol
-                    color={"#192636"}
+                    color={colors.PRIMARY}
                     dimension={15}
                     style={{
                       marginRight: 5,
@@ -397,7 +400,9 @@ const DataView = ({
                     height: 32,
                     marginTop: 6,
                     marginBottom: 6,
-                    backgroundColor: mouseOverClearData ? "#E8E8E8" : "#F6F6F6",
+                    backgroundColor: mouseOverClearData
+                      ? "#E8E8E8"
+                      : colors.BACKGROUND,
                   }}
                   onClick={() => {
                     handleResetTableData();
@@ -423,7 +428,9 @@ const DataView = ({
                   marginRight: 20,
                   marginTop: 6,
                   width: 50,
-                  backgroundColor: mouseOverAddVarButton ? "#F6F6F6" : null,
+                  backgroundColor: mouseOverAddVarButton
+                    ? colors.BACKGROUND
+                    : null,
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
@@ -432,7 +439,7 @@ const DataView = ({
                 onMouseEnter={() => setMouseOverAddVarButton(true)}
                 onMouseLeave={() => setMouseOverAddVarButton(false)}
               >
-                <PlusSymbol color={"#192636"} dimension={30} />
+                <PlusSymbol color={colors.PRIMARY} dimension={30} />
               </div>
             </div>
           </div>
@@ -440,7 +447,7 @@ const DataView = ({
       ) : (
         <p
           style={{
-            color: "#676767",
+            color: colors.DEACTIVATED,
           }}
         >
           Upload a CSV above to get started!

@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import CardTitle from "./CardTitle";
+import { colors } from "../assets/colors";
 
-const StepCard = ({ cardInfo, childComponent, footer }) => {
+const StepCard = ({ cardInfo, childComponent }) => {
   const [show, setShow] = useState(true);
 
   return (
     <div
       style={{
         minWidth: 800,
-        backgroundColor: "#F6F6F6",
+        backgroundColor: colors.BACKGROUND,
         borderRadius: 20,
         padding: 40,
         marginTop: 15,
@@ -37,6 +38,7 @@ const StepCard = ({ cardInfo, childComponent, footer }) => {
           title={cardInfo.title}
         />
       </div>
+      {/* child component container */}
       <div
         style={{
           display: show ? "flex" : "none",
@@ -49,13 +51,6 @@ const StepCard = ({ cardInfo, childComponent, footer }) => {
         }}
       >
         {childComponent}
-      </div>
-      <div
-        style={{
-          marginLeft: 60,
-        }}
-      >
-        {footer}
       </div>
     </div>
   );

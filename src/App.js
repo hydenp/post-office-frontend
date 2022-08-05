@@ -40,12 +40,12 @@ function App() {
     localStorage.removeItem("bodyInput");
   }
 
-  function unsetTestData() {
-    setTableHeaderVariables(null);
-    setTableData(null);
-    setBodyInput("");
-    setToken(null);
-  }
+  // function unsetTestData() {
+  //   setTableHeaderVariables(null);
+  //   setTableData(null);
+  //   setBodyInput("");
+  //   setToken(null);
+  // }
 
   // COMPONENT: BodyInput
 
@@ -295,7 +295,7 @@ function App() {
         {/*<button onClick={unsetTestData}>UNSET Data</button>*/}
         {/*<button onClick={handleDataColdStart}>Cold Start</button>*/}
         {/*<button onClick={resetLocalStorage}>UNSET Local Storage</button>*/}
-        {/*<button onClick={printStates}>Print Data</button>*/}
+        <button onClick={printStates}>Print Data</button>
 
         {/*File upload step */}
         <StepCard

@@ -1,4 +1,5 @@
 import React from "react";
+import { colors } from "../assets/colors";
 
 const PrimaryButton = ({ title, disabled, onClick, style }) => {
   return (
@@ -16,7 +17,7 @@ const PrimaryButton = ({ title, disabled, onClick, style }) => {
         paddingTop: 10,
         paddingBottom: 10,
         cursor: "pointer",
-        backgroundColor: disabled ? "#676767" : "#0066FF",
+        backgroundColor: disabled ? colors.DEACTIVATED : colors.ACCENT,
         color: "white",
         fontWeight: 500,
         fontSize: 16,

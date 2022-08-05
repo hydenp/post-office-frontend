@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { colors } from "../assets/colors";
 
 import {
   formatFileSize,
@@ -238,7 +239,7 @@ const CSVReader = ({
                 all: "unset",
                 background: "none",
                 cursor: "pointer",
-                color: "#0066FF",
+                color: colors.ACCENT,
               }}
               onClick={handleDataColdStart}
             >
@@ -256,7 +257,7 @@ const CSVReader = ({
           <p
             style={{
               margin: 0,
-              color: "#676767",
+              color: colors.DEACTIVATED,
             }}
           >
             This step is complete, you can clear your data below if you'd like
