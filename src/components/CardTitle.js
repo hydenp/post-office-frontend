@@ -3,12 +3,7 @@ import { colors } from "../assets/colors";
 
 import checkMark from "../assets/check.svg";
 
-// const cardStatus = {
-//   notStarted: 0,
-//   inProgress: 1,
-//   complete: 2
-// };
-const statuses = ["not-started", "in-progress", "complete"];
+import { cardStates } from "../models";
 
 const StatusIcon = ({ color, number, status }) => {
   return (
@@ -18,7 +13,7 @@ const StatusIcon = ({ color, number, status }) => {
         backgroundColor: color,
       }}
     >
-      {status === statuses[2] ? (
+      {status === cardStates.complete ? (
         <div
           style={{
             display: "flex",
@@ -73,7 +68,7 @@ const CardTitle = ({ number, status, title }) => {
     >
       <div style={titleIconStyle}>
         {(() => {
-          if (status === statuses[0]) {
+          if (status === cardStates.notStarted) {
             return (
               <>
                 <StatusIcon
@@ -91,7 +86,7 @@ const CardTitle = ({ number, status, title }) => {
                 </p>
               </>
             );
-          } else if (status === statuses[1]) {
+          } else if (status === cardStates.inProgress) {
             return (
               <>
                 <StatusIcon
@@ -109,7 +104,7 @@ const CardTitle = ({ number, status, title }) => {
                 </p>
               </>
             );
-          } else if (status === statuses[2]) {
+          } else if (status === cardStates.complete) {
             return (
               <>
                 <StatusIcon

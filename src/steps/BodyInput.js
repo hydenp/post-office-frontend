@@ -2,12 +2,22 @@ import React, { useEffect, useState } from "react";
 import VariablePill from "../components/VariablePill";
 import { colors } from "../assets/colors";
 
-const BodyInput = ({ bodyInput, variableNames, handleBodyInputChange }) => {
+const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
   const [hangingVariables, setHangingVariables] = useState([]);
   const [headerVariables, setHeaderVariables] = useState([]);
   const [allVars, setAllVars] = useState([]);
 
   // FUNCTIONS
+
+  function handleBodyInputChange(newValue) {
+    if (newValue === "" || newValue === null) {
+      localStorage.removeItem("bodyInput");
+      handleSetBodyInput("");
+    } else {
+      localStorage.setItem("bodyInput", JSON.stringify(newValue));
+      handleSetBodyInput(newValue);
+    }
+  }
 
   function updateHangingVariables() {
     // function that checks if the user has used any variables in the body that are not one of the header variables
@@ -21,8 +31,8 @@ const BodyInput = ({ bodyInput, variableNames, handleBodyInputChange }) => {
       const matchEnd = regex.lastIndex - 1;
       const possibleVar = bodyInput.substring(matchStart, matchEnd);
 
-      if (variableNames !== null) {
-        if (!(variableNames.indexOf(possibleVar) !== -1)) {
+      if (tableHeaderVariables !== null) {
+        if (!(tableHeaderVariables.indexOf(possibleVar) !== -1)) {
           hangingVars.push(possibleVar);
         }
       } else {
@@ -51,9 +61,9 @@ const BodyInput = ({ bodyInput, variableNames, handleBodyInputChange }) => {
   // HOOKS
 
   useEffect(() => {
-    if (variableNames !== null) {
+    if (tableHeaderVariables !== null) {
       const newVars = [];
-      for (const vn of variableNames) {
+      for (const vn of tableHeaderVariables) {
         newVars.push(vn);
       }
       setHeaderVariables(newVars);
@@ -64,7 +74,7 @@ const BodyInput = ({ bodyInput, variableNames, handleBodyInputChange }) => {
     }
 
     updateHangingVariables();
-  }, [variableNames, bodyInput]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [tableHeaderVariables, bodyInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // check for cached input when the component loads
   useEffect(() => {

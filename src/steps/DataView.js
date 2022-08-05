@@ -3,26 +3,7 @@ import DeleteSymbol from "../components/DeleteSymbol";
 import PlusSymbol from "../components/PlusSymbol";
 import { colors } from "../assets/colors";
 
-// this is how the parsed data will be delivered from the parser
-// const testData = {
-//   "headers": ["email", "subject", "var_1", "var_2"],
-//   "body": [
-//     {
-//       "email": "skyleitz@gmail.com",
-//       "subject": "Subject 1",
-//       "var_1": "Monika",
-//       "var_2": "59"
-//     },
-//     {
-//       "email": "hyden.testing@gmail.com",
-//       "subject": "Subject 2",
-//       "var_1": "Hyden",
-//       "var_2": "22"
-//     },
-//   ]
-// }
-
-const DataHeader = ({ item, handleDeleteHeaderVariable, handleHeaderEdit }) => {
+const DataHeader = ({ item, deleteHeaderVariable, headerEdit }) => {
   const editable = !(item.value === "Recipient" || item.value === "Subject");
 
   return (
@@ -43,7 +24,7 @@ const DataHeader = ({ item, handleDeleteHeaderVariable, handleHeaderEdit }) => {
         type="text"
         readOnly={!editable}
         value={item.value}
-        onChange={(e) => handleHeaderEdit(item.index, e.target.value)}
+        onChange={(e) => headerEdit(item.index, e.target.value)}
         style={{
           height: 35,
           width: 180,
@@ -66,7 +47,7 @@ const DataHeader = ({ item, handleDeleteHeaderVariable, handleHeaderEdit }) => {
           alignItems: "center",
           cursor: "pointer",
         }}
-        onClick={() => handleDeleteHeaderVariable(item.index)}
+        onClick={() => deleteHeaderVariable(item.index)}
         hidden={editable}
       >
         <DeleteSymbol dimension={20} color={"white"} hidden={!editable} />
@@ -129,13 +110,7 @@ const DataField = ({ item, handleFieldEdit }) => {
   );
 };
 
-const DataRow = ({
-  arrIndex,
-  dataLength,
-  row,
-  handleDeleteRow,
-  handleFieldEdit,
-}) => {
+const DataRow = ({ arrIndex, dataLength, row, deleteRow, handleFieldEdit }) => {
   const [mouseOver, setMouseOver] = useState(false);
   return (
     <div
@@ -183,7 +158,7 @@ const DataRow = ({
             alignItems: "center",
             cursor: "pointer",
           }}
-          onClick={() => handleDeleteRow(arrIndex)}
+          onClick={() => deleteRow(arrIndex)}
           disabled={!mouseOver || dataLength < 2}
         >
           <DeleteSymbol
@@ -199,23 +174,140 @@ const DataRow = ({
 
 const DataView = ({
   // data props
+  bodyInput,
   headerWarning,
   tableData,
   tableHeaderVariables,
+  numVariablesAdded,
   // function props
-  handleAddHeaderVariable,
-  handleAddTableRow,
-  handleDeleteHeaderVariable,
-  handleDeleteRow,
-  handleHeaderEdit,
-  handleResetTableData,
-  handleSetTableDataFromLocalStorage,
-  handleTableFieldEdit,
-  handleValidEmailsUpdate,
+  handleSetBodyInput,
+  handleSetHeaderVariableWarning,
+  handleSetTableHeaderVariables,
+  handleSetTableData,
+  handleSetNumVariablesAdded,
+  handleSetValidEmailsUpdate,
 }) => {
   const [mouseOverAddVarButton, setMouseOverAddVarButton] = useState(false);
   const [mouseOverAddRowButton, setMouseOverAddRowButton] = useState(false);
   const [mouseOverClearData, setMouseOverClearData] = useState(false);
+
+  // Table CRUD Functions
+
+  function addHeaderVariable() {
+    const newVarName = `new_variable_${numVariablesAdded + 1}`;
+    handleSetNumVariablesAdded(numVariablesAdded + 1);
+
+    // update the headers state variable
+    const newHeaderVariables = [...tableHeaderVariables];
+    newHeaderVariables.push(newVarName);
+    handleSetTableHeaderVariables(newHeaderVariables);
+
+    // update the tableData with the new key in every row
+    const updatedTableData = [];
+    for (const row in tableData) {
+      const updatedRow = { ...tableData[row] };
+      updatedRow[newVarName] = "";
+      updatedTableData.push(updatedRow);
+    }
+    handleSetTableData(updatedTableData);
+  }
+
+  function addTableRow() {
+    // create an object with all the keys mapped to empty strings
+    const newRow = {};
+    for (const header in tableHeaderVariables) {
+      newRow[tableHeaderVariables[header]] = "";
+    }
+
+    // create the shallow copy and set the state variable to the shallow copy
+    const newTableData = [...tableData];
+    newTableData.push(newRow);
+    handleSetTableData(newTableData);
+  }
+
+  function deleteRow(arrIndex) {
+    const newTableData = [...tableData];
+    newTableData.splice(arrIndex, 1);
+    handleSetTableData(newTableData);
+  }
+
+  function deleteHeaderVariable(variableIndex) {
+    const variableName = tableHeaderVariables[variableIndex];
+    // update headers
+    const updatedHeaderVariables = [...tableHeaderVariables];
+    updatedHeaderVariables.splice(variableIndex, 1);
+    handleSetTableHeaderVariables(updatedHeaderVariables);
+
+    // update data body
+    const updatedTableData = [];
+    for (const rowIndex in tableData) {
+      const updatedRow = { ...tableData[rowIndex] };
+      delete updatedRow[variableName];
+      updatedTableData.push(updatedRow);
+    }
+    handleSetTableData(updatedTableData);
+  }
+
+  function headerEdit(arrIndex, newValue) {
+    // make sure the variable doesn't already exist
+    if (tableHeaderVariables.includes(newValue)) {
+      // display the warning for 3 seconds that variables must be unique
+      handleSetHeaderVariableWarning(true);
+      setTimeout(function () {
+        handleSetHeaderVariableWarning(false);
+      }, 3000);
+
+      // if the new header variable is valid, perform updates
+    } else {
+      // update the header variables state
+      handleSetHeaderVariableWarning(false);
+      const oldValue = tableHeaderVariables[arrIndex];
+      const newHeaders = [...tableHeaderVariables];
+      newHeaders[arrIndex] = newValue;
+      handleSetTableHeaderVariables(newHeaders);
+
+      // update the key in the table data row objects
+      const newTableData = [];
+      for (const rowIndex in tableData) {
+        const updatedRow = { ...tableData[rowIndex] };
+        updatedRow[newValue] = updatedRow[oldValue];
+        delete updatedRow[oldValue];
+        newTableData.push(updatedRow);
+      }
+      handleSetTableData(newTableData);
+
+      // update the bodyInput with the new key everywhere it is used
+      const newBody = bodyInput.replaceAll(`{${oldValue}}`, `{${newValue}}`);
+      handleSetBodyInput(newBody);
+    }
+  }
+
+  function resetTableData() {
+    if (
+      window.confirm(
+        "Are you sure you want to clear all your progress? You cannot undo this action."
+      )
+    ) {
+      handleSetTableHeaderVariables(null);
+      handleSetTableData(null);
+      localStorage.removeItem("tableHeaders");
+      localStorage.removeItem("tableData");
+    }
+  }
+
+  // functions to be passed down
+
+  function handleTableFieldEdit(rowIndex, key, newValue) {
+    // create the new row object
+    const newRow = { ...tableData[rowIndex], [key]: newValue };
+    // shallow copy data and then set new row
+    const newData = [...tableData];
+    newData[rowIndex] = newRow;
+
+    handleSetTableData(newData);
+  }
+
+  // HOOKS + HOOKS related
 
   function cacheDataToLocalStore(key, data) {
     if (data !== null && data !== {}) {
@@ -238,10 +330,10 @@ const DataView = ({
               tableData[row]["Recipient"]
             );
         }
-        handleValidEmailsUpdate(allValid);
+        handleSetValidEmailsUpdate(allValid);
       }
     }
-  }, [tableHeaderVariables, tableData, handleValidEmailsUpdate]);
+  }, [tableHeaderVariables, tableData, handleSetValidEmailsUpdate]);
 
   // fetching the table data from local_storage on load
   useEffect(() => {
@@ -253,10 +345,8 @@ const DataView = ({
       localStorageTableData !== null &&
       localStorageTableHeaderVariables !== null
     ) {
-      handleSetTableDataFromLocalStorage(
-        localStorageTableHeaderVariables,
-        localStorageTableData
-      );
+      handleSetTableHeaderVariables(localStorageTableHeaderVariables);
+      handleSetTableData(localStorageTableData);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -323,8 +413,8 @@ const DataView = ({
                   <DataHeader
                     key={k}
                     item={{ index: k, value: tableHeaderVariables[k] }}
-                    handleDeleteHeaderVariable={handleDeleteHeaderVariable}
-                    handleHeaderEdit={handleHeaderEdit}
+                    deleteHeaderVariable={deleteHeaderVariable}
+                    headerEdit={headerEdit}
                   />
                 ))}
                 <div
@@ -353,7 +443,7 @@ const DataView = ({
                     dataLength={tableData.length}
                     row={tableData[k]}
                     handleFieldEdit={handleTableFieldEdit}
-                    handleDeleteRow={handleDeleteRow}
+                    deleteRow={deleteRow}
                   />
                 ))}
                 {/* Add Row*/}
@@ -374,7 +464,7 @@ const DataView = ({
                       ? "#E8E8E8"
                       : colors.BACKGROUND,
                   }}
-                  onClick={() => handleAddTableRow()}
+                  onClick={() => addTableRow()}
                   onMouseEnter={() => setMouseOverAddRowButton(true)}
                   onMouseLeave={() => setMouseOverAddRowButton(false)}
                 >
@@ -405,7 +495,7 @@ const DataView = ({
                       : colors.BACKGROUND,
                   }}
                   onClick={() => {
-                    handleResetTableData();
+                    resetTableData();
                     setMouseOverClearData(false);
                   }}
                   onMouseEnter={() => setMouseOverClearData(true)}
@@ -435,7 +525,7 @@ const DataView = ({
                   justifyContent: "center",
                   alignItems: "center",
                 }}
-                onClick={() => handleAddHeaderVariable()}
+                onClick={() => addHeaderVariable()}
                 onMouseEnter={() => setMouseOverAddVarButton(true)}
                 onMouseLeave={() => setMouseOverAddVarButton(false)}
               >

@@ -79,9 +79,8 @@ const styles = {
 
 const CSVReader = ({
   tableData,
-  handleDataColdStart,
-  handleRemoveFile,
-  handleUpload,
+  handleSetTableHeaderVariables,
+  handleSetTableData,
 }) => {
   const { CSVReader } = useCSVReader();
   const [removeHoverColor, setRemoveHoverColor] = useState(
@@ -119,6 +118,29 @@ const CSVReader = ({
     }
   }
 
+  function removeFile() {
+    if (
+      window.confirm(
+        "Are you sure you want to remove that file? Doing so will remove all changes in the table."
+      )
+    ) {
+      handleSetTableHeaderVariables(null);
+      handleSetTableData(null);
+      localStorage.removeItem("tableHeaders");
+      localStorage.removeItem("tableData");
+      localStorage.removeItem("bodyInput");
+    }
+  }
+
+  function handleDataColdStart() {
+    handleSetTableHeaderVariables(["Recipient", "Subject"]);
+    const blankRow = {
+      Recipient: "",
+      Subject: "",
+    };
+    handleSetTableData([blankRow]);
+  }
+
   return (
     <div
       style={{
@@ -145,7 +167,9 @@ const CSVReader = ({
                 console.log("---------------------------");
                 console.log(results);
                 setZoneHover(false);
-                handleUpload(...parseDataForView(results));
+                const res = parseDataForView(results);
+                handleSetTableHeaderVariables(res[0]);
+                handleSetTableData(res[1]);
               }}
               onDragOver={(event) => {
                 event.preventDefault();
@@ -197,7 +221,7 @@ const CSVReader = ({
                             }}
                             onClick={(event) => {
                               getRemoveFileProps().onClick(event);
-                              handleRemoveFile();
+                              removeFile();
                             }}
                           >
                             <Remove color={removeHoverColor} />

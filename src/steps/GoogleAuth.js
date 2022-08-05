@@ -1,4 +1,5 @@
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
+import { useEffect } from "react";
 import axios from "axios";
 import { colors } from "../assets/colors";
 
@@ -19,6 +20,7 @@ const Login = ({ handleGoogleLogin, title }) => {
   const login = useGoogleLogin({
     scope: GOOGLE_API_SCOPE,
     onSuccess: async (tokenResponse) => {
+      // noinspection JSUnresolvedVariable
       await getGoogleProfile(tokenResponse.access_token).then((r) => {
         console.log(r);
         handleGoogleLogin(tokenResponse, r.data);
@@ -61,7 +63,53 @@ const Login = ({ handleGoogleLogin, title }) => {
   );
 };
 
-const GoogleOauth = ({ profileInfo, token, handleGoogleLogin }) => {
+const GoogleOauth = ({
+  profileInfo,
+  token,
+  handleSetProfileInfo,
+  handleSetToken,
+}) => {
+  function handleGoogleLogin(token, profileInfo) {
+    handleSetToken({
+      token: token,
+      // expiry: new Date().getTime() + 10 * 1000,
+      expiry: new Date().getTime() + 3500 * 1000,
+    });
+    handleSetProfileInfo(profileInfo);
+
+    // set the login in local storage
+    localStorage.setItem(
+      "googleInfo",
+      JSON.stringify({
+        token: token,
+        profileInfo: profileInfo,
+        // set for 100 seconds less than an hour
+        expiry: new Date().getTime() + 3500 * 1000,
+        // expiry: new Date().getTime() + 10 * 1000,
+      })
+    );
+  }
+
+  function checkCachedGoogleUser() {
+    // check for a logged-in user and if they're still valid, if so, load into state variables
+    const cachedUser = JSON.parse(localStorage.getItem("googleInfo"));
+    if (cachedUser !== null) {
+      if (new Date().getTime() > cachedUser.expiry) {
+        localStorage.removeItem("googleInfo");
+      } else {
+        handleSetToken({
+          token: cachedUser.token,
+          expiry: cachedUser.expiry,
+        });
+        handleSetProfileInfo(cachedUser.profileInfo);
+      }
+    }
+  }
+
+  useEffect(() => {
+    checkCachedGoogleUser();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
       <div>

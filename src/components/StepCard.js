@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import CardTitle from "./CardTitle";
 import { colors } from "../assets/colors";
+import { cardStates } from "../models";
 
 const StepCard = ({ cardInfo, childComponent }) => {
   const [show, setShow] = useState(true);
@@ -18,7 +19,7 @@ const StepCard = ({ cardInfo, childComponent }) => {
         flexDirection: "column",
         alignContent: "flex-start",
         boxShadow:
-          cardInfo.status === "in-progress"
+          cardInfo.status === cardStates.inProgress
             ? "0px 10px 10px rgba(0, 0, 0, 0.25)"
             : null,
       }}

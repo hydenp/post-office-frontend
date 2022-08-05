@@ -18,14 +18,18 @@ const RequestHandler = ({
   profileInfo,
   token,
   validEmails,
-  handleResetInputRequest,
-  handleResetToken,
+  handleSetBodyInput,
+  handleSetNumVariablesAdded,
+  handleSetProfileInfo,
+  handleSetTableData,
+  handleSetTableHeaderVariables,
+  handleSetToken,
 }) => {
   const [request, setRequest] = useState({});
   const [requestReady, setRequestReady] = useState(false);
   const [response, setResponse] = useState(null);
   const [currentRequestState, setCurrentRequestState] = useState(
-    requestStates.sending
+    requestStates.unsent
   );
 
   // DEBUG/DEV
@@ -33,6 +37,21 @@ const RequestHandler = ({
   //   console.log(request);
   //   console.log(requestReady);
   // }
+
+  function resetToken() {
+    handleSetToken(null);
+    handleSetProfileInfo(null);
+  }
+
+  function handleResetInputRequest() {
+    handleSetTableHeaderVariables(null);
+    localStorage.removeItem("tableHeaders");
+    handleSetTableData(null);
+    localStorage.removeItem("tableData");
+    handleSetBodyInput("");
+    localStorage.removeItem("bodyInput");
+    handleSetNumVariablesAdded(0);
+  }
 
   // FUNCTIONS
 
@@ -71,7 +90,7 @@ const RequestHandler = ({
   async function handleRequest() {
     if (new Date().getTime() > token.expiry) {
       //  make sure the token is still valid before sending the request
-      handleResetToken();
+      resetToken();
       window.alert(
         "The Google token is no longer valid, please sign in again!"
       );
