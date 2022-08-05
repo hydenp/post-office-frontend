@@ -110,7 +110,14 @@ const DataField = ({ item, handleFieldEdit }) => {
   );
 };
 
-const DataRow = ({ arrIndex, dataLength, row, deleteRow, handleFieldEdit }) => {
+const DataRow = ({
+  arrIndex,
+  dataLength,
+  headerVariables,
+  row,
+  deleteRow,
+  handleFieldEdit,
+}) => {
   const [mouseOver, setMouseOver] = useState(false);
   return (
     <div
@@ -138,10 +145,10 @@ const DataRow = ({ arrIndex, dataLength, row, deleteRow, handleFieldEdit }) => {
       >
         {parseInt(arrIndex) + 1}.
       </p>
-      {Object.keys(row).map((k) => (
+      {headerVariables.map((v) => (
         <DataField
-          key={k}
-          item={{ index: arrIndex, key: k, value: row[k] }}
+          key={v}
+          item={{ index: arrIndex, key: v, value: row[v] }}
           handleFieldEdit={handleFieldEdit}
         />
       ))}
@@ -442,6 +449,7 @@ const DataView = ({
                     arrIndex={k}
                     dataLength={tableData.length}
                     row={tableData[k]}
+                    headerVariables={tableHeaderVariables}
                     handleFieldEdit={handleTableFieldEdit}
                     deleteRow={deleteRow}
                   />
