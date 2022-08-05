@@ -1,8 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap');
+
 .App {
   text-align: center;
   /*background: green;*/
   display: flex;
   justify-content: center;
+  font-family: Inter, serif;
 }
 
 .App-logo {
@@ -31,6 +34,10 @@
   color: #61dafb;
 }
 
+.p {
+  margin: 0;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -40,64 +47,50 @@
   }
 }
 
+.custom-field input {
+  border: none;
+  -webkit-appearance: none;
+  /*-ms-appearance: none;*/
+  -moz-appearance: none;
+  appearance: none;
+  background: #f2f2f2;
+  padding: 12px;
+  border-radius: 3px;
+  width: 250px;
+  font-size: 14px;
+}
 
-/*.input-container {*/
-/*  border: 1px solid gray;*/
-/*  border-radius: 4px;*/
-/*  width: 250px;*/
-/*  height: 2rem;*/
-/*  position: relative;*/
-/*}*/
+table {
+  border: none;
+}
 
-/*.input-container input {*/
-/*  width: 100%;*/
-/*  border: none;*/
-/*  position: absolute;*/
-/*  inset: 0;*/
-/*  z-index: 1;*/
-/*  outline: none;*/
-/*  padding: 0 0.5rem;*/
-/*  font-size: 14px;*/
-/*  background: transparent;*/
-/*}*/
+*:focus {
+  outline: none;
+}
 
-/*!* For showing through placeholder *!*/
-/*.input-container input:not([value=""]) {*/
-/*  -webkit-text-fill-color: transparent;*/
-/*}*/
+/* some styling for chrome scrollbars */
+::-webkit-scrollbar {
+  height: 10px;
+  background: transparent;
+}
 
-/*.input-container .input-renderer {*/
-/*  font-size: 14px;*/
-/*  position: absolute;*/
-/*  inset: 0;*/
-/*  display: flex;*/
-/*  align-items: center;*/
-/*  margin: 0 0.5rem;*/
-/*  !* This line preserves trailing*/
-/*      whitespaces *!*/
-/*  white-space: pre;*/
+::-webkit-scrollbar-thumb {
+  background: #E8E8E8;
+  -webkit-border-radius: 1ex;
+}
 
-/*  overflow-x: auto;*/
-/*  user-select: none;*/
-/*  scrollbar-width: none;*/
-/*}*/
+/* remove styling from text area */
+textarea {
+  border: none;
+  overflow: auto;
+  outline: none;
+  padding: 20px;
 
-/*.input-container .input-renderer::-webkit-scrollbar {*/
-/*  display: none;*/
-/*}*/
+  font-family: Inter, serif;
+  font-size: 16px;
 
-/*.green {*/
-/*  color: green;*/
-/*}*/
-
-/*body {*/
-/*  font-family: sans-serif;*/
-/*  display: flex;*/
-/*  align-items: center;*/
-/*  justify-content: center;*/
-/*  height: 80vh;*/
-/*}*/
-
-/** {*/
-/*  box-sizing: border-box;*/
-/*}*/
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  resize: none; /*remove the resize handle on the bottom right*/
+}

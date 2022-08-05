@@ -1,13 +1,14 @@
 import "./App.css";
 
-import GoogleOauth from "./components/GoogleAuth";
-import FileUpload from "./components/FileUpload";
+import GoogleOauth from "./steps/GoogleAuth";
+import FileUpload from "./steps/FileUpload";
 import { useEffect, useState } from "react";
-import DataView from "./components/DataView";
-import BodyInput from "./components/BodyInput";
-import RequestHandler from "./components/RequestHandler";
+import DataView from "./steps/DataView";
+import BodyInput from "./steps/BodyInput";
+import RequestHandler from "./steps/RequestHandler";
 
 import testData from "./test_data.json";
+import StepCard from "./components/StepCard";
 
 function App() {
   const [bodyInput, setBodyInput] = useState("");
@@ -27,12 +28,6 @@ function App() {
     setBodyInput(testData.bodyInput);
   }
 
-  function printData() {
-    console.log("Data ------");
-    console.log(tableData);
-    console.log(bodyInput);
-  }
-
   function printStates() {
     console.log("headers = ", tableHeaderVariables);
     console.log("data = ", tableData);
@@ -45,12 +40,12 @@ function App() {
     localStorage.removeItem("bodyInput");
   }
 
-  function unsetTestData() {
-    setTableHeaderVariables(null);
-    setTableData(null);
-    setBodyInput("");
-    setToken(null);
-  }
+  // function unsetTestData() {
+  //   setTableHeaderVariables(null);
+  //   setTableData(null);
+  //   setBodyInput("");
+  //   setToken(null);
+  // }
 
   // COMPONENT: BodyInput
 
@@ -64,10 +59,10 @@ function App() {
     }
   }
 
-  function handleResetBodyInput() {
-    setBodyInput("");
-    localStorage.removeItem("bodyInput");
-  }
+  // function handleResetBodyInput() {
+  //   setBodyInput("");
+  //   localStorage.removeItem("bodyInput");
+  // }
 
   // COMPONENT: DataView
 
@@ -199,7 +194,11 @@ function App() {
 
   function handleDataColdStart() {
     setTableHeaderVariables(["Recipient", "Subject"]);
-    setTableData([]);
+    const blankRow = {
+      Recipient: "",
+      Subject: "",
+    };
+    setTableData([blankRow]);
   }
 
   function handleRemoveFile() {
@@ -285,7 +284,7 @@ function App() {
     <div className="App">
       <div
         style={{
-          width: "70%",
+          width: "90%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
@@ -293,71 +292,107 @@ function App() {
       >
         <h1>PostOffice</h1>
         <button onClick={loadTestData}>Set Data</button>
-        <button onClick={unsetTestData}>UNSET Data</button>
-        <button onClick={handleDataColdStart}>Cold Start</button>
-        <button onClick={resetLocalStorage}>UNSET Local Storage</button>
+        {/*<button onClick={unsetTestData}>UNSET Data</button>*/}
+        {/*<button onClick={handleDataColdStart}>Cold Start</button>*/}
+        {/*<button onClick={resetLocalStorage}>UNSET Local Storage</button>*/}
         <button onClick={printStates}>Print Data</button>
 
-        {/* Component to handle file upload*/}
-        <FileUpload
-          handleRemoveFile={handleRemoveFile}
-          handleUpload={handleUpload}
+        {/*File upload step */}
+        <StepCard
+          cardInfo={{
+            number: 1,
+            status: "not-started",
+            title: "Upload CSV or start with a Blank Data Table",
+          }}
+          childComponent={
+            <FileUpload
+              tableData={tableData}
+              handleDataColdStart={handleDataColdStart}
+              handleRemoveFile={handleRemoveFile}
+              handleUpload={handleUpload}
+            />
+          }
         />
 
-        <div>
-          <h2>View and Edit your uploaded data</h2>
-          <DataView
-            headerWarning={headerVariableWarning}
-            tableData={tableData}
-            tableHeaderVariables={tableHeaderVariables}
-            handleAddHeaderVariable={handleAddHeaderVariable}
-            handleAddTableRow={handleAddTableRow}
-            handleDeleteHeaderVariable={handleDeleteHeaderVariable}
-            handleDeleteRow={handleDeleteRow}
-            handleHeaderEdit={handleHeaderEdit}
-            handleResetTableData={handleResetTableData}
-            handleSetTableDataFromLocalStorage={
-              handleSetTableDataFromLocalStorage
-            }
-            handleTableFieldEdit={handleTableFieldEdit}
-            handleValidEmailsUpdate={handleValidEmailsUpdate}
-          />
-          <br />
-          <button onClick={printData}>print data</button>
-        </div>
+        {/* View end Edit the data step */}
+        <StepCard
+          cardInfo={{
+            number: 2,
+            status: "complete",
+            title: "View and Edit your Data",
+          }}
+          childComponent={
+            <DataView
+              headerWarning={headerVariableWarning}
+              tableData={tableData}
+              tableHeaderVariables={tableHeaderVariables}
+              handleAddHeaderVariable={handleAddHeaderVariable}
+              handleAddTableRow={handleAddTableRow}
+              handleDeleteHeaderVariable={handleDeleteHeaderVariable}
+              handleDeleteRow={handleDeleteRow}
+              handleHeaderEdit={handleHeaderEdit}
+              handleResetTableData={handleResetTableData}
+              handleSetTableDataFromLocalStorage={
+                handleSetTableDataFromLocalStorage
+              }
+              handleTableFieldEdit={handleTableFieldEdit}
+              handleValidEmailsUpdate={handleValidEmailsUpdate}
+            />
+          }
+        />
 
-        {/* Component to handle creating body of email */}
-        <div>
-          <h2>Create a body for your email</h2>
-          <BodyInput
-            bodyInput={bodyInput}
-            variableNames={tableHeaderVariables}
-            handleBodyInputChange={handleBodyInputChange}
-            handleResetBodyInput={handleResetBodyInput}
-          />
-        </div>
+        {/* Creating body of email step */}
+        <StepCard
+          cardInfo={{
+            number: 3,
+            status: "complete",
+            title: "Create a Template Body for your Emails",
+          }}
+          childComponent={
+            <BodyInput
+              bodyInput={bodyInput}
+              variableNames={tableHeaderVariables}
+              handleBodyInputChange={handleBodyInputChange}
+            />
+          }
+        />
 
         {/* Component to start google oauth flow, store it in state variable and print token */}
-        <div>
-          <h2>Get Google the Keys</h2>
-          <GoogleOauth handleGoogleLogin={handleGoogleLogin} />
-        </div>
-
-        <div
-          style={{
-            marginBottom: 50,
+        <StepCard
+          cardInfo={{
+            number: 4,
+            status: "complete",
+            title: "Authorize Google",
           }}
-        >
-          {/* Component to handle sending of request and displaying response*/}
-          <RequestHandler
-            body={bodyInput}
-            data={tableData}
-            token={token}
-            validEmails={validEmails}
-            handleResetInputRequest={handleResetInputRequest}
-            handleResetToken={handleResetToken}
-          />
-        </div>
+          childComponent={
+            <GoogleOauth
+              profileInfo={profileInfo}
+              token={token}
+              handleGoogleLogin={handleGoogleLogin}
+            />
+          }
+        />
+
+        {/* Component to handle sending of request and displaying response*/}
+
+        <StepCard
+          cardInfo={{
+            number: 5,
+            status: "in-progress",
+            title: "Review and Send",
+          }}
+          childComponent={
+            <RequestHandler
+              body={bodyInput}
+              data={tableData}
+              profileInfo={profileInfo}
+              token={token}
+              validEmails={validEmails}
+              handleResetInputRequest={handleResetInputRequest}
+              handleResetToken={handleResetToken}
+            />
+          }
+        />
       </div>
     </div>
   );
