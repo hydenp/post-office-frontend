@@ -19,6 +19,14 @@ function App() {
   const [token, setToken] = useState(null);
   const [validEmails, setValidEmails] = useState(false);
 
+  const [cardState, setCardState] = useState({
+    1: cardStates.inProgress,
+    2: cardStates.notStarted,
+    3: cardStates.notStarted,
+    4: cardStates.notStarted,
+    5: cardStates.notStarted,
+  });
+
   // HELPER METHODS FOR DEBUG/DEV
 
   // function loadTestData() {
@@ -27,11 +35,12 @@ function App() {
   //   setBodyInput(testData.bodyInput);
   // }
 
-  // function printStates() {
-  //   console.log("headers = ", tableHeaderVariables);
-  //   console.log("data = ", tableData);
-  //   console.log("profile = ", profileInfo);
-  // }
+  function printStates() {
+    console.log("headers = ", tableHeaderVariables);
+    console.log("data = ", tableData);
+    console.log("profile = ", profileInfo);
+    console.log("cardState = ", cardState);
+  }
 
   // function resetLocalStorage() {
   //   localStorage.removeItem("tableHeaders");
@@ -50,6 +59,20 @@ function App() {
 
   function handleSetBodyInput(v) {
     setBodyInput(v);
+  }
+
+  function handleSetCardState(newStates) {
+    let updatedStates = { ...cardState, ...newStates };
+    if (
+      updatedStates[2] !== cardStates.notStarted ||
+      updatedStates[3] !== cardStates.notStarted ||
+      updatedStates[4] !== cardStates.notStarted
+    ) {
+      updatedStates = { ...updatedStates, 5: cardStates.inProgress };
+    } else {
+      updatedStates = { ...updatedStates, 5: cardStates.notStarted };
+    }
+    setCardState(() => updatedStates);
   }
 
   function handleSetHeaderVariableWarning(v) {
@@ -95,18 +118,19 @@ function App() {
         {/*<button onClick={unsetTestData}>UNSET Data</button>*/}
         {/*<button onClick={handleDataColdStart}>Cold Start</button>*/}
         {/*<button onClick={resetLocalStorage}>UNSET Local Storage</button>*/}
-        {/*<button onClick={printStates}>Print Data</button>*/}
+        <button onClick={printStates}>Print Data</button>
 
         {/*File upload step */}
         <StepCard
           cardInfo={{
             number: 1,
-            status: cardStates.complete,
+            status: cardState[1],
             title: "Upload CSV or start with a Blank Data Table",
           }}
           childComponent={
             <FileUpload
               tableData={tableData}
+              handleSetCardState={handleSetCardState}
               handleSetTableHeaderVariables={handleSetTableHeaderVariables}
               handleSetTableData={handleSetTableData}
             />
@@ -117,7 +141,7 @@ function App() {
         <StepCard
           cardInfo={{
             number: 2,
-            status: cardStates.complete,
+            status: cardState[2],
             title: "View and Edit your Data",
           }}
           childComponent={
@@ -128,6 +152,7 @@ function App() {
               tableData={tableData}
               tableHeaderVariables={tableHeaderVariables}
               handleSetBodyInput={handleSetBodyInput}
+              handleSetCardState={handleSetCardState}
               handleSetHeaderVariableWarning={handleSetHeaderVariableWarning}
               handleSetNumVariablesAdded={handleSetNumVariablesAdded}
               handleSetTableData={handleSetTableData}
@@ -141,7 +166,7 @@ function App() {
         <StepCard
           cardInfo={{
             number: 3,
-            status: cardStates.complete,
+            status: cardState[3],
             title: "Create a Template Body for your Emails",
           }}
           childComponent={
@@ -157,7 +182,7 @@ function App() {
         <StepCard
           cardInfo={{
             number: 4,
-            status: cardStates.inProgress,
+            status: cardState[4],
             title: "Authorize Google",
           }}
           childComponent={
@@ -175,7 +200,7 @@ function App() {
         <StepCard
           cardInfo={{
             number: 5,
-            status: cardStates.notStarted,
+            status: cardState[5],
             title: "Review and Send",
           }}
           childComponent={

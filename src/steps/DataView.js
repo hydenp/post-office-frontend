@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import DeleteSymbol from "../components/DeleteSymbol";
 import PlusSymbol from "../components/PlusSymbol";
 import { colors } from "../assets/colors";
+import { cardStates } from "../models";
+import { checkValidData } from "./utils";
 
 const DataHeader = ({ item, deleteHeaderVariable, headerEdit }) => {
   const editable = !(item.value === "Recipient" || item.value === "Subject");
@@ -63,7 +65,6 @@ const DataField = ({ item, handleFieldEdit }) => {
     borderWidth: 2,
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   function validateEmail(dataFieldValue) {
     if (item.key === "Recipient") {
       return !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
@@ -73,10 +74,6 @@ const DataField = ({ item, handleFieldEdit }) => {
       return dataFieldValue === "";
     }
   }
-
-  useEffect(() => {
-    validateEmail(item.value);
-  }, [item.value, validateEmail]);
 
   return (
     <div
@@ -188,6 +185,7 @@ const DataView = ({
   numVariablesAdded,
   // function props
   handleSetBodyInput,
+  handleSetCardState,
   handleSetHeaderVariableWarning,
   handleSetTableHeaderVariables,
   handleSetTableData,
@@ -201,7 +199,11 @@ const DataView = ({
   // Table CRUD Functions
 
   function addHeaderVariable() {
-    const newVarName = `new_variable_${numVariablesAdded + 1}`;
+    let newVarName = `new_variable_${numVariablesAdded + 1}`;
+    if (tableHeaderVariables.includes(newVarName)) {
+      Math.random();
+      newVarName = `new_variable_${Math.random() ** 10}`;
+    }
     handleSetNumVariablesAdded(numVariablesAdded + 1);
 
     // update the headers state variable
@@ -299,6 +301,10 @@ const DataView = ({
       handleSetTableData(null);
       localStorage.removeItem("tableHeaders");
       localStorage.removeItem("tableData");
+      handleSetCardState({
+        1: cardStates.inProgress,
+        2: cardStates.notStarted,
+      });
     }
   }
 
@@ -310,8 +316,14 @@ const DataView = ({
     // shallow copy data and then set new row
     const newData = [...tableData];
     newData[rowIndex] = newRow;
-
     handleSetTableData(newData);
+
+    // update card state if all data is valid
+    if (checkValidData(newData)) {
+      handleSetCardState({ 2: cardStates.complete });
+    } else {
+      handleSetCardState({ 2: cardStates.inProgress });
+    }
   }
 
   // HOOKS + HOOKS related
@@ -354,6 +366,7 @@ const DataView = ({
     ) {
       handleSetTableHeaderVariables(localStorageTableHeaderVariables);
       handleSetTableData(localStorageTableData);
+      handleSetCardState({ 1: cardStates.complete, 2: cardStates.inProgress });
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

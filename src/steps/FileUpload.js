@@ -6,6 +6,7 @@ import {
   lightenDarkenColor,
   useCSVReader,
 } from "react-papaparse";
+import { cardStates } from "../models";
 
 const GREY = "#CCC";
 const DEFAULT_REMOVE_HOVER_COLOR = "#A01919";
@@ -79,6 +80,7 @@ const styles = {
 
 const CSVReader = ({
   tableData,
+  handleSetCardState,
   handleSetTableHeaderVariables,
   handleSetTableData,
 }) => {
@@ -129,6 +131,10 @@ const CSVReader = ({
       localStorage.removeItem("tableHeaders");
       localStorage.removeItem("tableData");
       localStorage.removeItem("bodyInput");
+      handleSetCardState({
+        1: cardStates.inProgress,
+        2: cardStates.notStarted,
+      });
     }
   }
 
@@ -139,6 +145,7 @@ const CSVReader = ({
       Subject: "",
     };
     handleSetTableData([blankRow]);
+    handleSetCardState({ 1: cardStates.complete, 2: cardStates.inProgress });
   }
 
   return (
@@ -170,6 +177,10 @@ const CSVReader = ({
                 const res = parseDataForView(results);
                 handleSetTableHeaderVariables(res[0]);
                 handleSetTableData(res[1]);
+                handleSetCardState({
+                  1: cardStates.complete,
+                  2: cardStates.inProgress,
+                });
               }}
               onDragOver={(event) => {
                 event.preventDefault();
