@@ -8,24 +8,17 @@ import BodyInput from "./steps/BodyInput";
 import RequestHandler from "./steps/RequestHandler";
 import StepCard from "./components/StepCard";
 import { cardStates } from "./models";
+import { checkValidData, getHangingVariables } from "./steps/utils";
 
 function App() {
   const [bodyInput, setBodyInput] = useState("");
   const [headerVariableWarning, setHeaderVariableWarning] = useState(false);
   const [numVariablesAdded, setNumVariablesAdded] = useState(0);
   const [profileInfo, setProfileInfo] = useState(null);
-  const [tableData, setTableData] = useState(null);
-  const [tableHeaderVariables, setTableHeaderVariables] = useState(null);
+  const [tableData, setTableData] = useState([]);
+  const [tableHeaderVariables, setTableHeaderVariables] = useState([]);
   const [token, setToken] = useState(null);
   const [validEmails, setValidEmails] = useState(false);
-
-  const [cardState, setCardState] = useState({
-    1: cardStates.inProgress,
-    2: cardStates.notStarted,
-    3: cardStates.notStarted,
-    4: cardStates.notStarted,
-    5: cardStates.notStarted,
-  });
 
   // HELPER METHODS FOR DEBUG/DEV
 
@@ -39,7 +32,6 @@ function App() {
     console.log("headers = ", tableHeaderVariables);
     console.log("data = ", tableData);
     console.log("profile = ", profileInfo);
-    console.log("cardState = ", cardState);
   }
 
   // function resetLocalStorage() {
@@ -55,24 +47,86 @@ function App() {
   //   setToken(null);
   // }
 
+  // COMPONENT: FileUpload
+  function getFileUploadCardState() {
+    if (tableData.length > 0) {
+      return cardStates.complete;
+    } else {
+      return cardStates.todo;
+    }
+  }
+
+  // COMPONENT: DataView
+  function getDataViewCardState() {
+    // update card state if all data is valid
+    if (tableData.length === 0) {
+      return cardStates.notStarted;
+    } else if (checkValidData(tableData)) {
+      return cardStates.complete;
+    } else {
+      return cardStates.todo;
+    }
+  }
+
+  // COMPONENT: BodyInput
+  function getBodyInputCardState() {
+    let allVariablesUsed = true;
+    for (const k in tableHeaderVariables) {
+      if (!["0", "1"].includes(k)) {
+        allVariablesUsed =
+          allVariablesUsed &&
+          bodyInput.indexOf(`{${tableHeaderVariables[k]}}`) !== -1;
+      }
+    }
+    if (
+      allVariablesUsed &&
+      bodyInput !== "" &&
+      getHangingVariables(bodyInput, tableHeaderVariables).length === 0
+    ) {
+      return cardStates.complete;
+    } else {
+      return cardStates.todo;
+    }
+  }
+
+  // COMPONENT: BodyInput
+  function getGoogleLoginCardState() {
+    if (token !== null && profileInfo !== null) {
+      return cardStates.complete;
+    } else {
+      return cardStates.todo;
+    }
+  }
+
+  // COMPONENT: RequestHandler
+  function getReviewAndSendCardState() {
+    const currStates = [
+      getDataViewCardState(),
+      getBodyInputCardState(),
+      getGoogleLoginCardState(),
+    ];
+
+    if (
+      currStates[0] === cardStates.complete &&
+      currStates[1] === cardStates.complete &&
+      currStates[2] === cardStates.complete
+    ) {
+      return cardStates.complete;
+    } else if (
+      currStates[0] !== cardStates.notStarted ||
+      currStates[1] !== cardStates.notStarted ||
+      currStates[2] !== cardStates.todo
+    ) {
+      return cardStates.todo;
+    } else {
+      return cardStates.notStarted;
+    }
+  }
+
   // HANDLE SET FUNCTIONS
 
   function handleSetBodyInput(v) {
     setBodyInput(v);
-  }
-
-  function handleSetCardState(newStates) {
-    let updatedStates = { ...cardState, ...newStates };
-    if (
-      updatedStates[2] !== cardStates.notStarted ||
-      updatedStates[3] !== cardStates.notStarted ||
-      updatedStates[4] !== cardStates.notStarted
-    ) {
-      updatedStates = { ...updatedStates, 5: cardStates.inProgress };
-    } else {
-      updatedStates = { ...updatedStates, 5: cardStates.notStarted };
-    }
-    setCardState(() => updatedStates);
   }
 
   function handleSetHeaderVariableWarning(v) {
@@ -124,13 +178,12 @@ function App() {
         <StepCard
           cardInfo={{
             number: 1,
-            status: cardState[1],
+            status: getFileUploadCardState(),
             title: "Upload CSV or start with a Blank Data Table",
           }}
           childComponent={
             <FileUpload
               tableData={tableData}
-              handleSetCardState={handleSetCardState}
               handleSetTableHeaderVariables={handleSetTableHeaderVariables}
               handleSetTableData={handleSetTableData}
             />
@@ -141,7 +194,7 @@ function App() {
         <StepCard
           cardInfo={{
             number: 2,
-            status: cardState[2],
+            status: getDataViewCardState(),
             title: "View and Edit your Data",
           }}
           childComponent={
@@ -152,7 +205,6 @@ function App() {
               tableData={tableData}
               tableHeaderVariables={tableHeaderVariables}
               handleSetBodyInput={handleSetBodyInput}
-              handleSetCardState={handleSetCardState}
               handleSetHeaderVariableWarning={handleSetHeaderVariableWarning}
               handleSetNumVariablesAdded={handleSetNumVariablesAdded}
               handleSetTableData={handleSetTableData}
@@ -166,7 +218,7 @@ function App() {
         <StepCard
           cardInfo={{
             number: 3,
-            status: cardState[3],
+            status: getBodyInputCardState(),
             title: "Create a Template Body for your Emails",
           }}
           childComponent={
@@ -182,7 +234,7 @@ function App() {
         <StepCard
           cardInfo={{
             number: 4,
-            status: cardState[4],
+            status: getGoogleLoginCardState(),
             title: "Authorize Google",
           }}
           childComponent={
@@ -200,7 +252,7 @@ function App() {
         <StepCard
           cardInfo={{
             number: 5,
-            status: cardState[5],
+            status: getReviewAndSendCardState(),
             title: "Review and Send",
           }}
           childComponent={

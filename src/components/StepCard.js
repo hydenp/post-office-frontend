@@ -19,7 +19,7 @@ const StepCard = ({ cardInfo, childComponent }) => {
         flexDirection: "column",
         alignContent: "flex-start",
         boxShadow:
-          cardInfo.status === cardStates.inProgress
+          cardInfo.status === cardStates.todo
             ? "0px 10px 10px rgba(0, 0, 0, 0.25)"
             : null,
       }}

@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import DeleteSymbol from "../components/DeleteSymbol";
 import PlusSymbol from "../components/PlusSymbol";
 import { colors } from "../assets/colors";
-import { cardStates } from "../models";
-import { checkValidData } from "./utils";
 
 const DataHeader = ({ item, deleteHeaderVariable, headerEdit }) => {
   const editable = !(item.value === "Recipient" || item.value === "Subject");
@@ -185,7 +183,6 @@ const DataView = ({
   numVariablesAdded,
   // function props
   handleSetBodyInput,
-  handleSetCardState,
   handleSetHeaderVariableWarning,
   handleSetTableHeaderVariables,
   handleSetTableData,
@@ -297,14 +294,10 @@ const DataView = ({
         "Are you sure you want to clear all your progress? You cannot undo this action."
       )
     ) {
-      handleSetTableHeaderVariables(null);
-      handleSetTableData(null);
+      handleSetTableHeaderVariables([]);
+      handleSetTableData([]);
       localStorage.removeItem("tableHeaders");
       localStorage.removeItem("tableData");
-      handleSetCardState({
-        1: cardStates.inProgress,
-        2: cardStates.notStarted,
-      });
     }
   }
 
@@ -317,13 +310,6 @@ const DataView = ({
     const newData = [...tableData];
     newData[rowIndex] = newRow;
     handleSetTableData(newData);
-
-    // update card state if all data is valid
-    if (checkValidData(newData)) {
-      handleSetCardState({ 2: cardStates.complete });
-    } else {
-      handleSetCardState({ 2: cardStates.inProgress });
-    }
   }
 
   // HOOKS + HOOKS related
@@ -339,18 +325,16 @@ const DataView = ({
     cacheDataToLocalStore("tableHeaders", tableHeaderVariables);
     cacheDataToLocalStore("tableData", tableData);
 
-    if (tableData !== null) {
-      if (tableData.length > 0) {
-        let allValid = true;
-        for (const row in tableData) {
-          allValid =
-            allValid &&
-            /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-              tableData[row]["Recipient"]
-            );
-        }
-        handleSetValidEmailsUpdate(allValid);
+    if (tableData.length > 0) {
+      let allValid = true;
+      for (const row in tableData) {
+        allValid =
+          allValid &&
+          /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+            tableData[row]["Recipient"]
+          );
       }
+      handleSetValidEmailsUpdate(allValid);
     }
   }, [tableHeaderVariables, tableData, handleSetValidEmailsUpdate]);
 
@@ -366,7 +350,6 @@ const DataView = ({
     ) {
       handleSetTableHeaderVariables(localStorageTableHeaderVariables);
       handleSetTableData(localStorageTableData);
-      handleSetCardState({ 1: cardStates.complete, 2: cardStates.inProgress });
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -377,7 +360,7 @@ const DataView = ({
         justifyContent: "center",
       }}
     >
-      {tableHeaderVariables !== null ? (
+      {tableHeaderVariables.length > 0 ? (
         <div>
           <div
             style={{

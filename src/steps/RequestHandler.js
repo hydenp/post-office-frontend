@@ -44,9 +44,9 @@ const RequestHandler = ({
   }
 
   function handleResetInputRequest() {
-    handleSetTableHeaderVariables(null);
+    handleSetTableHeaderVariables([]);
     localStorage.removeItem("tableHeaders");
-    handleSetTableData(null);
+    handleSetTableData([]);
     localStorage.removeItem("tableData");
     handleSetBodyInput("");
     localStorage.removeItem("bodyInput");
