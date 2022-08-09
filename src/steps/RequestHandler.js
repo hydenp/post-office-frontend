@@ -123,15 +123,15 @@ const RequestHandler = ({
           return (
             <div>
               <StepStatus
-                title={"Data Upload and Ready"}
+                title={"Data Uploaded/Entered and Valid"}
                 status={validEmails ? "complete" : ""}
               />
               <StepStatus
-                title={"Body Template Added"}
+                title={"Template Body added and all Header Variables used"}
                 status={body ? "complete" : ""}
               />
               <StepStatus
-                title={"Google Authorized"}
+                title={"Google Account Authorized"}
                 status={token ? "complete" : ""}
               />
               {profileInfo ? (
