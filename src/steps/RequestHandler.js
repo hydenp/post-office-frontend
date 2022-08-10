@@ -120,6 +120,17 @@ const RequestHandler = ({
         if (currentRequestState === requestStates.unsent) {
           return (
             <div>
+              <p
+                style={{
+                  textAlign: "left",
+                  margin: 0,
+                  marginBottom: 20,
+                  fontSize: 16,
+                  color: colors.DEACTIVATED,
+                }}
+              >
+                Complete all the steps to send emails
+              </p>
               <StepStatus
                 title={"Data Uploaded/Entered and Valid"}
                 status={
@@ -143,6 +154,7 @@ const RequestHandler = ({
                 style={{
                   display: "flex",
                   height: 60,
+                  marginTop: 35,
                 }}
               >
                 <PrimaryButton
