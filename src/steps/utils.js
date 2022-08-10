@@ -24,7 +24,7 @@ export function getHangingVariables(newBodyInput, newTableHeaderVariables) {
   // function that checks if the user has used any variables in the body that are not one of the header variables
   // updates the hangingVariables state variable which displays a warning of the incorrect variable
 
-  const regex = /\{([^{}]+)}/g;
+  const regex = /^[a-zA-Z.!#$%&'+/=?^_`{|}~-][a-zA-Z\d.!#$%&'+/=?^_`{|}~-]*@/gm;
   let match;
   let hangingVars = [];
   while ((match = regex.exec(newBodyInput))) {
