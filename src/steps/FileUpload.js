@@ -90,7 +90,9 @@ const CSVReader = ({
 
   function parseDataForView(unparsedData) {
     if (unparsedData !== null) {
-      let headers = unparsedData.data[0];
+      let headers = unparsedData.data[0].map((v) => {
+        return v.toLowerCase();
+      });
       // make the very first two headers "Recipient" and "Subject" respectively
       if (unparsedData.data[0].length <= 2) {
         headers = ["Recipient", "Subject"];

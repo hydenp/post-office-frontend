@@ -269,7 +269,7 @@ const DataView = ({
       handleSetHeaderVariableWarning(false);
       const oldValue = tableHeaderVariables[arrIndex];
       const newHeaders = [...tableHeaderVariables];
-      newHeaders[arrIndex] = newValue;
+      newHeaders[arrIndex] = newValue.toLowerCase();
       handleSetTableHeaderVariables(newHeaders);
 
       // update the key in the table data row objects
