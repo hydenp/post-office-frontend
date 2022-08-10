@@ -100,6 +100,15 @@ function App() {
 
   // COMPONENT: RequestHandler
   function getReviewAndSendCardState() {
+    // check google token is still valid
+    if (token !== null) {
+      if (new Date().getTime() > token.expiry) {
+        localStorage.removeItem("googleInfo");
+        setToken(null);
+        setProfileInfo(null);
+      }
+    }
+
     const currStates = [
       getDataViewCardState(),
       getBodyInputCardState(),
