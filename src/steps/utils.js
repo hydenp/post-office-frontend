@@ -7,7 +7,7 @@ export function checkValidData(tableData) {
       if (objectKey === "Recipient") {
         allValid =
           allValid &&
-          /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+          /^[a-zA-Z.!#$%&'+/=?^_`{|}~-][a-zA-Z\d.!#$%&'+/=?^_`{|}~-]*@/gm.test(
             tableData[rowIndex][objectKey]
           );
       } else {
@@ -24,7 +24,7 @@ export function getHangingVariables(newBodyInput, newTableHeaderVariables) {
   // function that checks if the user has used any variables in the body that are not one of the header variables
   // updates the hangingVariables state variable which displays a warning of the incorrect variable
 
-  const regex = /^[a-zA-Z.!#$%&'+/=?^_`{|}~-][a-zA-Z\d.!#$%&'+/=?^_`{|}~-]*@/gm;
+  const regex = /\{([^{}]+)}/g;
   let match;
   let hangingVars = [];
   while ((match = regex.exec(newBodyInput))) {
