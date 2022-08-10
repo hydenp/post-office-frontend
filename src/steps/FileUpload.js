@@ -164,8 +164,6 @@ const CSVReader = ({
           >
             <CSVReader
               onUploadAccepted={(results) => {
-                console.log("---------------------------");
-                console.log(results);
                 setZoneHover(false);
                 const res = parseDataForView(results);
                 handleSetTableHeaderVariables(res[0]);

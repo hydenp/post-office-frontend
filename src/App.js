@@ -28,11 +28,11 @@ function App() {
   //   setBodyInput(testData.bodyInput);
   // }
 
-  function printStates() {
-    console.log("headers = ", tableHeaderVariables);
-    console.log("data = ", tableData);
-    console.log("profile = ", profileInfo);
-  }
+  // function printStates() {
+  //   console.log("headers = ", tableHeaderVariables);
+  //   console.log("data = ", tableData);
+  //   console.log("profile = ", profileInfo);
+  // }
 
   // function resetLocalStorage() {
   //   localStorage.removeItem("tableHeaders");
@@ -172,7 +172,7 @@ function App() {
         {/*<button onClick={unsetTestData}>UNSET Data</button>*/}
         {/*<button onClick={handleDataColdStart}>Cold Start</button>*/}
         {/*<button onClick={resetLocalStorage}>UNSET Local Storage</button>*/}
-        <button onClick={printStates}>Print Data</button>
+        {/*<button onClick={printStates}>Print Data</button>*/}
 
         {/*File upload step */}
         <StepCard
