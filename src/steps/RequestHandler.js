@@ -142,11 +142,13 @@ const RequestHandler = ({
               <div
                 style={{
                   display: "flex",
+                  height: 60,
                 }}
               >
                 <PrimaryButton
                   title={`Send ${data.length > 0 ? data.length : ""} email(s)`}
                   onClick={() => handleRequest()}
+                  style={{ fontSize: 20 }}
                   disabled={
                     !(
                       validationStates[0] === cardStates.complete &&
@@ -158,7 +160,9 @@ const RequestHandler = ({
                 {profileInfo && (
                   <p
                     style={{
-                      marginLeft: 10,
+                      paddingLeft: 20,
+                      fontSize: 20,
+                      alignSelf: "center",
                     }}
                   >
                     from the address{" "}
@@ -182,10 +186,11 @@ const RequestHandler = ({
             >
               <p
                 style={{
-                  marginRight: 15,
+                  marginRight: 20,
+                  fontSize: 24,
                 }}
               >
-                Sending emails (hopefully)
+                Sending emails...
               </p>
               <div className={SpinnerCSS.loadingSpinner}></div>
             </div>

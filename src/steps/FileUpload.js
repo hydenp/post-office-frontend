@@ -282,7 +282,7 @@ const CSVReader = ({
               color: colors.DEACTIVATED,
             }}
           >
-            This step is complete, you can clear your data below if you'd like
+            This step is complete, you can Clear All Values below if you'd like
             to restart this step.
           </p>
         </div>
