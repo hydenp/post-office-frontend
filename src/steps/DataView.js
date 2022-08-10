@@ -315,7 +315,7 @@ const DataView = ({
   // HOOKS + HOOKS related
 
   function cacheDataToLocalStore(key, data) {
-    if (data !== null && data !== {}) {
+    if (data.length > 0) {
       localStorage.setItem(key, JSON.stringify(data));
     }
   }
