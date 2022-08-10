@@ -84,8 +84,8 @@ const GoogleOauth = ({
         token: token,
         profileInfo: profileInfo,
         // set for 100 seconds less than an hour
-        expiry: new Date().getTime() + 3500 * 1000,
         // expiry: new Date().getTime() + 10 * 1000,
+        expiry: new Date().getTime() + 3500 * 1000,
       })
     );
   }
@@ -127,6 +127,7 @@ const GoogleOauth = ({
           <p
             style={{
               marginTop: 0,
+              color: colors.DEACTIVATED,
             }}
           >
             Connect POST OFFICE to your gmail account to send the email from
