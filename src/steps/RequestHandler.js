@@ -5,6 +5,7 @@ import StepStatus from "../components/StepStatus";
 
 import SpinnerCSS from "../assets/Spinner.module.css";
 import { colors } from "../assets/colors";
+import { cardStates } from "../models";
 
 const requestStates = {
   unsent: 0,
@@ -18,6 +19,7 @@ const RequestHandler = ({
   profileInfo,
   token,
   validEmails,
+  validationStates,
   handleSetBodyInput,
   handleSetNumVariablesAdded,
   handleSetProfileInfo,
@@ -26,7 +28,6 @@ const RequestHandler = ({
   handleSetToken,
 }) => {
   const [request, setRequest] = useState({});
-  const [requestReady, setRequestReady] = useState(false);
   const [response, setResponse] = useState(null);
   const [currentRequestState, setCurrentRequestState] = useState(
     requestStates.unsent
@@ -108,10 +109,7 @@ const RequestHandler = ({
 
   useEffect(() => {
     if (body !== "" && data !== null && token !== null && validEmails) {
-      setRequestReady(true);
       setRequest(createRequest(body, data, token));
-    } else {
-      setRequestReady(false);
     }
   }, [body, data, validEmails, token]);
 
@@ -124,27 +122,40 @@ const RequestHandler = ({
             <div>
               <StepStatus
                 title={"Data Uploaded/Entered and Valid"}
-                status={validEmails ? "complete" : ""}
+                status={
+                  validationStates[0] === cardStates.complete ? "complete" : ""
+                }
               />
               <StepStatus
                 title={"Template Body added and all Header Variables used"}
-                status={body ? "complete" : ""}
+                status={
+                  validationStates[1] === cardStates.complete ? "complete" : ""
+                }
               />
               <StepStatus
                 title={"Google Account Authorized"}
-                status={token ? "complete" : ""}
+                status={
+                  validationStates[2] === cardStates.complete ? "complete" : ""
+                }
               />
-              {profileInfo ? (
-                <div
-                  style={{
-                    display: "flex",
-                  }}
-                >
-                  <PrimaryButton
-                    title={`Send ${data ? data.length : ""} email(s)`}
-                    onClick={() => handleRequest()}
-                    disabled={!requestReady}
-                  />
+
+              <div
+                style={{
+                  display: "flex",
+                }}
+              >
+                <PrimaryButton
+                  title={`Send ${data.length > 0 ? data.length : ""} email(s)`}
+                  onClick={() => handleRequest()}
+                  disabled={
+                    !(
+                      validationStates[0] === cardStates.complete &&
+                      validationStates[1] === cardStates.complete &&
+                      validationStates[2] === cardStates.complete
+                    )
+                  }
+                />
+                {profileInfo && (
                   <p
                     style={{
                       marginLeft: 10,
@@ -155,10 +166,8 @@ const RequestHandler = ({
                       {profileInfo.email}
                     </span>
                   </p>
-                </div>
-              ) : (
-                <p>Sign In with Google above to send!</p>
-              )}
+                )}
+              </div>
             </div>
           );
         } else if (currentRequestState === requestStates.sending) {

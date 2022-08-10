@@ -262,6 +262,11 @@ function App() {
               profileInfo={profileInfo}
               token={token}
               validEmails={validEmails}
+              validationStates={[
+                getDataViewCardState(),
+                getBodyInputCardState(),
+                getGoogleLoginCardState(),
+              ]}
               handleSetProfileInfo={handleSetProfileInfo}
               handleSetToken={handleSetToken}
               handleSetTableHeaderVariables={handleSetTableHeaderVariables}
