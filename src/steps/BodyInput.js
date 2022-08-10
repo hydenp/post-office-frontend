@@ -8,7 +8,6 @@ const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
   const [allVars, setAllVars] = useState([]);
 
   // FUNCTIONS
-
   function handleBodyInputChange(newValue) {
     if (newValue === "" || newValue === null) {
       localStorage.removeItem("bodyInput");
@@ -29,11 +28,7 @@ const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
     handleSetBodyInput(newBodyInput);
     setHangingVariables(newHangingVars);
 
-    if (tableHeaderVariables === null) {
-      setAllVars(newHangingVars);
-    } else {
-      setAllVars([...tableHeaderVariables, ...newHangingVars]);
-    }
+    setAllVars([...tableHeaderVariables, ...newHangingVars]);
   }
 
   // HOOKS
@@ -50,12 +45,13 @@ const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (tableHeaderVariables !== null) {
-      setAllVars([...tableHeaderVariables, ...hangingVariables]);
-    } else {
-      setAllVars(hangingVariables);
-    }
-  }, [tableHeaderVariables, hangingVariables]);
+    const newHangingVariables = getHangingVariables(
+      bodyInput,
+      tableHeaderVariables
+    );
+    setAllVars([...tableHeaderVariables, ...newHangingVariables]);
+    setHangingVariables(newHangingVariables);
+  }, [tableHeaderVariables, bodyInput]);
 
   return (
     <div
