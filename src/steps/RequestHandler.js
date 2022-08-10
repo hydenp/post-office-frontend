@@ -123,9 +123,9 @@ const RequestHandler = ({
               <p
                 style={{
                   textAlign: "left",
-                  margin: 0,
+                  marginTop: 0,
                   marginBottom: 20,
-                  fontSize: 16,
+                  fontSize: 14,
                   color: colors.DEACTIVATED,
                 }}
               >
@@ -153,14 +153,14 @@ const RequestHandler = ({
               <div
                 style={{
                   display: "flex",
-                  height: 60,
-                  marginTop: 35,
+                  height: 50,
+                  marginTop: 20,
                 }}
               >
                 <PrimaryButton
                   title={`Send ${data.length > 0 ? data.length : ""} email(s)`}
                   onClick={() => handleRequest()}
-                  style={{ fontSize: 20 }}
+                  style={{ fontSize: 14 }}
                   disabled={
                     !(
                       validationStates[0] === cardStates.complete &&
@@ -172,8 +172,8 @@ const RequestHandler = ({
                 {profileInfo && (
                   <p
                     style={{
-                      paddingLeft: 20,
-                      fontSize: 20,
+                      paddingLeft: 10,
+                      fontSize: 14,
                       alignSelf: "center",
                     }}
                   >

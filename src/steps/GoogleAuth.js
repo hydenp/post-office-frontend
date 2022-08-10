@@ -52,7 +52,7 @@ const Login = ({ handleGoogleLogin, title }) => {
       <p
         style={{
           color: colors.ACCENT,
-          fontSize: 16,
+          fontSize: 14,
           marginRight: 10,
         }}
       >
@@ -117,7 +117,9 @@ const GoogleOauth = ({
           <p
             style={{
               marginTop: 0,
-              fontSize: 24,
+              fontSize: 14,
+              textAlign: "left",
+              color: colors.DEACTIVATED,
             }}
           >
             Welcome{" "}
@@ -128,6 +130,7 @@ const GoogleOauth = ({
             style={{
               marginTop: 0,
               color: colors.DEACTIVATED,
+              fontSize: 14,
             }}
           >
             Connect POST OFFICE to your gmail account to send the email from
@@ -138,7 +141,7 @@ const GoogleOauth = ({
           title={
             token === null
               ? "Sign In with Google"
-              : "Sign In with a different Google Account"
+              : "Sign In with a different account"
           }
           handleGoogleLogin={handleGoogleLogin}
         />
