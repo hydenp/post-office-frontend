@@ -1,92 +1,57 @@
 import React, { useEffect, useState } from "react";
 import VariablePill from "../components/VariablePill";
 import { colors } from "../assets/colors";
+import { getHangingVariables } from "./utils";
 
 const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
   const [hangingVariables, setHangingVariables] = useState([]);
-  const [headerVariables, setHeaderVariables] = useState([]);
   const [allVars, setAllVars] = useState([]);
 
   // FUNCTIONS
-
   function handleBodyInputChange(newValue) {
     if (newValue === "" || newValue === null) {
       localStorage.removeItem("bodyInput");
-      handleSetBodyInput("");
+      return "";
     } else {
       localStorage.setItem("bodyInput", JSON.stringify(newValue));
-      handleSetBodyInput(newValue);
+      return newValue;
     }
   }
 
-  function updateHangingVariables() {
-    // function that checks if the user has used any variables in the body that are not one of the header variables
-    // updates the hangingVariables state variable which displays a warning of the incorrect variable
-
-    const regex = /\{([^{}]+)}/g;
-    let match;
-    let hangingVars = [];
-    while ((match = regex.exec(bodyInput))) {
-      const matchStart = regex.lastIndex - match[0].length + 1;
-      const matchEnd = regex.lastIndex - 1;
-      const possibleVar = bodyInput.substring(matchStart, matchEnd);
-
-      if (tableHeaderVariables !== null) {
-        if (!(tableHeaderVariables.indexOf(possibleVar) !== -1)) {
-          hangingVars.push(possibleVar);
-        }
-      } else {
-        hangingVars.push(possibleVar);
-      }
-    }
-    setHangingVariables([...new Set(hangingVars)]);
-  }
-
-  function updateUsedVars() {
-    const newUsedVars = {};
-    for (const v of headerVariables) {
-      newUsedVars[v] = bodyInput.indexOf(`{${v}}`) !== -1;
-    }
-  }
-
-  function updateVariable(e) {
-    const val = e.target.value;
-    updateUsedVars();
-    updateHangingVariables();
-
+  function updateBodyEvent(eventValue) {
     // check for check matching headerVariables
-    handleBodyInputChange(val);
+    const newBodyInput = handleBodyInputChange(eventValue);
+    const newHangingVars = getHangingVariables(
+      newBodyInput,
+      tableHeaderVariables
+    );
+    handleSetBodyInput(newBodyInput);
+    setHangingVariables(newHangingVars);
+
+    setAllVars([...tableHeaderVariables, ...newHangingVars]);
   }
 
   // HOOKS
-
-  useEffect(() => {
-    if (tableHeaderVariables !== null) {
-      const newVars = [];
-      for (const vn of tableHeaderVariables) {
-        newVars.push(vn);
-      }
-      setHeaderVariables(newVars);
-      updateUsedVars();
-    } else {
-      setHeaderVariables([]);
-      setHangingVariables([]);
-    }
-
-    updateHangingVariables();
-  }, [tableHeaderVariables, bodyInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // check for cached input when the component loads
   useEffect(() => {
     const cachedBodyInput = JSON.parse(localStorage.getItem("bodyInput"));
     if (cachedBodyInput !== null) {
-      handleBodyInputChange(cachedBodyInput);
+      handleSetBodyInput(cachedBodyInput);
+      setHangingVariables(
+        getHangingVariables(cachedBodyInput, tableHeaderVariables)
+      );
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    setAllVars([...headerVariables, ...hangingVariables]);
-  }, [headerVariables, hangingVariables]);
+    const newHangingVariables = getHangingVariables(
+      bodyInput,
+      tableHeaderVariables
+    );
+    setAllVars([...tableHeaderVariables, ...newHangingVariables]);
+    setHangingVariables(newHangingVariables);
+  }, [tableHeaderVariables, bodyInput]);
 
   return (
     <div
@@ -118,7 +83,7 @@ const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
           paddingLeft: 10,
           marginBottom: 10,
 
-          backgroundColor: "rgba(254, 249, 167, 0.5)",
+          backgroundColor: "rgba(254, 249, 167, 0.7)",
         }}
       >
         <p>Looks like you tried using a</p>
@@ -150,22 +115,24 @@ const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
             flexWrap: "wrap",
             alignItems: "center",
             width: "100%",
-            paddingBottom: allVars.length > 2 ? 15 : 0,
+            paddingBottom:
+              allVars.length > 2 || hangingVariables.length > 0 ? 15 : 0,
             borderTopLeftRadius: 10,
             borderTopRightRadius: 10,
             backgroundColor: colors.PRIMARY,
           }}
         >
           {/*  list of variables in header */}
-          {allVars.length > 2 ? (
+          {allVars.length > 2 || hangingVariables.length > 0 ? (
             Object.keys(allVars)
               .filter(
                 (r) =>
-                  ["Recipient", "Subject"].indexOf(headerVariables[r]) === -1
+                  ["Recipient", "Subject"].indexOf(tableHeaderVariables[r]) ===
+                  -1
               )
               .map((k) => {
                 if (
-                  headerVariables.includes(allVars[k]) &&
+                  tableHeaderVariables.includes(allVars[k]) &&
                   bodyInput.indexOf(`{${allVars[k]}}`) !== -1
                 ) {
                   return (
@@ -226,7 +193,7 @@ const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
             borderBottomLeftRadius: 5,
             borderBottomRightRadius: 5,
           }}
-          onChange={(event) => updateVariable(event)}
+          onChange={(event) => updateBodyEvent(event.target.value)}
         ></textarea>
       </div>
     </div>

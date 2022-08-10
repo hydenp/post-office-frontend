@@ -8,14 +8,15 @@ import BodyInput from "./steps/BodyInput";
 import RequestHandler from "./steps/RequestHandler";
 import StepCard from "./components/StepCard";
 import { cardStates } from "./models";
+import { checkValidData, getHangingVariables } from "./steps/utils";
 
 function App() {
   const [bodyInput, setBodyInput] = useState("");
   const [headerVariableWarning, setHeaderVariableWarning] = useState(false);
   const [numVariablesAdded, setNumVariablesAdded] = useState(0);
   const [profileInfo, setProfileInfo] = useState(null);
-  const [tableData, setTableData] = useState(null);
-  const [tableHeaderVariables, setTableHeaderVariables] = useState(null);
+  const [tableData, setTableData] = useState([]);
+  const [tableHeaderVariables, setTableHeaderVariables] = useState([]);
   const [token, setToken] = useState(null);
   const [validEmails, setValidEmails] = useState(false);
 
@@ -45,6 +46,91 @@ function App() {
   //   setBodyInput("");
   //   setToken(null);
   // }
+
+  // COMPONENT: FileUpload
+  function getFileUploadCardState() {
+    if (tableData.length > 0) {
+      return cardStates.complete;
+    } else {
+      return cardStates.todo;
+    }
+  }
+
+  // COMPONENT: DataView
+  function getDataViewCardState() {
+    // update card state if all data is valid
+    if (tableData.length === 0) {
+      return cardStates.notStarted;
+    } else if (checkValidData(tableData)) {
+      return cardStates.complete;
+    } else {
+      return cardStates.todo;
+    }
+  }
+
+  // COMPONENT: BodyInput
+  function getBodyInputCardState() {
+    let allVariablesUsed = true;
+    for (const k in tableHeaderVariables) {
+      if (!["0", "1"].includes(k)) {
+        allVariablesUsed =
+          allVariablesUsed &&
+          bodyInput.indexOf(`{${tableHeaderVariables[k]}}`) !== -1;
+      }
+    }
+    if (
+      allVariablesUsed &&
+      bodyInput !== "" &&
+      getHangingVariables(bodyInput, tableHeaderVariables).length === 0
+    ) {
+      return cardStates.complete;
+    } else {
+      return cardStates.todo;
+    }
+  }
+
+  // COMPONENT: BodyInput
+  function getGoogleLoginCardState() {
+    if (token !== null && profileInfo !== null) {
+      return cardStates.complete;
+    } else {
+      return cardStates.todo;
+    }
+  }
+
+  // COMPONENT: RequestHandler
+  function getReviewAndSendCardState() {
+    // check google token is still valid
+    if (token !== null) {
+      if (new Date().getTime() > token.expiry) {
+        localStorage.removeItem("googleInfo");
+        setToken(null);
+        setProfileInfo(null);
+      }
+    }
+
+    const currStates = [
+      getDataViewCardState(),
+      getBodyInputCardState(),
+      getGoogleLoginCardState(),
+    ];
+
+    if (
+      currStates[0] === cardStates.complete &&
+      currStates[1] === cardStates.complete &&
+      currStates[2] === cardStates.complete
+    ) {
+      return cardStates.complete;
+    } else if (
+      currStates[0] !== cardStates.notStarted ||
+      currStates[1] !== cardStates.notStarted ||
+      currStates[2] !== cardStates.todo
+    ) {
+      return cardStates.todo;
+    } else {
+      return cardStates.notStarted;
+    }
+  }
 
   // HANDLE SET FUNCTIONS
 
@@ -101,7 +187,7 @@ function App() {
         <StepCard
           cardInfo={{
             number: 1,
-            status: cardStates.complete,
+            status: getFileUploadCardState(),
             title: "Upload CSV or start with a Blank Data Table",
           }}
           childComponent={
@@ -117,7 +203,7 @@ function App() {
         <StepCard
           cardInfo={{
             number: 2,
-            status: cardStates.complete,
+            status: getDataViewCardState(),
             title: "View and Edit your Data",
           }}
           childComponent={
@@ -141,7 +227,7 @@ function App() {
         <StepCard
           cardInfo={{
             number: 3,
-            status: cardStates.complete,
+            status: getBodyInputCardState(),
             title: "Create a Template Body for your Emails",
           }}
           childComponent={
@@ -157,7 +243,7 @@ function App() {
         <StepCard
           cardInfo={{
             number: 4,
-            status: cardStates.inProgress,
+            status: getGoogleLoginCardState(),
             title: "Authorize Google",
           }}
           childComponent={
@@ -175,7 +261,7 @@ function App() {
         <StepCard
           cardInfo={{
             number: 5,
-            status: cardStates.notStarted,
+            status: getReviewAndSendCardState(),
             title: "Review and Send",
           }}
           childComponent={
@@ -185,6 +271,11 @@ function App() {
               profileInfo={profileInfo}
               token={token}
               validEmails={validEmails}
+              validationStates={[
+                getDataViewCardState(),
+                getBodyInputCardState(),
+                getGoogleLoginCardState(),
+              ]}
               handleSetProfileInfo={handleSetProfileInfo}
               handleSetToken={handleSetToken}
               handleSetTableHeaderVariables={handleSetTableHeaderVariables}

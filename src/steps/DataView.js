@@ -63,7 +63,6 @@ const DataField = ({ item, handleFieldEdit }) => {
     borderWidth: 2,
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   function validateEmail(dataFieldValue) {
     if (item.key === "Recipient") {
       return !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
@@ -73,10 +72,6 @@ const DataField = ({ item, handleFieldEdit }) => {
       return dataFieldValue === "";
     }
   }
-
-  useEffect(() => {
-    validateEmail(item.value);
-  }, [item.value, validateEmail]);
 
   return (
     <div
@@ -201,7 +196,11 @@ const DataView = ({
   // Table CRUD Functions
 
   function addHeaderVariable() {
-    const newVarName = `new_variable_${numVariablesAdded + 1}`;
+    let newVarName = `new_variable_${numVariablesAdded + 1}`;
+    if (tableHeaderVariables.includes(newVarName)) {
+      Math.random();
+      newVarName = `new_variable_${Math.random() ** 10}`;
+    }
     handleSetNumVariablesAdded(numVariablesAdded + 1);
 
     // update the headers state variable
@@ -270,7 +269,7 @@ const DataView = ({
       handleSetHeaderVariableWarning(false);
       const oldValue = tableHeaderVariables[arrIndex];
       const newHeaders = [...tableHeaderVariables];
-      newHeaders[arrIndex] = newValue;
+      newHeaders[arrIndex] = newValue.toLowerCase();
       handleSetTableHeaderVariables(newHeaders);
 
       // update the key in the table data row objects
@@ -295,8 +294,8 @@ const DataView = ({
         "Are you sure you want to clear all your progress? You cannot undo this action."
       )
     ) {
-      handleSetTableHeaderVariables(null);
-      handleSetTableData(null);
+      handleSetTableHeaderVariables([]);
+      handleSetTableData([]);
       localStorage.removeItem("tableHeaders");
       localStorage.removeItem("tableData");
     }
@@ -310,14 +309,13 @@ const DataView = ({
     // shallow copy data and then set new row
     const newData = [...tableData];
     newData[rowIndex] = newRow;
-
     handleSetTableData(newData);
   }
 
   // HOOKS + HOOKS related
 
   function cacheDataToLocalStore(key, data) {
-    if (data !== null && data !== {}) {
+    if (data.length > 0) {
       localStorage.setItem(key, JSON.stringify(data));
     }
   }
@@ -327,18 +325,16 @@ const DataView = ({
     cacheDataToLocalStore("tableHeaders", tableHeaderVariables);
     cacheDataToLocalStore("tableData", tableData);
 
-    if (tableData !== null) {
-      if (tableData.length > 0) {
-        let allValid = true;
-        for (const row in tableData) {
-          allValid =
-            allValid &&
-            /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-              tableData[row]["Recipient"]
-            );
-        }
-        handleSetValidEmailsUpdate(allValid);
+    if (tableData.length > 0) {
+      let allValid = true;
+      for (const row in tableData) {
+        allValid =
+          allValid &&
+          /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+            tableData[row]["Recipient"]
+          );
       }
+      handleSetValidEmailsUpdate(allValid);
     }
   }, [tableHeaderVariables, tableData, handleSetValidEmailsUpdate]);
 
@@ -364,7 +360,7 @@ const DataView = ({
         justifyContent: "center",
       }}
     >
-      {tableHeaderVariables !== null ? (
+      {tableHeaderVariables.length > 0 ? (
         <div>
           <div
             style={{
@@ -382,7 +378,18 @@ const DataView = ({
               order to proceed.
             </p>
           </div>
-          <p hidden={!headerWarning} style={{ backgroundColor: "yellow" }}>
+          <p
+            style={{
+              display: headerWarning ? "flex" : "none",
+              alignItems: "center",
+              borderRadius: 10,
+              paddingLeft: 10,
+              marginBottom: 10,
+              height: 50,
+
+              backgroundColor: "rgba(254, 249, 167, 0.7)",
+            }}
+          >
             Please make sure all table headers are unique
           </p>
           <div
@@ -463,7 +470,7 @@ const DataView = ({
                     cursor: "pointer",
                     margin: 0,
                     marginLeft: 35 + 35,
-                    marginRight: 35 + 10,
+                    marginRight: 5 + 35 * (tableData.length > 1),
                     borderRadius: 10,
                     height: 32,
                     marginTop: 6,
@@ -493,7 +500,7 @@ const DataView = ({
                     cursor: "pointer",
                     margin: 0,
                     marginLeft: 35 + 35,
-                    marginRight: 35 + 10,
+                    marginRight: 5 + 35 * (tableData.length > 1),
                     borderRadius: 10,
                     height: 32,
                     marginTop: 6,

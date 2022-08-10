@@ -86,7 +86,7 @@ const CardTitle = ({ number, status, title }) => {
                 </p>
               </>
             );
-          } else if (status === cardStates.inProgress) {
+          } else if (status === cardStates.todo) {
             return (
               <>
                 <StatusIcon

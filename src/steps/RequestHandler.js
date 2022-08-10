@@ -5,6 +5,7 @@ import StepStatus from "../components/StepStatus";
 
 import SpinnerCSS from "../assets/Spinner.module.css";
 import { colors } from "../assets/colors";
+import { cardStates } from "../models";
 
 const requestStates = {
   unsent: 0,
@@ -18,6 +19,7 @@ const RequestHandler = ({
   profileInfo,
   token,
   validEmails,
+  validationStates,
   handleSetBodyInput,
   handleSetNumVariablesAdded,
   handleSetProfileInfo,
@@ -26,7 +28,6 @@ const RequestHandler = ({
   handleSetToken,
 }) => {
   const [request, setRequest] = useState({});
-  const [requestReady, setRequestReady] = useState(false);
   const [response, setResponse] = useState(null);
   const [currentRequestState, setCurrentRequestState] = useState(
     requestStates.unsent
@@ -44,9 +45,9 @@ const RequestHandler = ({
   }
 
   function handleResetInputRequest() {
-    handleSetTableHeaderVariables(null);
+    handleSetTableHeaderVariables([]);
     localStorage.removeItem("tableHeaders");
-    handleSetTableData(null);
+    handleSetTableData([]);
     localStorage.removeItem("tableData");
     handleSetBodyInput("");
     localStorage.removeItem("bodyInput");
@@ -108,10 +109,7 @@ const RequestHandler = ({
 
   useEffect(() => {
     if (body !== "" && data !== null && token !== null && validEmails) {
-      setRequestReady(true);
       setRequest(createRequest(body, data, token));
-    } else {
-      setRequestReady(false);
     }
   }, [body, data, validEmails, token]);
 
@@ -122,32 +120,61 @@ const RequestHandler = ({
         if (currentRequestState === requestStates.unsent) {
           return (
             <div>
+              <p
+                style={{
+                  textAlign: "left",
+                  margin: 0,
+                  marginBottom: 20,
+                  fontSize: 16,
+                  color: colors.DEACTIVATED,
+                }}
+              >
+                Complete all the steps to send emails
+              </p>
               <StepStatus
-                title={"Data Upload and Ready"}
-                status={validEmails ? "complete" : ""}
+                title={"Data Uploaded/Entered and Valid"}
+                status={
+                  validationStates[0] === cardStates.complete ? "complete" : ""
+                }
               />
               <StepStatus
-                title={"Body Template Added"}
-                status={body ? "complete" : ""}
+                title={"Template Body added and all Header Variables used"}
+                status={
+                  validationStates[1] === cardStates.complete ? "complete" : ""
+                }
               />
               <StepStatus
-                title={"Google Authorized"}
-                status={token ? "complete" : ""}
+                title={"Google Account Authorized"}
+                status={
+                  validationStates[2] === cardStates.complete ? "complete" : ""
+                }
               />
-              {profileInfo ? (
-                <div
-                  style={{
-                    display: "flex",
-                  }}
-                >
-                  <PrimaryButton
-                    title={`Send ${data ? data.length : ""} email(s)`}
-                    onClick={() => handleRequest()}
-                    disabled={!requestReady}
-                  />
+
+              <div
+                style={{
+                  display: "flex",
+                  height: 60,
+                  marginTop: 35,
+                }}
+              >
+                <PrimaryButton
+                  title={`Send ${data.length > 0 ? data.length : ""} email(s)`}
+                  onClick={() => handleRequest()}
+                  style={{ fontSize: 20 }}
+                  disabled={
+                    !(
+                      validationStates[0] === cardStates.complete &&
+                      validationStates[1] === cardStates.complete &&
+                      validationStates[2] === cardStates.complete
+                    )
+                  }
+                />
+                {profileInfo && (
                   <p
                     style={{
-                      marginLeft: 10,
+                      paddingLeft: 20,
+                      fontSize: 20,
+                      alignSelf: "center",
                     }}
                   >
                     from the address{" "}
@@ -155,10 +182,8 @@ const RequestHandler = ({
                       {profileInfo.email}
                     </span>
                   </p>
-                </div>
-              ) : (
-                <p>Sign In with Google above to send!</p>
-              )}
+                )}
+              </div>
             </div>
           );
         } else if (currentRequestState === requestStates.sending) {
@@ -173,10 +198,11 @@ const RequestHandler = ({
             >
               <p
                 style={{
-                  marginRight: 15,
+                  marginRight: 20,
+                  fontSize: 24,
                 }}
               >
-                Sending emails (hopefully)
+                Sending emails...
               </p>
               <div className={SpinnerCSS.loadingSpinner}></div>
             </div>

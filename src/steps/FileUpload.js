@@ -90,7 +90,9 @@ const CSVReader = ({
 
   function parseDataForView(unparsedData) {
     if (unparsedData !== null) {
-      let headers = unparsedData.data[0];
+      let headers = unparsedData.data[0].map((v) => {
+        return v.toLowerCase();
+      });
       // make the very first two headers "Recipient" and "Subject" respectively
       if (unparsedData.data[0].length <= 2) {
         headers = ["Recipient", "Subject"];
@@ -124,8 +126,8 @@ const CSVReader = ({
         "Are you sure you want to remove that file? Doing so will remove all changes in the table."
       )
     ) {
-      handleSetTableHeaderVariables(null);
-      handleSetTableData(null);
+      handleSetTableHeaderVariables([]);
+      handleSetTableData([]);
       localStorage.removeItem("tableHeaders");
       localStorage.removeItem("tableData");
       localStorage.removeItem("bodyInput");
@@ -147,7 +149,7 @@ const CSVReader = ({
         width: "100%",
       }}
     >
-      {tableData === null ? (
+      {tableData.length === 0 ? (
         <div
           style={{
             width: "100%",
@@ -164,8 +166,6 @@ const CSVReader = ({
           >
             <CSVReader
               onUploadAccepted={(results) => {
-                console.log("---------------------------");
-                console.log(results);
                 setZoneHover(false);
                 const res = parseDataForView(results);
                 handleSetTableHeaderVariables(res[0]);
@@ -284,7 +284,7 @@ const CSVReader = ({
               color: colors.DEACTIVATED,
             }}
           >
-            This step is complete, you can clear your data below if you'd like
+            This step is complete, you can Clear All Values below if you'd like
             to restart this step.
           </p>
         </div>
