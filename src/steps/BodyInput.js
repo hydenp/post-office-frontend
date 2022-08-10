@@ -87,7 +87,7 @@ const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
           paddingLeft: 10,
           marginBottom: 10,
 
-          backgroundColor: "rgba(254, 249, 167, 0.5)",
+          backgroundColor: "rgba(254, 249, 167, 0.7)",
         }}
       >
         <p>Looks like you tried using a</p>

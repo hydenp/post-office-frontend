@@ -378,7 +378,18 @@ const DataView = ({
               order to proceed.
             </p>
           </div>
-          <p hidden={!headerWarning} style={{ backgroundColor: "yellow" }}>
+          <p
+            style={{
+              display: headerWarning ? "flex" : "none",
+              alignItems: "center",
+              borderRadius: 10,
+              paddingLeft: 10,
+              marginBottom: 10,
+              height: 50,
+
+              backgroundColor: "rgba(254, 249, 167, 0.7)",
+            }}
+          >
             Please make sure all table headers are unique
           </p>
           <div
