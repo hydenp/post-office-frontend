@@ -310,10 +310,27 @@ function App() {
       <div
         style={{
           width: "100%",
+          display: "flex",
+          justifyContent: "center",
           backgroundColor: colors.BACKGROUND,
         }}
       >
         <p>React - Lambda</p>
+        <a
+          href="https://v727sjlnxuq.typeform.com/to/sH25XXP3"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <p
+            style={{
+              position: "absolute",
+              right: 40,
+              color: colors.DEACTIVATED,
+            }}
+          >
+            Give us some Feedback
+          </p>
+        </a>
       </div>
     </div>
   );
