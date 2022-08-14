@@ -135,12 +135,13 @@ const CSVReader = ({
   }
 
   function handleDataColdStart() {
+    const blankRow = {
+      Recipient: "",
+      Subject: "",
+      variable_1: "",
+    };
     if (tableData.length === 0) {
-      handleSetTableHeaderVariables(["Recipient", "Subject"]);
-      const blankRow = {
-        Recipient: "",
-        Subject: "",
-      };
+      handleSetTableHeaderVariables(["Recipient", "Subject", "variable_1"]);
       handleSetTableData([blankRow]);
     } else {
       if (
@@ -148,11 +149,7 @@ const CSVReader = ({
           "You already have some data, if you proceed, all current changes will by lost"
         )
       ) {
-        handleSetTableHeaderVariables(["Recipient", "Subject"]);
-        const blankRow = {
-          Recipient: "",
-          Subject: "",
-        };
+        handleSetTableHeaderVariables(["Recipient", "Subject", "variable_1"]);
         handleSetTableData([blankRow]);
       }
     }

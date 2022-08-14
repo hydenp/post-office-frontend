@@ -169,7 +169,7 @@ const DataRow = ({
             cursor: "pointer",
           }}
           onClick={() => deleteRow(arrIndex)}
-          disabled={!mouseOver || dataLength < 2}
+          disabled={!mouseOver}
         >
           <DeleteSymbol
             dimension={15}
