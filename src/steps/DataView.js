@@ -192,9 +192,9 @@ const DataView = ({
   // function props
   handleSetBodyInput,
   handleSetHeaderVariableWarning,
+  handleSetNumVariablesAdded,
   handleSetTableHeaderVariables,
   handleSetTableData,
-  handleSetNumVariablesAdded,
   handleSetValidEmailsUpdate,
 }) => {
   const [mouseOverAddVarButton, setMouseOverAddVarButton] = useState(false);
@@ -552,8 +552,8 @@ const DataView = ({
                   marginTop: 6,
                   width: 50,
                   backgroundColor: mouseOverAddVarButton
-                    ? colors.BACKGROUND
-                    : null,
+                    ? "#E8E8E8"
+                    : colors.BACKGROUND,
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",

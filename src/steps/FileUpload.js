@@ -135,12 +135,27 @@ const CSVReader = ({
   }
 
   function handleDataColdStart() {
-    handleSetTableHeaderVariables(["Recipient", "Subject"]);
-    const blankRow = {
-      Recipient: "",
-      Subject: "",
-    };
-    handleSetTableData([blankRow]);
+    if (tableData.length === 0) {
+      handleSetTableHeaderVariables(["Recipient", "Subject"]);
+      const blankRow = {
+        Recipient: "",
+        Subject: "",
+      };
+      handleSetTableData([blankRow]);
+    } else {
+      if (
+        window.confirm(
+          "You already have some data, if you proceed, all current changes will by lost"
+        )
+      ) {
+        handleSetTableHeaderVariables(["Recipient", "Subject"]);
+        const blankRow = {
+          Recipient: "",
+          Subject: "",
+        };
+        handleSetTableData([blankRow]);
+      }
+    }
   }
 
   return (
