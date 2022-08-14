@@ -570,6 +570,7 @@ const DataView = ({
       ) : (
         <p
           style={{
+            fontSize: 14,
             color: colors.DEACTIVATED,
           }}
         >

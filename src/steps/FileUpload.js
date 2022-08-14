@@ -171,7 +171,7 @@ const CSVReader = ({
               textAlign: "left",
               marginTop: 0,
               marginBottom: 20,
-              fontSize: 16,
+              fontSize: 14,
               color: colors.DEACTIVATED,
             }}
           >

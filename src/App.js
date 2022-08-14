@@ -178,7 +178,26 @@ function App() {
           paddingBottom: 20,
         }}
       >
-        <h1>PostOffice</h1>
+        <p
+          style={{
+            margin: 0,
+            paddingTop: 20,
+            paddingBottom: 5,
+            fontSize: 96,
+            fontWeight: 600,
+          }}
+        >
+          Post Office
+        </p>
+        <p
+          style={{
+            marginLeft: 100,
+            color: colors.DEACTIVATED,
+            paddingBottom: 20,
+          }}
+        >
+          The quickest way to send templated emails
+        </p>
         {/*<button onClick={loadTestData}>Set Data</button>*/}
         {/*<button onClick={unsetTestData}>UNSET Data</button>*/}
         {/*<button onClick={handleDataColdStart}>Cold Start</button>*/}
