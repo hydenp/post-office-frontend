@@ -193,6 +193,7 @@ const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
           placeholder="Start your email template here..."
           value={bodyInput}
           style={{
+            fontSize: 14,
             height: 240,
             borderBottomLeftRadius: 20,
             borderBottomRightRadius: 20,
