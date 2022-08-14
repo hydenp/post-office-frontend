@@ -23,7 +23,7 @@ const VariablePill = ({ title, type, style = {} }) => {
         backgroundColor: color,
         color: "white",
         fontWeight: 500,
-        fontSize: 16,
+        fontSize: 14,
         ...style,
       }}
     >

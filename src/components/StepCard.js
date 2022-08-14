@@ -9,12 +9,12 @@ const StepCard = ({ cardInfo, childComponent }) => {
   return (
     <div
       style={{
-        minWidth: 800,
+        minWidth: 650,
         backgroundColor: colors.BACKGROUND,
         borderRadius: 20,
-        padding: 40,
-        marginTop: 15,
-        marginBottom: 15,
+        padding: 30,
+        marginTop: 10,
+        marginBottom: 10,
         display: "flex",
         flexDirection: "column",
         alignContent: "flex-start",
@@ -44,8 +44,8 @@ const StepCard = ({ cardInfo, childComponent }) => {
         style={{
           display: show ? "flex" : "none",
           alignContent: "flex-start",
-          marginTop: 20,
-          marginLeft: 60,
+          marginTop: 5,
+          marginLeft: 53,
           overflow: "scroll auto",
           scrollbarColor: "#E8E8E8 transparent",
           // backgroundColor: "yellow",

@@ -9,6 +9,7 @@ import RequestHandler from "./steps/RequestHandler";
 import StepCard from "./components/StepCard";
 import { cardStates } from "./models";
 import { checkValidData, getHangingVariables } from "./steps/utils";
+import { colors } from "./assets/colors";
 
 function App() {
   const [bodyInput, setBodyInput] = useState("");
@@ -167,16 +168,36 @@ function App() {
   }
 
   return (
-    <div className="App">
+    <div className="App" style={{ position: "relative", minHeight: "100vh" }}>
       <div
         style={{
           width: "90%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
+          paddingBottom: 20,
         }}
       >
-        <h1>PostOffice</h1>
+        <p
+          style={{
+            margin: 0,
+            paddingTop: 20,
+            paddingBottom: 5,
+            fontSize: 96,
+            fontWeight: 600,
+          }}
+        >
+          Post Office
+        </p>
+        <p
+          style={{
+            marginLeft: 100,
+            color: colors.DEACTIVATED,
+            paddingBottom: 20,
+          }}
+        >
+          The quickest way to send templated emails
+        </p>
         {/*<button onClick={loadTestData}>Set Data</button>*/}
         {/*<button onClick={unsetTestData}>UNSET Data</button>*/}
         {/*<button onClick={handleDataColdStart}>Cold Start</button>*/}
@@ -285,6 +306,31 @@ function App() {
             />
           }
         />
+      </div>
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          backgroundColor: colors.BACKGROUND,
+        }}
+      >
+        <p>React - Lambda</p>
+        <a
+          href="https://v727sjlnxuq.typeform.com/to/sH25XXP3"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <p
+            style={{
+              position: "absolute",
+              right: 40,
+              color: colors.DEACTIVATED,
+            }}
+          >
+            Give us some Feedback
+          </p>
+        </a>
       </div>
     </div>
   );

@@ -27,8 +27,8 @@ const StatusIcon = ({ color, number, status }) => {
             style={{
               margin: 0,
               padding: 0,
-              height: 28,
-              width: 28,
+              height: 22,
+              width: 22,
             }}
           />
         </div>
@@ -51,11 +51,11 @@ const CardTitle = ({ number, status, title }) => {
   const titleStyle = {
     margin: 0,
     fontWeight: 600,
-    fontSize: 36,
+    fontSize: 28,
   };
   const titleIconStyle = {
     display: "flex",
-    fontSize: 36,
+    fontSize: 28,
   };
 
   return (
@@ -131,11 +131,11 @@ const CardTitle = ({ number, status, title }) => {
 
 const iconStyles = {
   container: {
-    height: 45,
-    width: 45,
-    borderRadius: 45,
+    height: 36,
+    width: 36,
+    borderRadius: 36,
     padding: 0,
-    marginRight: 20,
+    marginRight: 15,
     display: "flex",
     textAlign: "center",
     justifyContent: "center",

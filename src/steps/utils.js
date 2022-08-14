@@ -7,7 +7,7 @@ export function checkValidData(tableData) {
       if (objectKey === "Recipient") {
         allValid =
           allValid &&
-          /^[a-zA-Z.!#$%&'+/=?^_`{|}~-][a-zA-Z\d.!#$%&'+/=?^_`{|}~-]*@/gm.test(
+          /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
             tableData[rowIndex][objectKey]
           );
       } else {

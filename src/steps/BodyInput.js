@@ -67,8 +67,11 @@ const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
       >
         <p
           style={{
-            marginTop: 0,
             textAlign: "left",
+            marginTop: 0,
+            marginBottom: 20,
+            fontSize: 14,
+            color: colors.DEACTIVATED,
           }}
         >
           You can access the variables using the this syntax:{" "}
@@ -117,8 +120,8 @@ const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
             width: "100%",
             paddingBottom:
               allVars.length > 2 || hangingVariables.length > 0 ? 15 : 0,
-            borderTopLeftRadius: 10,
-            borderTopRightRadius: 10,
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
             backgroundColor: colors.PRIMARY,
           }}
         >
@@ -177,7 +180,8 @@ const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
           ) : (
             <p
               style={{
-                marginLeft: 10,
+                marginLeft: 15,
+                fontSize: 14,
                 color: "white",
               }}
             >
@@ -189,9 +193,10 @@ const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
           placeholder="Start your email template here..."
           value={bodyInput}
           style={{
+            fontSize: 14,
             height: 240,
-            borderBottomLeftRadius: 5,
-            borderBottomRightRadius: 5,
+            borderBottomLeftRadius: 20,
+            borderBottomRightRadius: 20,
           }}
           onChange={(event) => updateBodyEvent(event.target.value)}
         ></textarea>

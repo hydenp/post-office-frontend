@@ -3,6 +3,8 @@ import DeleteSymbol from "../components/DeleteSymbol";
 import PlusSymbol from "../components/PlusSymbol";
 import { colors } from "../assets/colors";
 
+const FIELD_WIDTH = 180;
+
 const DataHeader = ({ item, deleteHeaderVariable, headerEdit }) => {
   const editable = !(item.value === "Recipient" || item.value === "Subject");
 
@@ -10,8 +12,8 @@ const DataHeader = ({ item, deleteHeaderVariable, headerEdit }) => {
     <div
       key={item.index}
       style={{
-        height: 40,
-        width: 220,
+        height: 35,
+        width: FIELD_WIDTH,
         borderRadius: 10,
         margin: 10,
         display: "flex",
@@ -27,10 +29,10 @@ const DataHeader = ({ item, deleteHeaderVariable, headerEdit }) => {
         onChange={(e) => headerEdit(item.index, e.target.value)}
         style={{
           height: 35,
-          width: 180,
+          width: FIELD_WIDTH - 40,
           borderRadius: 10,
           paddingLeft: 10,
-          fontSize: 16,
+          fontSize: 14,
           color: "white",
           border: "none",
           backgroundColor: "transparent",
@@ -50,7 +52,7 @@ const DataHeader = ({ item, deleteHeaderVariable, headerEdit }) => {
         onClick={() => deleteHeaderVariable(item.index)}
         hidden={editable}
       >
-        <DeleteSymbol dimension={20} color={"white"} hidden={!editable} />
+        <DeleteSymbol dimension={15} color={"white"} hidden={!editable} />
       </button>
     </div>
   );
@@ -77,8 +79,11 @@ const DataField = ({ item, handleFieldEdit }) => {
     <div
       style={{
         borderColor: "white",
-        margin: 10,
-        width: 220,
+        marginLeft: 10,
+        marginRight: 10,
+        marginTop: 5,
+        marginBottom: 5,
+        width: FIELD_WIDTH,
       }}
       key={item.key}
     >
@@ -91,13 +96,15 @@ const DataField = ({ item, handleFieldEdit }) => {
                 borderWidth: 2,
                 borderColor: "#E8E8E8",
               }),
-          height: 35,
-          width: 210,
+          height: 30,
+          width: FIELD_WIDTH - 10,
+          fontSize: 12,
           borderRadius: 10,
           borderStyle: "solid",
           paddingLeft: 10,
           backgroundColor: "#E8E8E8",
         }}
+        spellCheck={item.key !== "Recipient"}
         value={item.value}
         onChange={(e) => handleFieldEdit(item.index, item.key, e.target.value)}
       />
@@ -121,8 +128,8 @@ const DataRow = ({
         width: "fit-content",
         backgroundColor: mouseOver ? colors.BACKGROUND : null,
         borderRadius: 10,
-        marginTop: 6,
-        marginLeft: 25,
+        marginTop: 3,
+        marginLeft: 15,
         borderColor: "red",
       }}
       onMouseEnter={() => setMouseOver(true)}
@@ -133,8 +140,9 @@ const DataRow = ({
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          margin: 0,
           width: 35,
-          fontSize: 16,
+          fontSize: 14,
           fontWeight: 500,
         }}
       >
@@ -152,19 +160,19 @@ const DataRow = ({
           style={{
             all: "unset",
             background: "none",
-            marginRight: 10,
+            marginRight: 5,
             marginLeft: 5,
-            width: 25,
+            width: 20,
             display: dataLength > 1 ? "flex" : "none",
             height: "100%",
             alignItems: "center",
             cursor: "pointer",
           }}
           onClick={() => deleteRow(arrIndex)}
-          disabled={!mouseOver || dataLength < 2}
+          disabled={!mouseOver}
         >
           <DeleteSymbol
-            dimension={20}
+            dimension={15}
             color={colors.PRIMARY}
             hidden={!mouseOver}
           />
@@ -184,9 +192,9 @@ const DataView = ({
   // function props
   handleSetBodyInput,
   handleSetHeaderVariableWarning,
+  handleSetNumVariablesAdded,
   handleSetTableHeaderVariables,
   handleSetTableData,
-  handleSetNumVariablesAdded,
   handleSetValidEmailsUpdate,
 }) => {
   const [mouseOverAddVarButton, setMouseOverAddVarButton] = useState(false);
@@ -371,6 +379,8 @@ const DataView = ({
             <p
               style={{
                 marginTop: 0,
+                marginBottom: 20,
+                fontSize: 14,
                 color: colors.DEACTIVATED,
               }}
             >
@@ -404,6 +414,7 @@ const DataView = ({
               style={{
                 height: 60,
                 borderRadius: 10,
+                marginBottom: 5,
               }}
             >
               {/* table head*/}
@@ -411,7 +422,7 @@ const DataView = ({
                 style={{
                   borderTopLeftRadius: 20,
                   borderTopRightRadius: 20,
-                  paddingLeft: 25,
+                  paddingLeft: 15,
                   height: 60,
                   display: "flex",
                   alignItems: "center",
@@ -422,7 +433,7 @@ const DataView = ({
                   style={{
                     width: 35,
                   }}
-                ></div>
+                />
                 {Object.keys(tableHeaderVariables).map((k) => (
                   <DataHeader
                     key={k}
@@ -469,8 +480,8 @@ const DataView = ({
                     alignItems: "center",
                     cursor: "pointer",
                     margin: 0,
-                    marginLeft: 35 + 35,
-                    marginRight: 5 + 35 * (tableData.length > 1),
+                    marginLeft: 60 + 20,
+                    marginRight: 35 * (tableData.length > 1) + 20,
                     borderRadius: 10,
                     height: 32,
                     marginTop: 6,
@@ -490,7 +501,13 @@ const DataView = ({
                       marginRight: 5,
                     }}
                   />
-                  <p>Add Row</p>
+                  <p
+                    style={{
+                      fontSize: 14,
+                    }}
+                  >
+                    Add Row
+                  </p>
                 </div>
                 <div
                   style={{
@@ -499,8 +516,8 @@ const DataView = ({
                     alignItems: "center",
                     cursor: "pointer",
                     margin: 0,
-                    marginLeft: 35 + 35,
-                    marginRight: 5 + 35 * (tableData.length > 1),
+                    marginLeft: 60 + 20,
+                    marginRight: 35 * (tableData.length > 1) + 20,
                     borderRadius: 10,
                     height: 32,
                     marginTop: 6,
@@ -519,6 +536,7 @@ const DataView = ({
                   <p
                     style={{
                       color: "rgba(205, 00, 00)",
+                      fontSize: 14,
                     }}
                   >
                     Clear All Values
@@ -534,8 +552,8 @@ const DataView = ({
                   marginTop: 6,
                   width: 50,
                   backgroundColor: mouseOverAddVarButton
-                    ? colors.BACKGROUND
-                    : null,
+                    ? "#E8E8E8"
+                    : colors.BACKGROUND,
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
@@ -544,7 +562,7 @@ const DataView = ({
                 onMouseEnter={() => setMouseOverAddVarButton(true)}
                 onMouseLeave={() => setMouseOverAddVarButton(false)}
               >
-                <PlusSymbol color={colors.PRIMARY} dimension={30} />
+                <PlusSymbol color={colors.PRIMARY} dimension={20} />
               </div>
             </div>
           </div>
@@ -552,6 +570,7 @@ const DataView = ({
       ) : (
         <p
           style={{
+            fontSize: 14,
             color: colors.DEACTIVATED,
           }}
         >
