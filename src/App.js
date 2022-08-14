@@ -9,6 +9,7 @@ import RequestHandler from "./steps/RequestHandler";
 import StepCard from "./components/StepCard";
 import { cardStates } from "./models";
 import { checkValidData, getHangingVariables } from "./steps/utils";
+import { colors } from "./assets/colors";
 
 function App() {
   const [bodyInput, setBodyInput] = useState("");
@@ -167,13 +168,14 @@ function App() {
   }
 
   return (
-    <div className="App">
+    <div className="App" style={{ position: "relative", minHeight: "100vh" }}>
       <div
         style={{
           width: "90%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
+          paddingBottom: 20,
         }}
       >
         <h1>PostOffice</h1>
@@ -285,6 +287,14 @@ function App() {
             />
           }
         />
+      </div>
+      <div
+        style={{
+          width: "100%",
+          backgroundColor: colors.BACKGROUND,
+        }}
+      >
+        <p>React - Lambda</p>
       </div>
     </div>
   );
