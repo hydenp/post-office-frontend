@@ -181,7 +181,7 @@ function App() {
         <p
           style={{
             margin: 0,
-            paddingTop: 20,
+            paddingTop: 50,
             paddingBottom: 5,
             fontSize: 96,
             fontWeight: 600,
