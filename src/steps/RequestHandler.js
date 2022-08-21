@@ -85,7 +85,10 @@ const RequestHandler = ({
   }
 
   function makeRequest() {
-    return axios.post(process.env.REACT_APP_AWS_GATEWAY_DEV_API, request);
+    return axios.post(
+      process.env.REACT_APP_AWS_GATEWAY_GMAIL_ENDPOINT,
+      request
+    );
   }
 
   async function handleRequest() {
