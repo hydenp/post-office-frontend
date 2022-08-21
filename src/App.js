@@ -198,7 +198,12 @@ function App() {
         >
           The quickest way to send templated emails
         </p>
-        {/*<button onClick={loadTestData}>Set Data</button>*/}
+        {/*<button*/}
+        {/*  onClick={() => console.log(process.env.REACT_APP_AWS_GATEWAY_DEV_API)}*/}
+        {/*>*/}
+        {/*  print endpoint*/}
+        {/*</button>*/}
+        {/*<button onClick={() => console.log(token)}>print token</button>*/}
         {/*<button onClick={unsetTestData}>UNSET Data</button>*/}
         {/*<button onClick={handleDataColdStart}>Cold Start</button>*/}
         {/*<button onClick={resetLocalStorage}>UNSET Local Storage</button>*/}
