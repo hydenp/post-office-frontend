@@ -394,10 +394,10 @@ const DataView = ({
               alignItems: "center",
               borderRadius: 10,
               paddingLeft: 10,
-              marginBottom: 10,
+              margin: 0,
               height: 50,
 
-              backgroundColor: "rgba(254, 249, 167, 0.7)",
+              backgroundColor: "rgba(244, 210, 33, 0.2)",
             }}
           >
             Please make sure all table headers are unique
@@ -445,9 +445,16 @@ const DataView = ({
                 <div
                   style={{
                     backgroundColor: colors.PRIMARY,
+                    width: 80,
                     borderTopRightRadius: 20,
+                    color: "white",
+                    fontSize: 12,
+                    fontWeight: 500,
+                    textAlign: "center",
                   }}
-                ></div>
+                >
+                  <p>Add Var</p>
+                </div>
               </div>
             </div>
             {/* table body */}
@@ -480,8 +487,8 @@ const DataView = ({
                     alignItems: "center",
                     cursor: "pointer",
                     margin: 0,
-                    marginLeft: 60 + 20,
-                    marginRight: 35 * (tableData.length > 1) + 20,
+                    marginLeft: 60,
+                    marginRight: 35 * (tableData.length > 1),
                     borderRadius: 10,
                     height: 32,
                     marginTop: 6,
@@ -516,8 +523,8 @@ const DataView = ({
                     alignItems: "center",
                     cursor: "pointer",
                     margin: 0,
-                    marginLeft: 60 + 20,
-                    marginRight: 35 * (tableData.length > 1) + 20,
+                    marginLeft: 60,
+                    marginRight: 35 * (tableData.length > 1),
                     borderRadius: 10,
                     height: 32,
                     marginTop: 6,
@@ -535,7 +542,7 @@ const DataView = ({
                 >
                   <p
                     style={{
-                      color: "rgba(205, 00, 00)",
+                      color: colors.ACCENT,
                       fontSize: 14,
                     }}
                   >

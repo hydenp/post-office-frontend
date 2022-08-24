@@ -2,7 +2,7 @@ import "./App.css";
 
 import GoogleOauth from "./steps/GoogleAuth";
 import FileUpload from "./steps/FileUpload";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DataView from "./steps/DataView";
 import BodyInput from "./steps/BodyInput";
 import RequestHandler from "./steps/RequestHandler";
@@ -10,6 +10,8 @@ import StepCard from "./components/StepCard";
 import { cardStates } from "./models";
 import { checkValidData, getHangingVariables } from "./steps/utils";
 import { colors } from "./assets/colors";
+
+import logo from "./assets/post_office_icon.svg";
 
 function App() {
   const [bodyInput, setBodyInput] = useState("");
@@ -20,6 +22,7 @@ function App() {
   const [tableHeaderVariables, setTableHeaderVariables] = useState([]);
   const [token, setToken] = useState(null);
   const [validEmails, setValidEmails] = useState(false);
+  const [windowSize, setWindowSize] = useState(getWindowSize());
 
   // HELPER METHODS FOR DEBUG/DEV
 
@@ -167,176 +170,297 @@ function App() {
     setValidEmails(v);
   }
 
+  // track window size and update whenever changed
+  function getWindowSize() {
+    const { innerWidth, innerHeight } = window;
+    return { innerWidth, innerHeight };
+  }
+
+  useEffect(() => {
+    function handleWindowResize() {
+      setWindowSize(getWindowSize());
+    }
+
+    window.addEventListener("resize", handleWindowResize);
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, []);
+
   return (
     <div className="App" style={{ position: "relative", minHeight: "100vh" }}>
-      <div
-        style={{
-          width: "90%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          paddingBottom: 20,
-        }}
-      >
-        <p
-          style={{
-            margin: 0,
-            paddingTop: 50,
-            paddingBottom: 5,
-            fontSize: 96,
-            fontWeight: 600,
-          }}
-        >
-          Post Office
-        </p>
-        <p
-          style={{
-            marginLeft: 100,
-            color: colors.DEACTIVATED,
-            paddingBottom: 20,
-          }}
-        >
-          The quickest way to send templated emails
-        </p>
-        {/*<button*/}
-        {/*  onClick={() => console.log(process.env.REACT_APP_AWS_GATEWAY_DEV_API)}*/}
-        {/*>*/}
-        {/*  print endpoint*/}
-        {/*</button>*/}
-        {/*<button onClick={() => console.log(token)}>print token</button>*/}
-        {/*<button onClick={unsetTestData}>UNSET Data</button>*/}
-        {/*<button onClick={handleDataColdStart}>Cold Start</button>*/}
-        {/*<button onClick={resetLocalStorage}>UNSET Local Storage</button>*/}
-        {/*<button onClick={printStates}>Print Data</button>*/}
-
-        {/*File upload step */}
-        <StepCard
-          cardInfo={{
-            number: 1,
-            status: getFileUploadCardState(),
-            title: "Upload CSV or start with a Blank Data Table",
-          }}
-          childComponent={
-            <FileUpload
-              tableData={tableData}
-              handleSetTableHeaderVariables={handleSetTableHeaderVariables}
-              handleSetTableData={handleSetTableData}
-            />
-          }
-        />
-
-        {/* View end Edit the data step */}
-        <StepCard
-          cardInfo={{
-            number: 2,
-            status: getDataViewCardState(),
-            title: "View and Edit your Data",
-          }}
-          childComponent={
-            <DataView
-              bodyInput={bodyInput}
-              headerWarning={headerVariableWarning}
-              numVariablesAdded={numVariablesAdded}
-              tableData={tableData}
-              tableHeaderVariables={tableHeaderVariables}
-              handleSetBodyInput={handleSetBodyInput}
-              handleSetHeaderVariableWarning={handleSetHeaderVariableWarning}
-              handleSetNumVariablesAdded={handleSetNumVariablesAdded}
-              handleSetTableData={handleSetTableData}
-              handleSetTableHeaderVariables={handleSetTableHeaderVariables}
-              handleSetValidEmailsUpdate={handleSetValidEmailsUpdate}
-            />
-          }
-        />
-
-        {/* Creating body of email step */}
-        <StepCard
-          cardInfo={{
-            number: 3,
-            status: getBodyInputCardState(),
-            title: "Create a Template Body for your Emails",
-          }}
-          childComponent={
-            <BodyInput
-              bodyInput={bodyInput}
-              tableHeaderVariables={tableHeaderVariables}
-              handleSetBodyInput={handleSetBodyInput}
-            />
-          }
-        />
-
-        {/* Component to start google oauth flow, store it in state variable and print token */}
-        <StepCard
-          cardInfo={{
-            number: 4,
-            status: getGoogleLoginCardState(),
-            title: "Authorize Google",
-          }}
-          childComponent={
-            <GoogleOauth
-              profileInfo={profileInfo}
-              token={token}
-              handleSetProfileInfo={handleSetProfileInfo}
-              handleSetToken={handleSetToken}
-            />
-          }
-        />
-
-        {/* Component to handle sending of request and displaying response*/}
-
-        <StepCard
-          cardInfo={{
-            number: 5,
-            status: getReviewAndSendCardState(),
-            title: "Review and Send",
-          }}
-          childComponent={
-            <RequestHandler
-              body={bodyInput}
-              data={tableData}
-              profileInfo={profileInfo}
-              token={token}
-              validEmails={validEmails}
-              validationStates={[
-                getDataViewCardState(),
-                getBodyInputCardState(),
-                getGoogleLoginCardState(),
-              ]}
-              handleSetProfileInfo={handleSetProfileInfo}
-              handleSetToken={handleSetToken}
-              handleSetTableHeaderVariables={handleSetTableHeaderVariables}
-              handleSetTableData={handleSetTableData}
-              handleSetBodyInput={handleSetBodyInput}
-              handleSetNumVariablesAdded={handleSetNumVariablesAdded}
-            />
-          }
-        />
-      </div>
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          backgroundColor: colors.BACKGROUND,
-        }}
-      >
-        <p>React - Lambda</p>
-        <a
-          href="https://v727sjlnxuq.typeform.com/to/sH25XXP3"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <p
+      {windowSize.innerWidth > 750 ? (
+        <>
+          <div
             style={{
-              position: "absolute",
-              right: 40,
-              color: colors.DEACTIVATED,
+              width: "90%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              paddingBottom: 20,
             }}
           >
-            Give us some Feedback
+            <div
+              style={{
+                paddingTop: 50,
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <img
+                src={logo}
+                alt="logo"
+                style={{
+                  height: 70,
+                  marginRight: 20,
+                }}
+              />
+              <p
+                style={{
+                  margin: 0,
+                  paddingBottom: 5,
+                  fontSize: 60,
+                  fontWeight: 600,
+                }}
+              >
+                Post Office
+              </p>
+            </div>
+            <p
+              style={{
+                marginLeft: 70,
+                color: colors.DEACTIVATED,
+                paddingBottom: 20,
+                fontStyle: "italic",
+              }}
+            >
+              The quickest way to send templated emails
+            </p>
+            {/*<button*/}
+            {/*  onClick={() => console.log(process.env.REACT_APP_AWS_GATEWAY_DEV_API)}*/}
+            {/*>*/}
+            {/*  print endpoint*/}
+            {/*</button>*/}
+            {/*<button onClick={() => console.log(token)}>print token</button>*/}
+            {/*<button onClick={unsetTestData}>UNSET Data</button>*/}
+            {/*<button onClick={handleDataColdStart}>Cold Start</button>*/}
+            {/*<button onClick={resetLocalStorage}>UNSET Local Storage</button>*/}
+            {/*<button onClick={printStates}>Print Data</button>*/}
+
+            <StepCard
+              cardInfo={{
+                number: "~",
+                status: cardStates.todo,
+                title: "Quick Tutorial",
+              }}
+              childComponent={<></>}
+            />
+
+            {/*File upload step */}
+            <StepCard
+              cardInfo={{
+                number: 1,
+                status: getFileUploadCardState(),
+                title: "Upload CSV or start with a Blank Data Table",
+              }}
+              childComponent={
+                <FileUpload
+                  tableData={tableData}
+                  handleSetTableHeaderVariables={handleSetTableHeaderVariables}
+                  handleSetTableData={handleSetTableData}
+                />
+              }
+            />
+
+            {/* View end Edit the data step */}
+            <StepCard
+              cardInfo={{
+                number: 2,
+                status: getDataViewCardState(),
+                title: "View and Edit your Data",
+              }}
+              childComponent={
+                <DataView
+                  bodyInput={bodyInput}
+                  headerWarning={headerVariableWarning}
+                  numVariablesAdded={numVariablesAdded}
+                  tableData={tableData}
+                  tableHeaderVariables={tableHeaderVariables}
+                  handleSetBodyInput={handleSetBodyInput}
+                  handleSetHeaderVariableWarning={
+                    handleSetHeaderVariableWarning
+                  }
+                  handleSetNumVariablesAdded={handleSetNumVariablesAdded}
+                  handleSetTableData={handleSetTableData}
+                  handleSetTableHeaderVariables={handleSetTableHeaderVariables}
+                  handleSetValidEmailsUpdate={handleSetValidEmailsUpdate}
+                />
+              }
+            />
+
+            {/* Creating body of email step */}
+            <StepCard
+              cardInfo={{
+                number: 3,
+                status: getBodyInputCardState(),
+                title: "Create a Template Body for your Emails",
+              }}
+              childComponent={
+                <BodyInput
+                  bodyInput={bodyInput}
+                  tableHeaderVariables={tableHeaderVariables}
+                  handleSetBodyInput={handleSetBodyInput}
+                />
+              }
+            />
+
+            {/* Component to start google oauth flow, store it in state variable and print token */}
+            <StepCard
+              cardInfo={{
+                number: 4,
+                status: getGoogleLoginCardState(),
+                title: "Authorize Google",
+              }}
+              childComponent={
+                <GoogleOauth
+                  profileInfo={profileInfo}
+                  token={token}
+                  handleSetProfileInfo={handleSetProfileInfo}
+                  handleSetToken={handleSetToken}
+                />
+              }
+            />
+
+            {/* Component to handle sending of request and displaying response*/}
+
+            <StepCard
+              cardInfo={{
+                number: 5,
+                status: getReviewAndSendCardState(),
+                title: "Review and Send",
+              }}
+              childComponent={
+                <RequestHandler
+                  body={bodyInput}
+                  data={tableData}
+                  profileInfo={profileInfo}
+                  token={token}
+                  validEmails={validEmails}
+                  validationStates={[
+                    getDataViewCardState(),
+                    getBodyInputCardState(),
+                    getGoogleLoginCardState(),
+                  ]}
+                  handleSetProfileInfo={handleSetProfileInfo}
+                  handleSetToken={handleSetToken}
+                  handleSetTableHeaderVariables={handleSetTableHeaderVariables}
+                  handleSetTableData={handleSetTableData}
+                  handleSetBodyInput={handleSetBodyInput}
+                  handleSetNumVariablesAdded={handleSetNumVariablesAdded}
+                />
+              }
+            />
+          </div>
+          <div
+            style={{
+              marginTop: 15,
+              height: 65,
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: colors.BACKGROUND,
+            }}
+          >
+            <p
+              style={{
+                fontWeight: 600,
+                color: colors.DEACTIVATED,
+              }}
+            >
+              React + Amplify | Lambda + Terraform
+            </p>
+            <a
+              href="https://v727sjlnxuq.typeform.com/to/sH25XXP3"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <p
+                style={{
+                  position: "absolute",
+                  right: 25,
+                  bottom: 0,
+                  color: colors.DEACTIVATED,
+                  padding: 7,
+                  backgroundColor: "#ECEBEB",
+                  borderRadius: 7,
+                }}
+              >
+                Feedback
+              </p>
+            </a>
+          </div>
+        </>
+      ) : (
+        // <div
+        //   style={{
+        //     display: "flex",
+        //     alignItems: "flex-start",
+        //     backgroundColor: "red",
+        //     height: "100%",
+        //   }}
+        // >
+        <div
+          style={{
+            height: "100vh",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-start",
+          }}
+        >
+          <div
+            style={{
+              paddingTop: 50,
+              display: "flex",
+              justifyContent: "center",
+              alignContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src={logo}
+              alt="logo"
+              style={{
+                height: 36,
+                marginRight: 12,
+              }}
+            />
+            <p
+              style={{
+                margin: 0,
+                paddingBottom: 5,
+                fontSize: 42,
+                fontWeight: 600,
+              }}
+            >
+              Post Office
+            </p>
+          </div>
+          <p
+            style={{
+              width: "70%",
+              alignSelf: "center",
+              color: colors.DEACTIVATED,
+              fontSize: 14,
+            }}
+          >
+            Please use a bigger screen in order for Post Office to provide a
+            suitable experience.
           </p>
-        </a>
-      </div>
+        </div>
+      )}
     </div>
   );
 }

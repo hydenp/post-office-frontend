@@ -18,7 +18,7 @@ const StepStatus = ({ title, status }) => {
               height: 20,
               width: 20,
               borderRadius: 20,
-              backgroundColor: "#3CCF4E",
+              backgroundColor: "#46877B",
               padding: 0,
               marginRight: 10,
               display: "flex",
@@ -40,7 +40,7 @@ const StepStatus = ({ title, status }) => {
           <p
             style={{
               margin: 0,
-              color: "#3CCF4E",
+              color: "#46877B",
               display: "flex",
               textAlign: "center",
               alignItems: "center",
@@ -56,7 +56,7 @@ const StepStatus = ({ title, status }) => {
               height: 20,
               width: 20,
               borderRadius: 20,
-              backgroundColor: "rgba(205, 00, 00)",
+              backgroundColor: "#C54949",
               padding: 0,
               marginRight: 10,
               display: "flex",
@@ -69,7 +69,7 @@ const StepStatus = ({ title, status }) => {
           <p
             style={{
               margin: 0,
-              color: "rgba(205, 00, 00)",
+              color: "#C54949",
               display: "flex",
               textAlign: "center",
               alignItems: "center",

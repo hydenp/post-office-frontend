@@ -316,8 +316,8 @@ const CSVReader = ({
             }}
           >
             This step is complete, you can{" "}
-            <span style={{ color: "rgba(205, 00, 00)" }}>Clear All Values</span>{" "}
-            below if you'd like to restart this step.
+            <span style={{ color: colors.ACCENT }}>Clear All Values</span> below
+            if you'd like to restart this step.
           </p>
         </div>
       )}
