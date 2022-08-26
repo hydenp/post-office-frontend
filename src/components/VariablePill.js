@@ -4,11 +4,11 @@ import { colors } from "../assets/colors";
 const VariablePill = ({ title, type, style = {} }) => {
   let color;
   if (type === "used") {
-    color = "#3CCF4E";
+    color = colors.GREEN;
   } else if (type === "unused") {
     color = "rgba(191, 217, 255, 0.3)";
   } else if (type === "warning") {
-    color = colors.PRIMARY;
+    color = colors.DEACTIVATED;
   }
   return (
     <div

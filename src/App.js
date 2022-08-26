@@ -12,9 +12,12 @@ import { checkValidData, getHangingVariables } from "./steps/utils";
 import { colors } from "./assets/colors";
 
 import logo from "./assets/post_office_icon.svg";
+import PrimaryButton from "./components/PrimaryButton";
 
 function App() {
   const [bodyInput, setBodyInput] = useState("");
+  const [overrideDemoShow, setOverrideDemoShow] = useState(false);
+  const [demoWatched, setDemoWatched] = useState(false);
   const [headerVariableWarning, setHeaderVariableWarning] = useState(false);
   const [numVariablesAdded, setNumVariablesAdded] = useState(0);
   const [profileInfo, setProfileInfo] = useState(null);
@@ -142,6 +145,10 @@ function App() {
     setBodyInput(v);
   }
 
+  function handleSetOverride(v) {
+    setOverrideDemoShow(v);
+  }
+
   function handleSetHeaderVariableWarning(v) {
     setHeaderVariableWarning(v);
   }
@@ -252,10 +259,37 @@ function App() {
             <StepCard
               cardInfo={{
                 number: "~",
-                status: cardStates.todo,
+                status: demoWatched ? cardStates.complete : cardStates.todo,
                 title: "Quick Tutorial",
               }}
-              childComponent={<></>}
+              overrideShow={overrideDemoShow}
+              handleSetOverride={handleSetOverride}
+              childComponent={
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <iframe
+                    width="750"
+                    height="500"
+                    src="https://www.youtube.com/embed/EbDxQbGfSfM"
+                    title="YouTube video player"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    style={{
+                      border: 0,
+                    }}
+                  ></iframe>
+                  <PrimaryButton
+                    title={"Done"}
+                    style={{
+                      width: 40,
+                      marginTop: 20,
+                    }}
+                    onClick={() => {
+                      setOverrideDemoShow(true);
+                      setDemoWatched(true);
+                    }}
+                  />
+                </div>
+              }
             />
 
             {/*File upload step */}
@@ -418,6 +452,8 @@ function App() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "flex-start",
+            alignContent: "center",
+            alignItems: "center",
           }}
         >
           <div
@@ -454,11 +490,29 @@ function App() {
               alignSelf: "center",
               color: colors.DEACTIVATED,
               fontSize: 14,
+              marginBottom: 30,
             }}
           >
             Please use a bigger screen in order for Post Office to provide a
-            suitable experience.
+            suitable experience. Meantime you can checkout the demo below!
           </p>
+          <div
+            style={{
+              width: "70%",
+            }}
+          >
+            <iframe
+              width={"100%"}
+              height={0.5 * windowSize.innerWidth}
+              src="https://www.youtube.com/embed/EbDxQbGfSfM"
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{
+                border: 0,
+              }}
+            ></iframe>
+          </div>
         </div>
       )}
     </div>

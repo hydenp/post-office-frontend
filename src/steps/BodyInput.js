@@ -100,8 +100,8 @@ const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
                 title={k}
                 type={"warning"}
                 style={{
-                  marginLeft: 3,
-                  marginRight: 3,
+                  marginLeft: 4,
+                  marginRight: 2,
                 }}
               />
               {v + 1 !== hangingVariables.length && ","}
