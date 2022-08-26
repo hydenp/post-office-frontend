@@ -1,9 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CardTitle from "./CardTitle";
 import { colors } from "../assets/colors";
 
-const StepCard = ({ cardInfo, childComponent }) => {
+const StepCard = ({
+  cardInfo,
+  childComponent,
+  overrideShow = false,
+  handleSetOverride,
+}) => {
   const [show, setShow] = useState(true);
+
+  useEffect(() => {
+    if (overrideShow) {
+      setShow(false);
+      handleSetOverride(false);
+    }
+  }, [handleSetOverride, overrideShow]);
 
   return (
     <div
