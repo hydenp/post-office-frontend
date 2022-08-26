@@ -141,7 +141,7 @@ const RequestHandler = ({
                 }
               />
               <StepStatus
-                title={"Template Body added and all Header Variables used"}
+                title={"Template Body added and all Variables used"}
                 status={
                   validationStates[1] === cardStates.complete ? "complete" : ""
                 }

@@ -86,23 +86,26 @@ const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
           paddingLeft: 10,
           marginBottom: 10,
 
-          backgroundColor: "rgba(244, 210, 33, 0.2)",
+          backgroundColor: colors.YELLOW,
         }}
       >
         <p>
           Looks like you tried using the following variables that aren't not in
           the table data:
         </p>
-        {hangingVariables.map((v) => {
+        {hangingVariables.map((k, v) => {
           return (
-            <VariablePill
-              title={v}
-              type={"warning"}
-              style={{
-                marginLeft: 10,
-                marginRight: 10,
-              }}
-            />
+            <>
+              <VariablePill
+                title={k}
+                type={"warning"}
+                style={{
+                  marginLeft: 3,
+                  marginRight: 3,
+                }}
+              />
+              {v + 1 !== hangingVariables.length && ","}
+            </>
           );
         })}
       </div>
@@ -132,7 +135,7 @@ const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
           }}
         >
           {/*  list of variables in header */}
-          {tableHeaderVariables.length > 0 ? (
+          {tableHeaderVariables.length > 2 ? (
             Object.keys(tableHeaderVariables)
               .filter(
                 (r) =>

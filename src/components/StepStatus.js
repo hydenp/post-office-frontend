@@ -1,6 +1,7 @@
 import React from "react";
 import checkMark from "../assets/check.svg";
 import DeleteSymbol from "./DeleteSymbol";
+import { colors } from "../assets/colors";
 
 const StepStatus = ({ title, status }) => {
   return (
@@ -18,7 +19,7 @@ const StepStatus = ({ title, status }) => {
               height: 20,
               width: 20,
               borderRadius: 20,
-              backgroundColor: "#46877B",
+              backgroundColor: colors.GREEN,
               padding: 0,
               marginRight: 10,
               display: "flex",
@@ -40,7 +41,7 @@ const StepStatus = ({ title, status }) => {
           <p
             style={{
               margin: 0,
-              color: "#46877B",
+              color: colors.GREEN,
               display: "flex",
               textAlign: "center",
               alignItems: "center",
@@ -56,7 +57,7 @@ const StepStatus = ({ title, status }) => {
               height: 20,
               width: 20,
               borderRadius: 20,
-              backgroundColor: "#C54949",
+              backgroundColor: colors.RED,
               padding: 0,
               marginRight: 10,
               display: "flex",
@@ -69,7 +70,7 @@ const StepStatus = ({ title, status }) => {
           <p
             style={{
               margin: 0,
-              color: "#C54949",
+              color: colors.RED,
               display: "flex",
               textAlign: "center",
               alignItems: "center",
