@@ -16,7 +16,7 @@ import PrimaryButton from "./components/PrimaryButton";
 
 function App() {
   const [bodyInput, setBodyInput] = useState("");
-  const [overrideDemoShow, setOverrideDemoShow] = useState(false);
+  const [overrideDemoShow, setOverrideDemoShow] = useState(true);
   const [demoWatched, setDemoWatched] = useState(false);
   const [headerVariableWarning, setHeaderVariableWarning] = useState(false);
   const [numVariablesAdded, setNumVariablesAdded] = useState(0);
@@ -267,8 +267,8 @@ function App() {
               childComponent={
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   <iframe
-                    width="750"
-                    height="500"
+                    width="700"
+                    height="530"
                     src="https://www.youtube.com/embed/EbDxQbGfSfM"
                     title="YouTube video player"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
