@@ -8,7 +8,7 @@ const VariablePill = ({ title, type, style = {} }) => {
   } else if (type === "unused") {
     color = "rgba(191, 217, 255, 0.3)";
   } else if (type === "warning") {
-    color = colors.RED;
+    color = colors.DEACTIVATED;
   }
   return (
     <div
