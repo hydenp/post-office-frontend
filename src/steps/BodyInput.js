@@ -86,19 +86,28 @@ const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
           paddingLeft: 10,
           marginBottom: 10,
 
-          backgroundColor: "rgba(254, 249, 167, 0.7)",
+          backgroundColor: colors.YELLOW,
         }}
       >
-        <p>Looks like you tried using a</p>
-        <VariablePill
-          title={"variable"}
-          type={"warning"}
-          style={{
-            marginLeft: 10,
-            marginRight: 10,
-          }}
-        />
-        <p> that is not in the table data</p>
+        <p>
+          Looks like you tried using the following variables that aren't not in
+          the table data:
+        </p>
+        {hangingVariables.map((k, v) => {
+          return (
+            <>
+              <VariablePill
+                title={k}
+                type={"warning"}
+                style={{
+                  marginLeft: 3,
+                  marginRight: 3,
+                }}
+              />
+              {v + 1 !== hangingVariables.length && ","}
+            </>
+          );
+        })}
       </div>
 
       {/* text input*/}
@@ -126,8 +135,8 @@ const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
           }}
         >
           {/*  list of variables in header */}
-          {allVars.length > 2 || hangingVariables.length > 0 ? (
-            Object.keys(allVars)
+          {tableHeaderVariables.length > 2 ? (
+            Object.keys(tableHeaderVariables)
               .filter(
                 (r) =>
                   ["Recipient", "Subject"].indexOf(tableHeaderVariables[r]) ===

@@ -4,11 +4,18 @@ import axios from "axios";
 import { colors } from "../assets/colors";
 
 import GmailIcon from "../assets/gmail.svg";
+import PrimaryButton from "../components/PrimaryButton";
 
 const PROFILE_URL = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json";
 const GOOGLE_API_SCOPE = "https://www.googleapis.com/auth/gmail.send";
 
-const Login = ({ handleGoogleLogin, title }) => {
+const Login = ({
+  handleGoogleLogin,
+  title,
+  token,
+  handleSetProfileInfo,
+  handleSetToken,
+}) => {
   async function getGoogleProfile(accessToken) {
     return axios.get(PROFILE_URL, {
       headers: {
@@ -29,37 +36,58 @@ const Login = ({ handleGoogleLogin, title }) => {
   });
 
   return (
-    <button
+    <div
       style={{
-        height: 50,
-        all: "unset",
-        background: "none",
         display: "flex",
-
-        paddingLeft: 20,
-        paddingRight: 20,
-
-        borderRadius: 10,
-        borderStyle: "solid",
-        borderColor: colors.ACCENT,
-        cursor: "pointer",
-        flexWrap: "nowrap",
-        alignContent: "center",
-        backgroundColor: "white",
       }}
-      onClick={() => login()}
     >
-      <p
+      <button
         style={{
-          color: colors.ACCENT,
-          fontSize: 14,
-          marginRight: 10,
+          height: 50,
+          all: "unset",
+          background: "none",
+          display: "flex",
+
+          paddingLeft: 20,
+          paddingRight: 20,
+
+          borderRadius: 10,
+          borderStyle: "solid",
+          borderColor: colors.ACCENT,
+          cursor: "pointer",
+          flexWrap: "nowrap",
+          alignContent: "center",
+          backgroundColor: "white",
         }}
+        onClick={() => login()}
       >
-        {title}
-      </p>
-      <img src={GmailIcon} alt="gmail" />
-    </button>
+        <p
+          style={{
+            color: colors.ACCENT,
+            fontSize: 14,
+            marginRight: 10,
+          }}
+        >
+          {title}
+        </p>
+        <img src={GmailIcon} alt="gmail" />
+      </button>
+      {token && (
+        <PrimaryButton
+          title={"Log Out"}
+          style={{
+            marginLeft: 15,
+          }}
+          onClick={() => {
+            handleSetProfileInfo(null);
+            handleSetToken(null);
+            localStorage.removeItem("googleInfo");
+          }}
+        >
+          Log Out
+        </PrimaryButton>
+      )}
+    </div>
   );
 };
 
@@ -133,8 +161,8 @@ const GoogleOauth = ({
               fontSize: 14,
             }}
           >
-            Connect POST OFFICE to your gmail account to send the email from
-            your personal account
+            Connect POST OFFICE to your gmail account to send the email directly
+            from your address
           </p>
         )}
         <Login
@@ -143,7 +171,10 @@ const GoogleOauth = ({
               ? "Sign In with Google"
               : "Sign In with a different account"
           }
+          token={token}
           handleGoogleLogin={handleGoogleLogin}
+          handleSetProfileInfo={handleSetProfileInfo}
+          handleSetToken={handleSetToken}
         />
       </div>
     </GoogleOAuthProvider>

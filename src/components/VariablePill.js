@@ -1,4 +1,5 @@
 import React from "react";
+import { colors } from "../assets/colors";
 
 const VariablePill = ({ title, type, style = {} }) => {
   let color;
@@ -7,7 +8,7 @@ const VariablePill = ({ title, type, style = {} }) => {
   } else if (type === "unused") {
     color = "rgba(191, 217, 255, 0.3)";
   } else if (type === "warning") {
-    color = "#DCCE50";
+    color = colors.PRIMARY;
   }
   return (
     <div

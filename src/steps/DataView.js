@@ -97,7 +97,7 @@ const DataField = ({ item, handleFieldEdit }) => {
                 borderColor: "#E8E8E8",
               }),
           height: 30,
-          width: FIELD_WIDTH - 10,
+          width: FIELD_WIDTH - 15,
           fontSize: 12,
           borderRadius: 10,
           borderStyle: "solid",
@@ -373,20 +373,54 @@ const DataView = ({
           <div
             style={{
               display: "flex",
+              flexDirection: "column",
               justifyContent: "flex-start",
+              margin: 0,
             }}
           >
             <p
               style={{
-                marginTop: 0,
+                margin: 0,
                 marginBottom: 20,
                 fontSize: 14,
                 color: colors.DEACTIVATED,
+                textAlign: "left",
               }}
             >
-              View and edit all of your data. Every cell must have a value in
-              order to proceed.
+              View and edit all of your data here
             </p>
+            {/* Can add listed instructions back if we want */}
+            {/*<ul*/}
+            {/*  style={{*/}
+            {/*    textAlign: "left",*/}
+            {/*    margin: 0,*/}
+            {/*    marginBottom: 10,*/}
+            {/*    paddingLeft: 20,*/}
+            {/*  }}*/}
+            {/*>*/}
+            {/*  <li*/}
+            {/*    style={{*/}
+            {/*      fontSize: 14,*/}
+            {/*      color: colors.DEACTIVATED,*/}
+            {/*      marginTop: 5,*/}
+            {/*      marginLeft: 0,*/}
+            {/*      padding: 0,*/}
+            {/*    }}*/}
+            {/*  >*/}
+            {/*    All cells must contain a value*/}
+            {/*  </li>*/}
+            {/*  <li*/}
+            {/*    style={{*/}
+            {/*      fontSize: 14,*/}
+            {/*      color: colors.DEACTIVATED,*/}
+            {/*      marginTop: 5,*/}
+            {/*      marginLeft: 0,*/}
+            {/*      padding: 0,*/}
+            {/*    }}*/}
+            {/*  >*/}
+            {/*    Recipients must be a valid email and have no trailing spaces*/}
+            {/*  </li>*/}
+            {/*</ul>*/}
           </div>
           <p
             style={{
@@ -394,10 +428,11 @@ const DataView = ({
               alignItems: "center",
               borderRadius: 10,
               paddingLeft: 10,
+              margin: 0,
               marginBottom: 10,
               height: 50,
 
-              backgroundColor: "rgba(254, 249, 167, 0.7)",
+              backgroundColor: colors.YELLOW,
             }}
           >
             Please make sure all table headers are unique
@@ -429,11 +464,15 @@ const DataView = ({
                   backgroundColor: colors.PRIMARY,
                 }}
               >
-                <div
-                  style={{
-                    width: 35,
-                  }}
-                />
+                <div>
+                  <p
+                    style={{
+                      width: 35,
+                    }}
+                  >
+                    &nbsp;
+                  </p>
+                </div>
                 {Object.keys(tableHeaderVariables).map((k) => (
                   <DataHeader
                     key={k}
@@ -444,10 +483,17 @@ const DataView = ({
                 ))}
                 <div
                   style={{
-                    backgroundColor: colors.PRIMARY,
+                    width: "100%",
                     borderTopRightRadius: 20,
+                    textAlign: "right",
+                    paddingRight: 23,
+                    color: "white",
+                    fontSize: 12,
+                    fontWeight: 500,
                   }}
-                ></div>
+                >
+                  <p>Add Var</p>
+                </div>
               </div>
             </div>
             {/* table body */}
@@ -480,8 +526,8 @@ const DataView = ({
                     alignItems: "center",
                     cursor: "pointer",
                     margin: 0,
-                    marginLeft: 60 + 20,
-                    marginRight: 35 * (tableData.length > 1) + 20,
+                    marginLeft: 60,
+                    marginRight: 29 * (tableData.length > 1) + 9,
                     borderRadius: 10,
                     height: 32,
                     marginTop: 6,
@@ -516,8 +562,8 @@ const DataView = ({
                     alignItems: "center",
                     cursor: "pointer",
                     margin: 0,
-                    marginLeft: 60 + 20,
-                    marginRight: 35 * (tableData.length > 1) + 20,
+                    marginLeft: 60,
+                    marginRight: 29 * (tableData.length > 1) + 9,
                     borderRadius: 10,
                     height: 32,
                     marginTop: 6,
@@ -535,7 +581,7 @@ const DataView = ({
                 >
                   <p
                     style={{
-                      color: "rgba(205, 00, 00)",
+                      color: colors.ACCENT,
                       fontSize: 14,
                     }}
                   >

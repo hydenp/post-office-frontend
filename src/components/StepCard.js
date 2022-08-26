@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import CardTitle from "./CardTitle";
 import { colors } from "../assets/colors";
-import { cardStates } from "../models";
 
 const StepCard = ({ cardInfo, childComponent }) => {
   const [show, setShow] = useState(true);
@@ -13,15 +12,12 @@ const StepCard = ({ cardInfo, childComponent }) => {
         backgroundColor: colors.BACKGROUND,
         borderRadius: 20,
         padding: 30,
-        marginTop: 10,
-        marginBottom: 10,
+        marginTop: 12,
+        marginBottom: 12,
         display: "flex",
         flexDirection: "column",
         alignContent: "flex-start",
-        boxShadow:
-          cardInfo.status === cardStates.todo
-            ? "0px 10px 10px rgba(0, 0, 0, 0.25)"
-            : null,
+        boxShadow: show ? "0px 10px 10px rgba(0, 0, 0, 0.25)" : null,
       }}
     >
       <div
