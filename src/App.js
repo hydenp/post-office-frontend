@@ -266,17 +266,27 @@ function App() {
               handleSetOverride={handleSetOverride}
               childComponent={
                 <div style={{ display: "flex", flexDirection: "column" }}>
-                  <iframe
-                    width="700"
-                    height="530"
-                    src="https://www.youtube.com/embed/EbDxQbGfSfM"
-                    title="YouTube video player"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
+                  <div
                     style={{
-                      border: 0,
+                      borderRadius: 10,
+                      width: 700,
+                      height: 530,
+                      overflow: "hidden",
                     }}
-                  ></iframe>
+                  >
+                    <iframe
+                      width="700"
+                      height="530"
+                      src="https://www.youtube.com/embed/EbDxQbGfSfM"
+                      title="YouTube video player"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      style={{
+                        border: 0,
+                      }}
+                    ></iframe>
+                  </div>
+
                   <PrimaryButton
                     title={"Done"}
                     style={{

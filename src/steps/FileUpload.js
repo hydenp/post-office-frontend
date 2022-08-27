@@ -91,7 +91,7 @@ const CSVReader = ({
   function parseDataForView(unparsedData) {
     if (unparsedData !== null) {
       let headers = unparsedData.data[0].map((v) => {
-        return v.toLowerCase();
+        return v.toLowerCase().trim();
       });
       // make the very first two headers "Recipient" and "Subject" respectively
       if (unparsedData.data[0].length <= 2) {
@@ -107,11 +107,11 @@ const CSVReader = ({
         let parsedRow = {};
         for (let j = 0; j < headers.length; j++) {
           if (j === 0) {
-            parsedRow["Recipient"] = unparsedData.data[i][j];
+            parsedRow["Recipient"] = unparsedData.data[i][j].trim();
           } else if (j === 1) {
-            parsedRow["Subject"] = unparsedData.data[i][j];
+            parsedRow["Subject"] = unparsedData.data[i][j].trim();
           } else {
-            parsedRow[headers[j]] = unparsedData.data[i][j];
+            parsedRow[headers[j]] = unparsedData.data[i][j].trim();
           }
         }
         parsedData.push(parsedRow);
