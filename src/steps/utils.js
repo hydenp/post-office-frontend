@@ -11,7 +11,7 @@ export function checkValidData(tableData) {
             tableData[rowIndex][objectKey]
           );
       } else {
-        allValid = allValid && tableData[rowIndex][objectKey] !== "";
+        allValid = allValid && tableData[rowIndex][objectKey].trim() !== "";
       }
     }
   }

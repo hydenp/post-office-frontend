@@ -60,9 +60,7 @@ const DataHeader = ({ item, deleteHeaderVariable, headerEdit }) => {
 
 const DataField = ({ item, handleFieldEdit }) => {
   const invalidStyle = {
-    borderColor: "rgba(205, 00, 00)",
-    backgroundColor: "white",
-    borderWidth: 2,
+    backgroundColor: "rgba(236, 45, 45, 0.4)",
   };
 
   function validateEmail(dataFieldValue) {
@@ -71,7 +69,7 @@ const DataField = ({ item, handleFieldEdit }) => {
         dataFieldValue
       );
     } else {
-      return dataFieldValue === "";
+      return dataFieldValue.trim() === "";
     }
   }
 
@@ -93,16 +91,14 @@ const DataField = ({ item, handleFieldEdit }) => {
           ...(validateEmail(item.value)
             ? invalidStyle
             : {
-                borderWidth: 2,
-                borderColor: "#E8E8E8",
+                backgroundColor: "#E8E8E8",
               }),
           height: 30,
           width: FIELD_WIDTH - 15,
           fontSize: 12,
           borderRadius: 10,
-          borderStyle: "solid",
+          borderStyle: "none",
           paddingLeft: 10,
-          backgroundColor: "#E8E8E8",
         }}
         spellCheck={item.key !== "Recipient"}
         value={item.value}
@@ -277,7 +273,7 @@ const DataView = ({
       handleSetHeaderVariableWarning(false);
       const oldValue = tableHeaderVariables[arrIndex];
       const newHeaders = [...tableHeaderVariables];
-      newHeaders[arrIndex] = newValue.toLowerCase();
+      newHeaders[arrIndex] = newValue.toLowerCase().trim();
       handleSetTableHeaderVariables(newHeaders);
 
       // update the key in the table data row objects
@@ -291,7 +287,10 @@ const DataView = ({
       handleSetTableData(newTableData);
 
       // update the bodyInput with the new key everywhere it is used
-      const newBody = bodyInput.replaceAll(`{${oldValue}}`, `{${newValue}}`);
+      const newBody = bodyInput.replaceAll(
+        `{${oldValue}}`,
+        `{${newValue.trim()}}`
+      );
       handleSetBodyInput(newBody);
     }
   }
