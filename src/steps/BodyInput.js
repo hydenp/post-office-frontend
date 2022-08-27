@@ -127,8 +127,7 @@ const BodyInput = ({ bodyInput, tableHeaderVariables, handleSetBodyInput }) => {
             flexWrap: "wrap",
             alignItems: "center",
             width: "100%",
-            paddingBottom:
-              allVars.length > 2 || hangingVariables.length > 0 ? 15 : 0,
+            paddingBottom: tableHeaderVariables.length > 2 ? 15 : 0,
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             backgroundColor: colors.PRIMARY,
